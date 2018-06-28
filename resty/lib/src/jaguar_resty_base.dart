@@ -309,7 +309,7 @@ class Get extends RouteBase {
 
   Get setUrl(String url) => super.setUrl(url);
 
-  AsyncStringResponse go([dynamic then(StringResponse resp)]) {
+  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     for (Before mod in before) mod(this);
 
     if (_cookies.length != 0)
@@ -335,13 +335,13 @@ class Get extends RouteBase {
   }
 
   Future<T> one<T>([T convert(Map d)]) async {
-    StringResponse resp = await go();
+    Response<String> resp = await go();
     if (resp.statusCode == 200) return go().decode<T>(convert);
     throw resp;
   }
 
   Future<List<T>> list<T>([T convert(Map d)]) async {
-    StringResponse resp = await go();
+    Response<String> resp = await go();
     if (resp.statusCode == 200) return go().decodeList<T>(convert);
     throw resp;
   }
@@ -481,7 +481,7 @@ class Post extends RouteBase {
 
   Post setUrl(String url) => super.setUrl(url);
 
-  AsyncStringResponse go([dynamic then(StringResponse resp)]) {
+  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     AsyncStringResponse resp;
     for (Before mod in before) mod(this);
 
@@ -530,13 +530,13 @@ class Post extends RouteBase {
   }
 
   Future<T> one<T>([T convert(Map d)]) async {
-    StringResponse resp = await go();
+    Response<String> resp = await go();
     if (resp.statusCode == 200) return go().decode<T>(convert);
     throw resp;
   }
 
   Future<List<T>> list<T>([T convert(Map d)]) async {
-    StringResponse resp = await go();
+    Response<String> resp = await go();
     if (resp.statusCode == 200) return go().decodeList<T>(convert);
     throw resp;
   }
@@ -675,7 +675,7 @@ class Put extends RouteBase {
 
   Put setUrl(String url) => super.setUrl(url);
 
-  AsyncStringResponse go([dynamic then(StringResponse resp)]) {
+  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     for (Before mod in before) mod(this);
 
     if (_cookies.length != 0)
@@ -725,13 +725,13 @@ class Put extends RouteBase {
   }
 
   Future<T> one<T>([T convert(Map d)]) async {
-    StringResponse resp = await go();
+    Response<String> resp = await go();
     if (resp.statusCode == 200) return go().decode<T>(convert);
     throw resp;
   }
 
   Future<List<T>> list<T>([T convert(Map d)]) async {
-    StringResponse resp = await go();
+    Response<String> resp = await go();
     if (resp.statusCode == 200) return go().decodeList<T>(convert);
     throw resp;
   }
@@ -818,7 +818,7 @@ class Delete extends RouteBase {
 
   Delete setUrl(String url) => super.setUrl(url);
 
-  AsyncStringResponse go([dynamic then(StringResponse resp)]) {
+  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     for (Before mod in before) mod(this);
 
     if (_cookies.length != 0)
@@ -844,13 +844,13 @@ class Delete extends RouteBase {
   }
 
   Future<T> one<T>([T convert(Map d)]) async {
-    StringResponse resp = await go();
+    Response<String> resp = await go();
     if (resp.statusCode == 200) return go().decode<T>(convert);
     throw resp;
   }
 
   Future<List<T>> list<T>([T convert(Map d)]) async {
-    StringResponse resp = await go();
+    Response<String> resp = await go();
     if (resp.statusCode == 200) return go().decodeList<T>(convert);
     throw resp;
   }
@@ -939,7 +939,7 @@ class OptionsMethod extends RouteBase {
 
   OptionsMethod setUrl(String url) => super.setUrl(url);
 
-  AsyncStringResponse go([dynamic then(StringResponse resp)]) {
+  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     for (Before mod in before) mod(this);
 
     if (_cookies.length != 0)
@@ -970,13 +970,13 @@ class OptionsMethod extends RouteBase {
   }
 
   Future<T> one<T>([T convert(Map d)]) async {
-    StringResponse resp = await go();
+    Response<String> resp = await go();
     if (resp.statusCode == 200) return go().decode<T>(convert);
     throw resp;
   }
 
   Future<List<T>> list<T>([T convert(Map d)]) async {
-    StringResponse resp = await go();
+    Response<String> resp = await go();
     if (resp.statusCode == 200) return go().decodeList<T>(convert);
     throw resp;
   }

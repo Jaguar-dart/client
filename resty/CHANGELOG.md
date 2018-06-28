@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.9
+
++ Fixed bugs in `go` method
+
 ## 2.5.6
 
 + Dart2 bug fixes
