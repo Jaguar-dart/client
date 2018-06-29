@@ -49,7 +49,8 @@ Future client() async {
   final JsonClient client = new JsonClient(baseClient, repo: new JsonRepo());
 
   {
-    final JsonResponse resp = await client.get('http://localhost:10123/api/map');
+    final JsonResponse resp =
+        await client.get('http://localhost:10123/api/map');
     print(resp.body);
   }
 

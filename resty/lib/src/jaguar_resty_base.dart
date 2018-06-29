@@ -13,6 +13,7 @@ class CookieJar {
     r.cookies(store.cookies);
     r.interceptAfter(after);
   }
+
   void after(Response<String> resp) {
     store.addFromHeader(resp.headers['set-cookie']);
   }
@@ -157,7 +158,7 @@ class RouteBase {
 
   RouteBase setUrl(String url) {
     final purl = Uri.parse(url);
-    if(purl.hasAuthority) origin(purl.origin);
+    if (purl.hasAuthority) origin(purl.origin);
     path(purl.pathSegments.join('/'));
     queries(purl.queryParametersAll);
     return this;

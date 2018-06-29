@@ -34,8 +34,7 @@ void main() {
     test('JSON body', () async {
       await resty
           .post('http://localhost:10000/api/sub')
-          .json({'a': 5, 'b': 20})
-          .go((resp) => expect(resp.body, '25'));
+          .json({'a': 5, 'b': 20}).go((resp) => expect(resp.body, '25'));
     });
   });
 }

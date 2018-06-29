@@ -1,6 +1,6 @@
 name: jaguar_resty
 description: Build fluent functional Restful clients
-version: 2.5.9
+version: 2.5.10
 homepage: https://github.com/Jaguar-dart/client
 author: Ravi Teja Gudapati <tejainece@gmail.com>
 

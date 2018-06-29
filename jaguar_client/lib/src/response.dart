@@ -43,7 +43,7 @@ class AsyncJsonResponse extends DelegatingFuture<JsonResponse>
         if (r.isSuccess) await func(r);
       });
 
-  AsyncJsonResponse expect(List<resty.Checker<JsonResponse>> conditions) =>
+  AsyncJsonResponse expect(List<resty.Checker<resty.Response>> conditions) =>
       new AsyncJsonResponse(repo, then((r) => r.expect(conditions)));
 
   AsyncJsonResponse exact(
@@ -187,7 +187,7 @@ class JsonResponse extends resty.StringResponse {
 
   List<T> listWithRepo<T>(JsonRepo repo) => repo.decodeList<T>(body);
 
-  JsonResponse expect(List<resty.Checker<resty.Response<String>>> conditions) =>
+  JsonResponse expect(List<resty.Checker<resty.Response>> conditions) =>
       super.expect(conditions);
 
   JsonResponse exact(

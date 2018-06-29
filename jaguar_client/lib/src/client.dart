@@ -268,7 +268,7 @@ class JsonClient {
 
   void _captureBearerHeader(resty.Response resp) {
     final authHeader =
-    new AuthHeaders.fromHeaderStr(resp.headers['authorization']);
+        new AuthHeaders.fromHeaderStr(resp.headers['authorization']);
     bearerAuthHeader = authHeader.items['Bearer']?.credentials;
   }
 

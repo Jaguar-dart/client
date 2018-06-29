@@ -83,7 +83,7 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
         if (r.isSuccess) await func(r);
       });
 
-  AsyncTResponse<BT> expect(List<Checker<Response<BT>>> conditions) {
+  AsyncTResponse<BT> expect(List<Checker<Response>> conditions) {
     return new AsyncTResponse<BT>(then((r) => r.expect(conditions)));
   }
 
@@ -157,7 +157,7 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
         if (r.isSuccess) await func(r);
       });
 
-  AsyncStringResponse expect(List<Checker<Response<String>>> conditions) {
+  AsyncStringResponse expect(List<Checker<Response>> conditions) {
     return new AsyncStringResponse(then((r) => r.expect(conditions)));
   }
 
@@ -231,7 +231,7 @@ abstract class Response<T> implements AsyncResponse<T> {
 
   String get encoding;
 
-  Response<T> expect(List<Checker<Response<T>>> conditions);
+  Response<T> expect(List<Checker<Response>> conditions);
 
   Response<T> exact(
       {int statusCode,
@@ -310,7 +310,7 @@ class TResponse<T> implements Response<T> {
         if (r.isSuccess) await func(r);
       });
 
-  TResponse<T> expect(List<Checker<Response<T>>> conditions) {
+  TResponse<T> expect(List<Checker<Response>> conditions) {
     final mismatches = conditions
         .map((c) => c(this))
         .reduce((List<Mismatch> v, List<Mismatch> e) => v..addAll(e))
@@ -463,7 +463,7 @@ class StringResponse implements Response<String> {
     return d.cast<T>();
   }
 
-  StringResponse expect(List<Checker<Response<String>>> conditions) {
+  StringResponse expect(List<Checker<Response>> conditions) {
     final mismatches = conditions
         .map((c) => c(this))
         .reduce((List<Mismatch> v, List<Mismatch> e) => v..addAll(e))
