@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.12
+
++ pub fixes
+
 ## 2.5.9
 
 + Fixed bugs in `go` method
