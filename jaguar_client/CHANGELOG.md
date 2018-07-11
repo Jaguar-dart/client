@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.8
+
++ Bug fixes
+
 ## 2.1.1
 
 + Uses jaguar_serializer 2.1.x

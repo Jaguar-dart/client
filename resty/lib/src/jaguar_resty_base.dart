@@ -7,18 +7,6 @@ import 'package:http_parser/http_parser.dart';
 import 'package:client_cookie/client_cookie.dart';
 import 'package:auth_header/auth_header.dart';
 
-class CookieJar {
-  final CookieStore store = new CookieStore();
-  void intercept(RouteBase r) {
-    r.cookies(store.cookies);
-    r.interceptAfter(after);
-  }
-
-  void after(Response<String> resp) {
-    store.addFromHeader(resp.headers['set-cookie']);
-  }
-}
-
 typedef void Before(RouteBase route);
 
 Route route(String url) => new Route(url);
@@ -263,9 +251,9 @@ class Get extends RouteBase {
   Get.copy(Route route) {
     _origin = route._origin;
     _path = route._path;
-    queryMap = new Map<String, String>.from(route.queryMap);
-    headersMap = new Map<String, String>.from(route.headersMap);
-    authHeaders = new Map<String, String>.from(route.authHeaders);
+    queryMap = Map<String, dynamic>.from(route.queryMap);
+    headersMap = Map<String, String>.from(route.headersMap);
+    authHeaders = Map<String, String>.from(route.authHeaders);
     _client = route._client;
     before.addAll(route.before);
     after.addAll(route.after.toList());
@@ -382,9 +370,9 @@ class Post extends RouteBase {
   Post.copy(Route route) {
     _origin = route._origin;
     _path = route._path;
-    queryMap = new Map<String, String>.from(route.queryMap);
-    headersMap = new Map<String, String>.from(route.headersMap);
-    authHeaders = new Map<String, String>.from(route.authHeaders);
+    queryMap = Map<String, dynamic>.from(route.queryMap);
+    headersMap = Map<String, String>.from(route.headersMap);
+    authHeaders = Map<String, String>.from(route.authHeaders);
     _client = route._client;
     before.addAll(route.before);
     after.addAll(route.after.toList());
@@ -577,9 +565,9 @@ class Put extends RouteBase {
   Put.copy(Route route) {
     _origin = route._origin;
     _path = route._path;
-    queryMap = new Map<String, String>.from(route.queryMap);
-    headersMap = new Map<String, String>.from(route.headersMap);
-    authHeaders = new Map<String, String>.from(route.authHeaders);
+    queryMap = Map<String, dynamic>.from(route.queryMap);
+    headersMap = Map<String, String>.from(route.headersMap);
+    authHeaders = Map<String, String>.from(route.authHeaders);
     _client = route._client;
     before.addAll(route.before);
     after.addAll(route.after.toList());
@@ -771,9 +759,9 @@ class Delete extends RouteBase {
   Delete.copy(Route route) {
     _origin = route._origin;
     _path = route._path;
-    queryMap = new Map<String, String>.from(route.queryMap);
-    headersMap = new Map<String, String>.from(route.headersMap);
-    authHeaders = new Map<String, String>.from(route.authHeaders);
+    queryMap = Map<String, dynamic>.from(route.queryMap);
+    headersMap = Map<String, String>.from(route.headersMap);
+    authHeaders = Map<String, String>.from(route.authHeaders);
     _client = route._client;
     before.addAll(route.before);
     after.addAll(route.after.toList());
@@ -889,9 +877,9 @@ class OptionsMethod extends RouteBase {
   OptionsMethod.copy(Route route) {
     _origin = route._origin;
     _path = route._path;
-    queryMap = new Map<String, String>.from(route.queryMap);
-    headersMap = new Map<String, String>.from(route.headersMap);
-    authHeaders = new Map<String, String>.from(route.authHeaders);
+    queryMap = Map<String, dynamic>.from(route.queryMap);
+    headersMap = Map<String, String>.from(route.headersMap);
+    authHeaders = Map<String, String>.from(route.authHeaders);
     _client = route._client;
     before.addAll(route.before);
     after.addAll(route.after.toList());

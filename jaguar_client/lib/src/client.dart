@@ -18,19 +18,33 @@ class JsonClient {
 
   JsonClient(this.client, {this.repo, this.manageCookie: false, this.basePath});
 
+  Uri _makeUri(/* String | Uri */ url) {
+    if (url is String) {
+      if (basePath is String) url = basePath + url;
+      return Uri.parse(url);
+    } else {
+      return url;
+    }
+  }
+
+  resty.Route _makeRoute(/* String | Uri */ url) {
+    Uri uri = _makeUri(url);
+
+    final route = resty.Route(uri.path).withClient(client);
+    if (uri.hasAuthority) route.origin(uri.origin);
+    route.queries(uri.queryParametersAll);
+
+    return route;
+  }
+
   /// Issues a JSON GET request and returns decoded JSON response as [JsonResponse]
-  AsyncJsonResponse get(url,
+  AsyncJsonResponse get(/* String | Uri */ url,
       {final Map<String, String> headers,
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
-    if (url is String && basePath is String) url = basePath + url;
-    Uri uri = Uri.parse(url);
+    final item = _makeRoute(url).get;
 
-    final item = new resty.Get(uri.path).withClient(client);
-    if (uri.hasAuthority) item.origin(uri.origin);
-    item.queries(uri.queryParametersAll);
     if (headers != null) item.headers(headers);
-
     _addHeaders(item);
 
     before.forEach(item.interceptBefore);
@@ -45,10 +59,9 @@ class JsonClient {
       body,
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
-    if (url is String && basePath is String) url = basePath + url;
-    final item = new resty.Post(url).withClient(client);
-    if (headers != null) item.headers(headers);
+    final item = _makeRoute(url).post;
 
+    if (headers != null) item.headers(headers);
     _addHeaders(item);
 
     if (body != null) {
@@ -71,10 +84,9 @@ class JsonClient {
       body,
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
-    if (url is String && basePath is String) url = basePath + url;
-    final item = new resty.Put(url).withClient(client);
-    if (headers != null) item.headers(headers);
+    final item = _makeRoute(url).put;
 
+    if (headers != null) item.headers(headers);
     _addHeaders(item);
 
     if (body != null) {
@@ -96,10 +108,9 @@ class JsonClient {
       {final Map<String, String> headers,
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
-    if (url is String && basePath is String) url = basePath + url;
-    final item = new resty.Delete(url).withClient(client);
-    if (headers != null) item.headers(headers);
+    final item = _makeRoute(url).delete;
 
+    if (headers != null) item.headers(headers);
     _addHeaders(item);
 
     before.forEach(item.interceptBefore);
@@ -113,10 +124,9 @@ class JsonClient {
       body,
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
-    if (url is String && basePath is String) url = basePath + url;
-    final item = new resty.Post(url).withClient(client);
-    if (headers != null) item.headers(headers);
+    final item = _makeRoute(url).post;
 
+    if (headers != null) item.headers(headers);
     _addHeaders(item);
 
     if (body != null) {
@@ -144,10 +154,9 @@ class JsonClient {
       body,
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
-    if (url is String && basePath is String) url = basePath + url;
-    final item = new resty.Put(url).withClient(client);
-    if (headers != null) item.headers(headers);
+    final item = _makeRoute(url).put;
 
+    if (headers != null) item.headers(headers);
     _addHeaders(item);
 
     if (body != null) {
@@ -177,8 +186,7 @@ class JsonClient {
       String reCaptchaResp,
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
-    if (url is String && basePath is String) url = basePath + url;
-    final item = new resty.Post(url).withClient(client);
+    final item = _makeRoute(url).post;
 
     final reqHeaders = new Map<String, String>.from(headers ?? {});
     if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
@@ -206,8 +214,8 @@ class JsonClient {
       String reCaptchaResp,
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
-    if (url is String && basePath is String) url = basePath + url;
-    final item = new resty.Post(url).withClient(client);
+    final item = _makeRoute(url).post;
+
     final reqHeaders = new Map<String, String>.from(headers ?? {});
     if (reCaptchaResp is String) reqHeaders[recapHeader] = reCaptchaResp;
     if (headers != null) item.headers(reqHeaders);
@@ -234,8 +242,8 @@ class JsonClient {
       String reCaptchaResp,
       List<resty.Before> before: const [],
       List<resty.After> after: const []}) {
-    if (url is String && basePath is String) url = basePath + url;
-    final item = new resty.Post(url).withClient(client);
+    final item = _makeRoute(url).post;
+
     if (headers != null) item.headers(headers);
     if (reCaptchaResp is String) item.header('recapHeader', reCaptchaResp);
 

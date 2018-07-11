@@ -6,6 +6,7 @@
 ///       .fetch((m) => new Book.fromMap(m));
 library jaguar_resty;
 
-export 'src/response.dart';
-export 'src/jaguar_resty_base.dart';
 export 'src/expect.dart';
+export 'src/interceptors.dart';
+export 'src/jaguar_resty_base.dart';
+export 'src/response.dart';

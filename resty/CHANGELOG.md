@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.5.16
+
++ Fixed `query` copying bug
+
+## 2.5.15
+
++ Added `BearerToken` interceptor
+
 ## 2.5.12
 
 + pub fixes
