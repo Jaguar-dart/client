@@ -12,7 +12,6 @@ import 'package:http/http.dart' as http;
 import 'package:auth_header/auth_header.dart';
 
 import 'package:jaguar_serializer/jaguar_serializer.dart';
-import 'package:jaguar_common/jaguar_common.dart';
 
 part 'authenticators.dart';
 part 'client.dart';

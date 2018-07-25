@@ -1,6 +1,6 @@
 name: jaguar_client
 description: Write concise JSON API clients. Uses jaguar_serializer for automatic serialization. Supports cookies, interceptors and authentication.
-version: 2.1.8
+version: 2.1.9
 author: Ravi Teja Gudapati <tejainece@gmail.com>
 homepage: https://github.com/Jaguar-dart/client
 documentation:
@@ -11,7 +11,6 @@ environment:
 dependencies:
   http: ^0.11.3
   jaguar_serializer: ^2.1.9
-  jaguar_common: ^0.2.1
   auth_header: ^0.0.3
   client_cookie: ^2.1.2
   jaguar_resty: ^2.5.16
