@@ -324,14 +324,14 @@ class Get extends RouteBase {
   }
 
   Future<T> one<T>([T convert(Map d)]) async {
-    Response<String> resp = await go();
-    if (resp.statusCode == 200) return go().decode<T>(convert);
+    StringResponse resp = await go();
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     throw resp;
   }
 
   Future<List<T>> list<T>([T convert(Map d)]) async {
-    Response<String> resp = await go();
-    if (resp.statusCode == 200) return go().decodeList<T>(convert);
+    StringResponse resp = await go();
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     throw resp;
   }
 
@@ -519,14 +519,14 @@ class Post extends RouteBase {
   }
 
   Future<T> one<T>([T convert(Map d)]) async {
-    Response<String> resp = await go();
-    if (resp.statusCode == 200) return go().decode<T>(convert);
+    StringResponse resp = await go();
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     throw resp;
   }
 
   Future<List<T>> list<T>([T convert(Map d)]) async {
-    Response<String> resp = await go();
-    if (resp.statusCode == 200) return go().decodeList<T>(convert);
+    StringResponse resp = await go();
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     throw resp;
   }
 
@@ -714,14 +714,14 @@ class Put extends RouteBase {
   }
 
   Future<T> one<T>([T convert(Map d)]) async {
-    Response<String> resp = await go();
-    if (resp.statusCode == 200) return go().decode<T>(convert);
+    StringResponse resp = await go();
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     throw resp;
   }
 
   Future<List<T>> list<T>([T convert(Map d)]) async {
-    Response<String> resp = await go();
-    if (resp.statusCode == 200) return go().decodeList<T>(convert);
+    StringResponse resp = await go();
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     throw resp;
   }
 
@@ -833,14 +833,14 @@ class Delete extends RouteBase {
   }
 
   Future<T> one<T>([T convert(Map d)]) async {
-    Response<String> resp = await go();
-    if (resp.statusCode == 200) return go().decode<T>(convert);
+    StringResponse resp = await go();
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     throw resp;
   }
 
   Future<List<T>> list<T>([T convert(Map d)]) async {
-    Response<String> resp = await go();
-    if (resp.statusCode == 200) return go().decodeList<T>(convert);
+    StringResponse resp = await go();
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     throw resp;
   }
 
@@ -959,14 +959,14 @@ class OptionsMethod extends RouteBase {
   }
 
   Future<T> one<T>([T convert(Map d)]) async {
-    Response<String> resp = await go();
-    if (resp.statusCode == 200) return go().decode<T>(convert);
+    StringResponse resp = await go();
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     throw resp;
   }
 
   Future<List<T>> list<T>([T convert(Map d)]) async {
-    Response<String> resp = await go();
-    if (resp.statusCode == 200) return go().decodeList<T>(convert);
+    StringResponse resp = await go();
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     throw resp;
   }
 
