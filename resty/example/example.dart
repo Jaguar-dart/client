@@ -41,12 +41,13 @@ final server = new Jaguar(port: 8000)
   });
 
 Future client() async {
-  print(await resty.get('/book/1').http('localhost:8000').one(Book.map));
+  print(
+      await resty.get('/book/1').http('localhost:8000').one(convert: Book.map));
   print(await resty
       .post('/book')
       .http('localhost:8000')
       .json(new Book(id: '4', name: 'Book4'))
-      .list(Book.map));
+      .list(convert: Book.map));
 }
 
 main() async {

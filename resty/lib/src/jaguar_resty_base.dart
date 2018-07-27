@@ -323,16 +323,26 @@ class Get extends RouteBase {
     return resp;
   }
 
-  Future<T> one<T>([T convert(Map d)]) async {
+  Future<T> one<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
-    throw resp;
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decode<T>(convert);
+    if (onError == null) throw resp;
+    await onError(resp);
+    return null;
   }
 
-  Future<List<T>> list<T>([T convert(Map d)]) async {
+  Future<List<T>> list<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
-    throw resp;
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decodeList<T>(convert);
+    if (onError == null) throw resp;
+    await onError(resp);
+    return null;
   }
 
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>
@@ -518,16 +528,26 @@ class Post extends RouteBase {
     return resp;
   }
 
-  Future<T> one<T>([T convert(Map d)]) async {
+  Future<T> one<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
-    throw resp;
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decode<T>(convert);
+    if (onError == null) throw resp;
+    await onError(resp);
+    return null;
   }
 
-  Future<List<T>> list<T>([T convert(Map d)]) async {
+  Future<List<T>> list<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
-    throw resp;
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decodeList<T>(convert);
+    if (onError == null) throw resp;
+    await onError(resp);
+    return null;
   }
 
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>
@@ -713,16 +733,26 @@ class Put extends RouteBase {
     return resp;
   }
 
-  Future<T> one<T>([T convert(Map d)]) async {
+  Future<T> one<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
-    throw resp;
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decode<T>(convert);
+    if (onError == null) throw resp;
+    await onError(resp);
+    return null;
   }
 
-  Future<List<T>> list<T>([T convert(Map d)]) async {
+  Future<List<T>> list<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
-    throw resp;
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decodeList<T>(convert);
+    if (onError == null) throw resp;
+    await onError(resp);
+    return null;
   }
 
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>
@@ -832,16 +862,26 @@ class Delete extends RouteBase {
     return resp;
   }
 
-  Future<T> one<T>([T convert(Map d)]) async {
+  Future<T> one<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
-    throw resp;
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decode<T>(convert);
+    if (onError == null) throw resp;
+    await onError(resp);
+    return null;
   }
 
-  Future<List<T>> list<T>([T convert(Map d)]) async {
+  Future<List<T>> list<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
-    throw resp;
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decodeList<T>(convert);
+    if (onError == null) throw resp;
+    await onError(resp);
+    return null;
   }
 
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>
@@ -958,16 +998,26 @@ class OptionsMethod extends RouteBase {
     return resp;
   }
 
-  Future<T> one<T>([T convert(Map d)]) async {
+  Future<T> one<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
-    throw resp;
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decode<T>(convert);
+    if (onError == null) throw resp;
+    await onError(resp);
+    return null;
   }
 
-  Future<List<T>> list<T>([T convert(Map d)]) async {
+  Future<List<T>> list<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
-    throw resp;
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decodeList<T>(convert);
+    if (onError == null) throw resp;
+    await onError(resp);
+    return null;
   }
 
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>

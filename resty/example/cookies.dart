@@ -7,7 +7,7 @@ import 'package:jaguar/jaguar.dart';
 final server = new Jaguar(port: 8000)
   ..get(
       '/key',
-      (Context ctx) => new StrResponse.json({'Msg': 'Success!'})
+      (Context ctx) => Response.json({'Msg': 'Success!'})
         ..cookies.add(new Cookie('Key', 'Pass')))
   ..getJson('/data', (Context ctx) async {
     if (!ctx.cookies.containsKey('Key')) return {'Msg': 'Invalid!'};
