@@ -1,4 +1,4 @@
-name: jaguar_http
+name: declarative_client
 description: Retrofit inspired declarative Http client for Dart.
 version: 2.1.1
 authors:
@@ -7,7 +7,7 @@ authors:
 homepage: https://github.com/Jaguar-dart/client
 
 environment:
-  sdk: '>=1.20.1 <2.0.0'
+  sdk: ">=2.0.0-dev.58.0 <3.0.0"
 
 dependencies:
   jaguar_serializer: ^2.1.9
@@ -17,6 +17,8 @@ dependencies:
 
 dev_dependencies:
   test: 1.2.0
+  jaguar_serializer_cli:
+  build_runner:
 
 dependency_overrides:
   jaguar_client:

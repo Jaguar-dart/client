@@ -6,22 +6,20 @@ part of jaguar_http.example;
 // Generator: JaguarHttpGenerator
 // **************************************************************************
 
-class UserApiImpl extends ApiClient with UserApi {
-  UserApiImpl({Route base, SerializerRepo serializers}) : super(base, serializers);
-
+abstract class UserApiImpl implements ApiClient {
   Future<User> getUserById(String id) async {
     var req = base.get.path('/users/:id');
-    return req.one<User>((Map d) => serializers.oneFrom<User>(d));
+    return req.one<User>(convert: (Map d) => serializers.oneFrom<User>(d));
   }
 
   Future<User> postUser(User user) async {
     var req = base.post.path('/users').json(serializers.to(user));
-    return req.one<User>((Map d) => serializers.oneFrom<User>(d));
+    return req.one<User>(convert: (Map d) => serializers.oneFrom<User>(d));
   }
 
   Future<User> updateUser(String userId, User user) async {
     var req = base.put.path('/users/:uid').json(serializers.to(user));
-    return req.one<User>((Map d) => serializers.oneFrom<User>(d));
+    return req.one<User>(convert: (Map d) => serializers.oneFrom<User>(d));
   }
 
   Future<void> deleteUser(String id) async {
@@ -34,6 +32,6 @@ class UserApiImpl extends ApiClient with UserApi {
       'n': name,
       'email': email,
     });
-    return req.list<User>((Map d) => serializers.oneFrom<User>(d));
+    return req.list<User>(convert: (Map d) => serializers.oneFrom<User>(d));
   }
 }

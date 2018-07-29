@@ -4,7 +4,7 @@
 /// Support for doing something awesome.
 ///
 /// More dartdocs go here.
-library jaguar_http;
+library declarative_client;
 
-export 'src/core/definitions.dart';
-export 'src/core/utils.dart';
+export 'annotations/annotations.dart';
+export 'client/client.dart';

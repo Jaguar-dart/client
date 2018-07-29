@@ -2,7 +2,7 @@ library example.user;
 
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-part 'user.g.dart';
+part 'user.jser.dart';
 
 class User {
   String name;
@@ -11,6 +11,4 @@ class User {
 
 @GenSerializer()
 class UserSerializer extends Serializer<User> with _$UserSerializer {
-  @override
-  User createModel() => new User();
 }

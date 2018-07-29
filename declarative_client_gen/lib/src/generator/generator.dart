@@ -3,17 +3,17 @@ import 'package:analyzer/analyzer.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
-import 'package:jaguar_http/jaguar_http.dart';
+import 'package:declarative_client/declarative_client.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_gen/src/utils.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:logging/logging.dart';
-import "utils.dart";
+import "package:declarative_client_gen/src/utils/utils.dart";
 
 final _log = new Logger("JaguarHttpGenerator");
 
 /// source_gen hook to generate serializer
-class JaguarHttpGenerator extends GeneratorForAnnotation<JaguarHttp> {
+class JaguarHttpGenerator extends GeneratorForAnnotation<GenApiClient> {
   const JaguarHttpGenerator();
 
   final _onlyClassMsg =

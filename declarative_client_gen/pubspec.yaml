@@ -1,4 +1,4 @@
-name: jaguar_http_cli
+name: declarative_client_gen
 description: Generator for jaguar_http, a Retrofit inspired declarative HTTP client.
 version: 2.1.1
 authors:
@@ -7,7 +7,7 @@ authors:
 homepage: https://github.com/Jaguar-dart/client
 
 environment:
-  sdk: '>=1.20.1 <2.0.0'
+  sdk: ">=2.0.0-dev.58.0 <3.0.0"
 
 executables:
   jaguar_http:
@@ -18,8 +18,7 @@ dependencies:
   logging: ^0.11.0
   source_gen: ^0.8.3
   meta: ^1.1.5
-  # code_builder: ^3.1.1
-  jaguar_http: ^2.1.1
+  declarative_client: ^2.1.1
 
 dev_dependencies:
   test: ^1.2.0
@@ -28,5 +27,5 @@ dev_dependencies:
   path: ^1.6.1
 
 dependency_overrides:
-  jaguar_http:
-    path: ../jaguar_http
+  declarative_client:
+    path: ../declarative_client
