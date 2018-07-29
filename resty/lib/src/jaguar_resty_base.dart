@@ -28,7 +28,11 @@ class RouteBase {
     if (url != null) setUrl(url);
   }
 
-  String _path = '';
+  // String _path = '';
+
+  final _paths = <String>[];
+
+  final _pathParams = <String, String>{};
 
   String _origin;
 
@@ -74,8 +78,13 @@ class RouteBase {
   /// Append path segments to the URL
   RouteBase path(String path) {
     if (path.isEmpty) return this;
-    if (!_path.endsWith('/') && !path.startsWith('/')) _path += '/';
-    _path += path;
+    final parts = path.split('/').where((p) => p.isNotEmpty);
+    _paths.addAll(parts);
+    return this;
+  }
+
+  RouteBase pathParams(String name, dynamic value) {
+    if (value != null) _pathParams[name] = value?.toString();
     return this;
   }
 
@@ -154,21 +163,19 @@ class RouteBase {
 
   /// URL
   String get url {
-    String path = _path.split('/').where((s) => s.isNotEmpty).join('/');
-    if (path.isNotEmpty) {
-      if (_path.endsWith('/')) path += '/';
-    }
+    String path = _paths
+        .map((ps) => ps.startsWith(':') ? _pathParams[ps.substring(1)] : ps)
+        .join('/');
 
-    if (_origin == null && queryMap == null) {
-      return path;
-    }
-    StringBuffer sb = new StringBuffer();
+    path = Uri.encodeFull(path);
+
+    if (_origin == null && queryMap == null) return path;
+
+    final sb = StringBuffer();
     if (_origin != null) sb.write(_origin);
     if (_origin == null || !_origin.endsWith('/')) sb.write('/');
     sb.write(path);
-    if (queryMap == null) {
-      return sb.toString();
-    }
+    if (queryMap == null) return sb.toString();
     _makeQueryParams(sb, queryMap);
     return sb.toString();
   }
@@ -250,7 +257,8 @@ class Get extends RouteBase {
 
   Get.copy(Route route) {
     _origin = route._origin;
-    _path = route._path;
+    _paths.addAll(route._paths);
+    _pathParams.addAll(route._pathParams);
     queryMap = Map<String, dynamic>.from(route.queryMap);
     headersMap = Map<String, String>.from(route.headersMap);
     authHeaders = Map<String, String>.from(route.authHeaders);
@@ -330,7 +338,8 @@ class Get extends RouteBase {
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
     if (onError == null) throw resp;
-    await onError(resp);
+    var err = await onError(resp);
+    if(err != null) throw err;
     return null;
   }
 
@@ -341,7 +350,8 @@ class Get extends RouteBase {
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
     if (onError == null) throw resp;
-    await onError(resp);
+    var err = await onError(resp);
+    if(err != null) throw err;
     return null;
   }
 
@@ -379,7 +389,8 @@ class Post extends RouteBase {
 
   Post.copy(Route route) {
     _origin = route._origin;
-    _path = route._path;
+    _paths.addAll(route._paths);
+    _pathParams.addAll(route._pathParams);
     queryMap = Map<String, dynamic>.from(route.queryMap);
     headersMap = Map<String, String>.from(route.headersMap);
     authHeaders = Map<String, String>.from(route.authHeaders);
@@ -535,7 +546,8 @@ class Post extends RouteBase {
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
     if (onError == null) throw resp;
-    await onError(resp);
+    var err = await onError(resp);
+    if(err != null) throw err;
     return null;
   }
 
@@ -546,7 +558,8 @@ class Post extends RouteBase {
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
     if (onError == null) throw resp;
-    await onError(resp);
+    var err = await onError(resp);
+    if(err != null) throw err;
     return null;
   }
 
@@ -584,7 +597,8 @@ class Put extends RouteBase {
 
   Put.copy(Route route) {
     _origin = route._origin;
-    _path = route._path;
+    _paths.addAll(route._paths);
+    _pathParams.addAll(route._pathParams);
     queryMap = Map<String, dynamic>.from(route.queryMap);
     headersMap = Map<String, String>.from(route.headersMap);
     authHeaders = Map<String, String>.from(route.authHeaders);
@@ -740,7 +754,8 @@ class Put extends RouteBase {
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
     if (onError == null) throw resp;
-    await onError(resp);
+    var err = await onError(resp);
+    if(err != null) throw err;
     return null;
   }
 
@@ -751,7 +766,8 @@ class Put extends RouteBase {
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
     if (onError == null) throw resp;
-    await onError(resp);
+    var err = await onError(resp);
+    if(err != null) throw err;
     return null;
   }
 
@@ -788,7 +804,8 @@ class Delete extends RouteBase {
 
   Delete.copy(Route route) {
     _origin = route._origin;
-    _path = route._path;
+    _paths.addAll(route._paths);
+    _pathParams.addAll(route._pathParams);
     queryMap = Map<String, dynamic>.from(route.queryMap);
     headersMap = Map<String, String>.from(route.headersMap);
     authHeaders = Map<String, String>.from(route.authHeaders);
@@ -869,7 +886,8 @@ class Delete extends RouteBase {
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
     if (onError == null) throw resp;
-    await onError(resp);
+    var err = await onError(resp);
+    if(err != null) throw err;
     return null;
   }
 
@@ -880,7 +898,8 @@ class Delete extends RouteBase {
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
     if (onError == null) throw resp;
-    await onError(resp);
+    var err = await onError(resp);
+    if(err != null) throw err;
     return null;
   }
 
@@ -916,7 +935,8 @@ class OptionsMethod extends RouteBase {
 
   OptionsMethod.copy(Route route) {
     _origin = route._origin;
-    _path = route._path;
+    _paths.addAll(route._paths);
+    _pathParams.addAll(route._pathParams);
     queryMap = Map<String, dynamic>.from(route.queryMap);
     headersMap = Map<String, String>.from(route.headersMap);
     authHeaders = Map<String, String>.from(route.authHeaders);
@@ -1005,7 +1025,8 @@ class OptionsMethod extends RouteBase {
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
     if (onError == null) throw resp;
-    await onError(resp);
+    var err = await onError(resp);
+    if(err != null) throw err;
     return null;
   }
 
@@ -1016,7 +1037,8 @@ class OptionsMethod extends RouteBase {
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
     if (onError == null) throw resp;
-    await onError(resp);
+    var err = await onError(resp);
+    if(err != null) throw err;
     return null;
   }
 
