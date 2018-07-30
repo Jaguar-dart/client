@@ -1,31 +1,33 @@
-abstract class Req {}
+abstract class Req {
+  String get path;
+}
 
 class GetReq implements Req {
-  final String url;
-  const GetReq([this.url = ""]);
+  final String path;
+  const GetReq([this.path = ""]);
 }
 
 class PostReq implements Req {
-  final String url;
-  const PostReq([this.url = ""]);
+  final String path;
+  const PostReq([this.path = ""]);
 }
 
 class PutReq implements Req {
-  final String url;
-  const PutReq([this.url = ""]);
+  final String path;
+  const PutReq([this.path = ""]);
 }
 
 class DeleteReq implements Req {
-  final String url;
-  const DeleteReq([this.url = ""]);
+  final String path;
+  const DeleteReq([this.path = ""]);
 }
 
 class HeadReq implements Req {
-  final String url;
-  const HeadReq([this.url = ""]);
+  final String path;
+  const HeadReq([this.path = ""]);
 }
 
 class PatchReq implements Req {
-  final String url;
-  const PatchReq([this.url = "/"]);
+  final String path;
+  const PatchReq([this.path = "/"]);
 }

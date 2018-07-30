@@ -18,4 +18,4 @@ dependencies:
 
 dev_dependencies:
   test: ^1.0.0
-  jaguar: ^2.1.8
+  jaguar: ^2.1.35

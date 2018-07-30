@@ -1,5 +1,5 @@
 name: declarative_client
-description: Retrofit inspired declarative Http client for Dart.
+description: Retrofit inspired declarative HTTP client for Dart.
 version: 2.1.1
 authors:
 - Hadrien Lejard <hadrien.lejard@gmail.com>
@@ -13,13 +13,19 @@ dependencies:
   jaguar_serializer: ^2.1.9
   http: ^0.11.3
   meta: ^1.1.5
-  jaguar_client: ^2.1.4
+  jaguar_client: ^2.2.1
+  jaguar_resty:
 
 dev_dependencies:
   test: 1.2.0
   jaguar_serializer_cli:
   build_runner:
+  jaguar: ^2.1.1
+  declarative_client_gen:
+    path: ../declarative_client_gen
 
 dependency_overrides:
   jaguar_client:
     path: ../jaguar_client
+  jaguar_resty:
+    path: ../resty

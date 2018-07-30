@@ -277,6 +277,8 @@ class Get extends RouteBase {
 
   Get path(String path) => super.path(path);
 
+  Get pathParams(String name, dynamic value) => super.pathParams(name, value);
+
   Get query(String key, value) => super.query(key, value);
 
   Get queries(Map<String, dynamic> value) => super.queries(value);
@@ -408,6 +410,8 @@ class Post extends RouteBase {
   Post origin(String origin, [String path]) => super.origin(origin, path);
 
   Post path(String path) => super.path(path);
+
+  Post pathParams(String name, dynamic value) => super.pathParams(name, value);
 
   Post query(String key, value) => super.query(key, value);
 
@@ -617,6 +621,8 @@ class Put extends RouteBase {
 
   Put path(String path) => super.path(path);
 
+  Put pathParams(String name, dynamic value) => super.pathParams(name, value);
+
   Put query(String key, value) => super.query(key, value);
 
   Put queries(Map<String, dynamic> value) => super.queries(value);
@@ -824,6 +830,8 @@ class Delete extends RouteBase {
 
   Delete path(String path) => super.path(path);
 
+  Delete pathParams(String name, dynamic value) => super.pathParams(name, value);
+
   Delete query(String key, value) => super.query(key, value);
 
   Delete queries(Map<String, dynamic> value) => super.queries(value);
@@ -956,6 +964,8 @@ class OptionsMethod extends RouteBase {
       super.origin(origin, path);
 
   OptionsMethod path(String path) => super.path(path);
+
+  OptionsMethod pathParams(String name, dynamic value) => super.pathParams(name, value);
 
   OptionsMethod query(String key, value) => super.query(key, value);
 

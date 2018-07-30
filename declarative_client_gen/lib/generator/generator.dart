@@ -1,32 +1,32 @@
 import 'dart:async';
-import 'package:analyzer/analyzer.dart';
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:declarative_client/declarative_client.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:source_gen/src/utils.dart';
-import 'package:code_builder/code_builder.dart';
 import 'package:logging/logging.dart';
-import "package:declarative_client_gen/src/utils/utils.dart";
+
+import '../parsed_info/parsed_info.dart';
+import '../parser/parser.dart';
+import '../writer/writer.dart';
 
 final _log = new Logger("JaguarHttpGenerator");
+
+final _onlyClassException =
+    Exception("GenSerializer annotation can only be defined on a class.");
 
 /// source_gen hook to generate serializer
 class JaguarHttpGenerator extends GeneratorForAnnotation<GenApiClient> {
   const JaguarHttpGenerator();
 
-  final _onlyClassMsg =
-      "GenSerializer annotation can only be defined on a class.";
-
   @override
-  FutureOr<String> generateForAnnotatedElement(
+  String generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) {
-    if (element is! ClassElement) throw new Exception(_onlyClassMsg);
+    if (element is! ClassElement) throw _onlyClassException;
 
     try {
+      WriteInfo wi = parse(element, annotation);
       // TODO
-      return "// TODO not implemented!";
+      return (Writer(wi)..generate()).toString();
     } on Exception catch (e, s) {
       _log.severe(e);
       _log.severe(s);
@@ -38,24 +38,3 @@ class JaguarHttpGenerator extends GeneratorForAnnotation<GenApiClient> {
 Builder jaguarHttpPartBuilder({String header}) =>
     new PartBuilder([JaguarHttpGenerator()],
         header: header, generatedExtension: '.jhttp.dart');
-
-class GetInfo {
-
-}
-
-class Writer {
-  String name;
-
-  String generate() {
-    var sb = StringBuffer();
-
-    sb.writeln('class _\$${name}Impl extends ApiClient with $name {');
-    sb.writeln('}');
-    return sb.toString();
-  }
-
-  void writeGet(StringBuffer sb, GetInfo info) {
-    sb.writeln("Future ");
-    // TODO
-  }
-}

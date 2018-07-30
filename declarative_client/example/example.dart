@@ -5,9 +5,11 @@ import 'package:http/http.dart';
 import 'package:declarative_client/declarative_client.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'models/user.dart';
+import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_client/jaguar_client.dart';
+import 'package:jaguar/jaguar.dart';
 
-part 'example.g.dart';
+part 'example.jhttp.dart';
 
 /*
 abstract class UserApiImpl implements ApiClient {
@@ -43,8 +45,8 @@ abstract class UserApiImpl implements ApiClient {
 
 /// definition
 @GenApiClient()
-class UserApi extends UserApiImpl implements ApiClient {
-  final Route base;
+class UserApi extends _$UserApiClient implements ApiClient {
+  final resty.Route base;
 
   final SerializerRepo serializers;
 
@@ -54,10 +56,10 @@ class UserApi extends UserApiImpl implements ApiClient {
   Future<User> getUserById(String id);
 
   @PostReq("/users")
-  Future<User> postUser(@ToJson() User user);
+  Future<User> postUser(@AsJson() User user);
 
   @PutReq("/users/:id")
-  Future<User> updateUser(String id, @ToJson() User user);
+  Future<User> updateUser(String id, @AsJson() User user);
 
   @DeleteReq("/users/:id")
   Future<void> deleteUser(String id);
@@ -66,21 +68,24 @@ class UserApi extends UserApiImpl implements ApiClient {
   Future<List<User>> search({String name, String email});
 }
 
-JsonRepo repo = new JsonRepo()..add(new UserSerializer());
+final repo = JsonRepo()..add(UserSerializer());
 
-void main() async {
-  UserApi
-      api /* = new Api(
-      client: new IOClient(),
-      baseUrl: "http://localhost:9000",
-      serializers: repo) */
-      /*
-    ..requestInterceptors.add((JaguarRequest req) {
-      req.headers["Authorization"] = "TOKEN";
-      return req;
-    }) */
-      ;
+void server() async {
+  final server = Jaguar(port: 10000);
+  server.getJson(
+      '/users/5', (_) => User(id: "5", name: "Five", email: "five@five.com"));
+  await server.serve();
+}
 
-  User user = await api.getUserById("userId");
+void client() async {
+  globalClient = IOClient();
+  var api = UserApi(base: route("http://localhost:10000"), serializers: repo);
+
+  User user = await api.getUserById("5");
   print(user);
+}
+
+main() async {
+  await server();
+  await client();
 }

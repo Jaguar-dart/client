@@ -9,9 +9,6 @@ homepage: https://github.com/Jaguar-dart/client
 environment:
   sdk: ">=2.0.0-dev.58.0 <3.0.0"
 
-executables:
-  jaguar_http:
-
 dependencies:
   analyzer: ^0.32.0
   build: ^0.12.0
