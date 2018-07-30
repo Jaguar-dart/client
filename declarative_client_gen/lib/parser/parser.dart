@@ -10,7 +10,11 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   String path = reader.read('path').stringValue;
   var pathSegs = <String>[];
   if (path != null)
-    pathSegs = path.split(path).where((p) => p.startsWith(':')).toList();
+    pathSegs = path
+        .split(path)
+        .where((p) => p.startsWith(':'))
+        .map((p) => p.substring(1))
+        .toList();
 
   final pathParams = Set<String>();
 
