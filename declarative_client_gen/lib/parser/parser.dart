@@ -8,16 +8,14 @@ import '../parsed_info/parsed_info.dart';
 Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   final reader = ConstantReader(annot);
   String path = reader.read('path').stringValue;
-  var pathSegs = <String>[];
+  var varPathSegs = <String>[];
   print(path);
   if (path != null)
-    pathSegs = path
+    varPathSegs = path
         .split('/')
         .where((p) => p.startsWith(':'))
         .map((p) => p.substring(1))
         .toList();
-
-  print(pathSegs);
 
   final pathParams = Set<String>();
 
@@ -25,7 +23,7 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   final headers = <String, String>{};
 
   for (ParameterElement pe in method.parameters) {
-    if (pathSegs.contains(pe.displayName)) pathParams.add(pe.displayName);
+    if (varPathSegs.contains(pe.displayName)) pathParams.add(pe.displayName);
 
     {
       DartObject qp = isQueryParam.firstAnnotationOfExact(pe);
