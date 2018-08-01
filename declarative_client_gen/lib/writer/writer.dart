@@ -34,6 +34,10 @@ class Writer {
       sb.write('.header("$key", $valueField)');
     });
 
+    if (r.body is JsonBody) {
+      sb.write('.json(serializers.to(${(r.body as JsonBody).name}))');
+    }
+
     sb.writeln(';');
 
     if (r.result.returnsVoid) {

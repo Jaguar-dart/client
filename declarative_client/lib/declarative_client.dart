@@ -8,3 +8,4 @@ library declarative_client;
 
 export 'annotations/annotations.dart';
 export 'client/client.dart';
+export 'package:jaguar_resty/jaguar_resty.dart';

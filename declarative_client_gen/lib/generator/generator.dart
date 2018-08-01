@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:declarative_client/declarative_client.dart';

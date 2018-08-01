@@ -1,5 +1,6 @@
 library jaguar_http.example;
 
+import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart';
 import 'package:declarative_client/declarative_client.dart';
@@ -11,39 +12,7 @@ import 'package:jaguar/jaguar.dart';
 
 part 'example.jhttp.dart';
 
-/*
-abstract class UserApiImpl implements ApiClient {
-  Future<User> getUserById(String id) async {
-    var req = base.get.path('/users/:id');
-    return req.one<User>(convert: (Map d) => serializers.oneFrom<User>(d));
-  }
-
-  Future<User> postUser(User user) async {
-    var req = base.post.path('/users').json(serializers.to(user));
-    return req.one<User>(convert: (Map d) => serializers.oneFrom<User>(d));
-  }
-
-  Future<User> updateUser(String userId, User user) async {
-    var req = base.put.path('/users/:uid').json(serializers.to(user));
-    return req.one<User>(convert: (Map d) => serializers.oneFrom<User>(d));
-  }
-
-  Future<void> deleteUser(String id) async {
-    var req = base.delete.path('/users/:uid');
-    return req.go();
-  }
-
-  Future<List<User>> search({String name, String email}) async {
-    var req = base.get.path('/users').queries({
-      'n': name,
-      'email': email,
-    });
-    return req.list<User>(convert: (Map d) => serializers.oneFrom<User>(d));
-  }
-}
- */
-
-/// definition
+/// Example showing how to define an [ApiClient]
 @GenApiClient()
 class UserApi extends _$UserApiClient implements ApiClient {
   final resty.Route base;
@@ -56,7 +25,7 @@ class UserApi extends _$UserApiClient implements ApiClient {
   Future<User> getUserById(String id);
 
   @PostReq("/users")
-  Future<User> postUser(@AsJson() User user);
+  Future<User> createUser(@AsJson() User user);
 
   @PutReq("/users/:id")
   Future<User> updateUser(String id, @AsJson() User user);
@@ -65,15 +34,28 @@ class UserApi extends _$UserApiClient implements ApiClient {
   Future<void> deleteUser(String id);
 
   @GetReq("/users")
-  Future<List<User>> search({String name, String email});
+  Future<List<User>> all({String name, String email});
 }
 
 final repo = JsonRepo()..add(UserSerializer());
 
 void server() async {
+  final users = <String, User>{};
+
   final server = Jaguar(port: 10000);
-  server.getJson(
-      '/users/5', (_) => User(id: "5", name: "Five", email: "five@five.com"));
+  server.getJson('/users/:id', (c) => users[c.pathParams['id']]);
+  server.getJson('/users', (c) => users.values.toList());
+  server.postJson('/users', (c) async {
+    User user = await c.bodyAsJson(convert: User.fromMap);
+    users[user.id] = user;
+    return user;
+  });
+  server.putJson('/users/:id', (c) async {
+    User user = await c.bodyAsJson(convert: User.fromMap);
+    users[user.id] = user;
+    return user;
+  });
+  server.deleteJson('/users/:id', (c) => users.remove(c.pathParams['id']));
   await server.serve();
 }
 
@@ -81,11 +63,30 @@ void client() async {
   globalClient = IOClient();
   var api = UserApi(base: route("http://localhost:10000"), serializers: repo);
 
-  User user = await api.getUserById("5");
-  print(user);
+  try {
+    User user5 = await api
+        .createUser(User(id: '5', name: 'five', email: 'five@five.com'));
+    print('Created $user5');
+    User user10 =
+        await api.createUser(User(id: '10', name: 'ten', email: 'ten@ten.com'));
+    print('Created $user10');
+    user5 = await api.getUserById("5");
+    print('Fetched $user5');
+    List<User> users = await api.all();
+    print('Fetched all users $users');
+    user5 = await api.updateUser(
+        '5', User(id: '5', name: 'Five', email: 'five@five.com'));
+    print('Updated $user5');
+    await api.deleteUser('5');
+    users = await api.all();
+    print('Deleted user $users');
+  } on resty.Response catch (e) {
+    print(e.body);
+  }
 }
 
 main() async {
   await server();
   await client();
+  exit(0);
 }

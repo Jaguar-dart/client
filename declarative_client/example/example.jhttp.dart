@@ -12,13 +12,16 @@ abstract class _$UserApiClient implements ApiClient {
     return req.one(convert: serializers.oneFrom);
   }
 
-  Future<User> postUser(User user) async {
-    var req = base.post.path("/users");
+  Future<User> createUser(User user) async {
+    var req = base.post.path("/users").json(serializers.to(user));
     return req.one(convert: serializers.oneFrom);
   }
 
   Future<User> updateUser(String id, User user) async {
-    var req = base.put.path("/users/:id").pathParams("id", id);
+    var req = base.put
+        .path("/users/:id")
+        .pathParams("id", id)
+        .json(serializers.to(user));
     return req.one(convert: serializers.oneFrom);
   }
 
@@ -27,7 +30,7 @@ abstract class _$UserApiClient implements ApiClient {
     await req.go();
   }
 
-  Future<List<User>> search({String name, String email}) async {
+  Future<List<User>> all({String name, String email}) async {
     var req = base.get.path("/users");
     return req.list(convert: serializers.oneFrom);
   }

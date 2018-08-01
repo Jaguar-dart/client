@@ -1,6 +1,5 @@
 import '../utils/utils.dart';
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:source_gen/source_gen.dart';
 import '../parsed_info/parsed_info.dart';
@@ -21,6 +20,7 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
 
   final query = <String, String>{};
   final headers = <String, String>{};
+  Body body;
 
   for (ParameterElement pe in method.parameters) {
     if (varPathSegs.contains(pe.displayName)) pathParams.add(pe.displayName);
@@ -40,10 +40,19 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
             hp.getField('alias').toStringValue() ?? pe.displayName;
       }
     }
+
+    {
+      DartObject json = isAsJson.firstAnnotationOfExact(pe);
+      if (json != null) body = JsonBody(pe.displayName);
+    }
   }
 
   return Req(httpMethod, method,
-      path: path, pathParams: pathParams, query: query, headers: headers);
+      path: path,
+      pathParams: pathParams,
+      query: query,
+      headers: headers,
+      body: body);
 }
 
 WriteInfo parse(ClassElement element, ConstantReader annotation) {

@@ -2,6 +2,13 @@
 
 An Http Api generator inspired by Retrofit for Dart
 
+# TODO
+
++ Header Map
++ Query Map
++ UrlEncodedForm
++ Multipart form
+
 ## Install
 
 `pub global activate jaguar_http_cli`
@@ -17,27 +24,31 @@ jaguar_http:
   - example/example.dart
 ```
 
-#### example.yaml
+#### Defining and ApiClient
 
 ```dart
-library example;
+@GenApiClient()
+class UserApi extends _$UserApiClient implements ApiClient {
+  final resty.Route base;
 
-part 'example.g.dart';
+  final SerializerRepo serializers;
 
-/// definition
-@JaguarHttp(name: "Api")
-abstract class ApiDefinition extends JaguarInterceptors {
-  @Get("/users/:id")
-  Future<JaguarResponse<User>> getUserById(@Param() String id);
+  UserApi({this.base, this.serializers});
 
-  @Post("/users")
-  Future<JaguarResponse<User>> postUser(@Body() User user);
+  @GetReq("/users/:id")
+  Future<User> getUserById(String id);
 
-  @Put("/users/:uid")
-  Future<JaguarResponse<User>> updateUser(@Param(name: "uid") String userId, @Body() User user);
+  @PostReq("/users")
+  Future<User> createUser(@AsJson() User user);
 
-  @Delete("/users/:id")
-  Future<JaguarResponse> deleteUser(@Param() String id);
+  @PutReq("/users/:id")
+  Future<User> updateUser(String id, @AsJson() User user);
+
+  @DeleteReq("/users/:id")
+  Future<void> deleteUser(String id);
+
+  @GetReq("/users")
+  Future<List<User>> all({String name, String email});
 }
 ```
 

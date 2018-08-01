@@ -4,7 +4,10 @@ import 'package:declarative_client_gen/utils/utils.dart';
 
 abstract class Body {}
 
-class JsonBody implements Body {}
+class JsonBody implements Body {
+  final String name;
+  JsonBody(this.name);
+}
 
 class UrlEncodedForm implements Body {}
 
