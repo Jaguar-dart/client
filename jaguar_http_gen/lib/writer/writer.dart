@@ -34,6 +34,14 @@ class Writer {
       sb.write('.header("$key", $valueField)');
     });
 
+    r.queryMap.forEach((String name) {
+      sb.write('.queries($name)');
+    });
+
+    r.headerMap.forEach((String name) {
+      sb.write('.headers($name)');
+    });
+
     if (r.body is JsonBody) {
       sb.write('.json(serializers.to(${(r.body as JsonBody).name}))');
     }

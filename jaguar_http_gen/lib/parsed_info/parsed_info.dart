@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/element/element.dart' show MethodElement;
 import 'package:analyzer/dart/element/type.dart';
-import 'package:declarative_client_gen/utils/utils.dart';
+import 'package:jaguar_http_gen/utils/utils.dart';
 
 abstract class Body {}
 
@@ -76,6 +76,10 @@ class Req {
 
   final Map<String, String> headers;
 
+  final Set<String> queryMap;
+
+  final Set<String> headerMap;
+
   final Body body;
 
   final MethodElement me;
@@ -83,7 +87,13 @@ class Req {
   final Result result;
 
   Req(this.method, this.me,
-      {this.path, this.query, this.headers, this.body, this.pathParams})
+      {this.path,
+      this.query,
+      this.headers,
+      this.body,
+      this.pathParams,
+      this.headerMap,
+      this.queryMap})
       : result = Result(me);
 }
 

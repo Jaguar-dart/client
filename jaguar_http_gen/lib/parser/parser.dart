@@ -20,6 +20,8 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
 
   final query = <String, String>{};
   final headers = <String, String>{};
+  final queryMap = Set<String>();
+  final headerMap = Set<String>();
   Body body;
 
   for (ParameterElement pe in method.parameters) {
@@ -30,6 +32,20 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
       if (qp != null) {
         query[pe.displayName] =
             qp.getField('alias').toStringValue() ?? pe.displayName;
+      }
+    }
+
+    {
+      DartObject qp = isQueryMap.firstAnnotationOfExact(pe);
+      if (qp != null) {
+        queryMap.add(pe.displayName);
+      }
+    }
+
+    {
+      DartObject qp = isHeaderMap.firstAnnotationOfExact(pe);
+      if (qp != null) {
+        headerMap.add(pe.displayName);
       }
     }
 

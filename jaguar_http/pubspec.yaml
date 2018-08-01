@@ -1,5 +1,5 @@
-name: declarative_client_gen
-description: Generator for jaguar_http, a Retrofit inspired declarative HTTP client.
+name: jaguar_http
+description: Retrofit inspired declarative HTTP client for Dart.
 version: 2.1.1
 authors:
 - Hadrien Lejard <hadrien.lejard@gmail.com>
@@ -10,22 +10,21 @@ environment:
   sdk: ">=2.0.0-dev.58.0 <3.0.0"
 
 dependencies:
-  analyzer: ^0.32.0
-  build: ^0.12.0
-  logging: ^0.11.0
-  source_gen: ^0.8.3
+  jaguar_serializer: ^2.1.9
+  http: ^0.11.3
   meta: ^1.1.5
-  declarative_client: ^2.1.1
+  jaguar_client: ^2.2.1
+  jaguar_resty:
 
 dev_dependencies:
-  test: ^1.2.0
-  build_runner: ^0.9.0
-  collection: ^1.14.10
-  path: ^1.6.1
+  test: 1.2.0
+  jaguar_serializer_cli:
+  build_runner:
+  jaguar: ^2.1.1
+  jaguar_http_gen:
+    path: ../jaguar_http_gen
 
 dependency_overrides:
-  declarative_client:
-    path: ../declarative_client
   jaguar_client:
     path: ../jaguar_client
   jaguar_resty:

@@ -1,6 +1,6 @@
 import 'package:build_runner/build_runner.dart' as _i1;
 import 'package:jaguar_serializer_cli/builder.dart' as _i2;
-import 'package:declarative_client_gen/builder.dart' as _i3;
+import 'package:jaguar_http_gen/builder.dart' as _i3;
 import 'dart:isolate' as _i4;
 
 final _builders = <_i1.BuilderApplication>[

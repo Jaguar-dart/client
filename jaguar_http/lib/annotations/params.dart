@@ -3,9 +3,17 @@ class QueryParam {
   const QueryParam([this.alias]);
 }
 
+class QueryMap {
+  const QueryMap();
+}
+
 class Header {
   final String alias;
   const Header([this.alias]);
+}
+
+class HeaderMap {
+  const HeaderMap();
 }
 
 class AsJson {

@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
-import 'package:declarative_client/declarative_client.dart';
+import 'package:jaguar_http/jaguar_http.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:logging/logging.dart';
 

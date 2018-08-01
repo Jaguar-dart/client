@@ -1,5 +1,5 @@
 import 'package:source_gen/source_gen.dart';
-import 'package:declarative_client/declarative_client.dart';
+import 'package:jaguar_http/jaguar_http.dart';
 import 'package:analyzer/dart/element/type.dart';
 
 const isReq = const TypeChecker.fromRuntime(Req);
@@ -10,9 +10,10 @@ const isDeleteReq = const TypeChecker.fromRuntime(DeleteReq);
 const isHeadReq = const TypeChecker.fromRuntime(HeadReq);
 const isPatchReq = const TypeChecker.fromRuntime(PatchReq);
 
-// const isPath = const TypeChecker.fromRuntime(Path);
 const isQueryParam = const TypeChecker.fromRuntime(QueryParam);
+const isQueryMap = const TypeChecker.fromRuntime(QueryMap);
 const isHeader = const TypeChecker.fromRuntime(Header);
+const isHeaderMap = const TypeChecker.fromRuntime(HeaderMap);
 const isAsJson = const TypeChecker.fromRuntime(AsJson);
 
 const isList = const TypeChecker.fromRuntime(List);

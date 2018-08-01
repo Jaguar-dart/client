@@ -4,24 +4,18 @@ An Http Api generator inspired by Retrofit for Dart
 
 # TODO
 
-+ Header Map
-+ Query Map
 + UrlEncodedForm
 + Multipart form
 
 ## Install
 
-`pub global activate jaguar_http_cli`
-
-## Usage
-
-A simple usage example:
-
-#### pubspec.yaml
-
 ```yaml
-jaguar_http:
-  - example/example.dart
+dependencies:
+  jaguar_http: ^2.1.1
+
+dev_dependencies:
+  jaguar_http_gen: ^2.1.1
+  build_runner:
 ```
 
 #### Defining and ApiClient
@@ -52,17 +46,12 @@ class UserApi extends _$UserApiClient implements ApiClient {
 }
 ```
 
+#### Generate
+`pub run build_runner build`
 
-#### run
-`jaguar_http build`
-
-#### use it
+#### Use it
 ```dart
-final api = new Api(new IOClient(), "http://localhost:9000", serializers: repo);
+  var api = UserApi(base: route("http://localhost:10000"), serializers: repo);
+  User user5 = await api
+        .createUser(User(id: '5', name: 'five', email: 'five@five.com'));
 ```
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme

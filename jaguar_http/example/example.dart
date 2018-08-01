@@ -3,7 +3,7 @@ library jaguar_http.example;
 import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart';
-import 'package:declarative_client/declarative_client.dart';
+import 'package:jaguar_http/jaguar_http.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'models/user.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
