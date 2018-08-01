@@ -9,17 +9,17 @@ part of jaguar_http.example;
 abstract class _$UserApiClient implements ApiClient {
   Future<User> getUserById(String id) async {
     var req = base.get.path("/users/:id").pathParams("id", id);
-    await req.go();
+    return req.one(convert: serializers.oneFrom);
   }
 
   Future<User> postUser(User user) async {
     var req = base.post.path("/users");
-    await req.go();
+    return req.one(convert: serializers.oneFrom);
   }
 
   Future<User> updateUser(String id, User user) async {
     var req = base.put.path("/users/:id").pathParams("id", id);
-    await req.go();
+    return req.one(convert: serializers.oneFrom);
   }
 
   Future<void> deleteUser(String id) async {
@@ -29,6 +29,6 @@ abstract class _$UserApiClient implements ApiClient {
 
   Future<List<User>> search({String name, String email}) async {
     var req = base.get.path("/users");
-    await req.go();
+    return req.list(convert: serializers.oneFrom);
   }
 }

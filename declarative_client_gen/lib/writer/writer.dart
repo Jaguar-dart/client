@@ -24,7 +24,7 @@ class Writer {
 
     if (r.path != null) sb.write('.path("${r.path}")');
 
-    for(String path in r.pathParams) sb.write('.pathParams("$path", $path)');
+    for (String path in r.pathParams) sb.write('.pathParams("$path", $path)');
 
     r.query.forEach((String key, String valueField) {
       sb.write('.query("$key", $valueField)');
@@ -36,8 +36,17 @@ class Writer {
 
     sb.writeln(';');
 
-    // TODO parse response body if needed
-    sb.writeln('await req.go();');
+    if (r.result.returnsVoid) {
+      sb.writeln('await req.go();');
+    } else if (r.result.model != null) {
+      if (r.result.isResultList) {
+        sb.writeln('return req.list(convert: serializers.oneFrom);');
+      } else {
+        sb.writeln('return req.one(convert: serializers.oneFrom);');
+      }
+    } else {
+      sb.writeln('return serializers.from(await req.go().body);');
+    }
 
     sb.writeln('}');
   }

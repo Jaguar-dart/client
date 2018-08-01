@@ -26,3 +26,7 @@ dev_dependencies:
 dependency_overrides:
   declarative_client:
     path: ../declarative_client
+  jaguar_client:
+    path: ../jaguar_client
+  jaguar_resty:
+    path: ../resty
