@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.4
+
++ Dart 2 stable
+
 ## 2.1.2
 
 + Added `cookie` and `cookiesMap` to `CookieStore`
