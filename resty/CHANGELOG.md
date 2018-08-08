@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.6.2
+
++ Dart 2 stable
+
 ## 2.5.16
 
 + Fixed `query` copying bug
