@@ -86,14 +86,17 @@ class ClientCookie {
     var minute = _intToString(utc.minute, 2);
     var second = _intToString(utc.second, 2);
 
-    return '${day[utc.weekday-1]}, ${utc.day} ${mon[utc.month-1]} ${utc.year} ' +
+    return '${day[utc.weekday - 1]}, ${utc.day} ${mon[utc.month - 1]} ${utc.year} ' +
         '${hour}:${minute}:${second} ${utc.timeZoneName}';
   }
 
-  /// Returns a [String] representation that can be written directly to [http.Request]
-  /// 'cookie' header
-  String get header {
-    final sb = new StringBuffer();
+  @Deprecated("Use asHeader instead")
+  String get header => asHeader;
+
+  /// Returns a [String] representation that can be written directly to
+  /// [http.Request] 'cookie' header
+  String get asHeader {
+    final sb = StringBuffer();
 
     //TODO encode all
 
@@ -110,7 +113,7 @@ class ClientCookie {
 
   /// String representation that is useful for debug printing
   String toString() {
-    final sb = new StringBuffer();
+    final sb = StringBuffer();
 
     //TODO encode all
 
@@ -173,9 +176,12 @@ class CookieStore {
     return ret;
   }
 
+  @Deprecated("Use asHeader instead")
+  String get header => asHeader;
+
   /// Returns a [String] representation that can be directly written [http.Request]
   /// header
-  String get header {
+  String get asHeader {
     final removes = <String>[];
     final rets = <String>[];
 
@@ -184,7 +190,7 @@ class CookieStore {
         removes.add(cookie.name);
         continue;
       }
-      rets.add(cookie.header);
+      rets.add(cookie.asHeader);
     }
 
     for (String rem in removes) cookieMap.remove(rem);

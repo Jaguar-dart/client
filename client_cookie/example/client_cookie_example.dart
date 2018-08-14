@@ -8,7 +8,7 @@ main() {
   var cookie1 = ClientCookie('Client', 'jaguar_resty', new DateTime.now());
 
   // Cookie to header string
-  print(cookie1.header);
+  print(cookie1.asHeader);
 
   // Encoding many cookies
   var cookie2 = ClientCookie('Client', 'jaguar_resty', new DateTime.now());
