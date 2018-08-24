@@ -4,7 +4,7 @@
 /// Support for doing something awesome.
 ///
 /// More dartdocs go here.
-library declarative_client;
+library jaguar.retrofit;
 
 export 'annotations/annotations.dart';
 export 'client/client.dart';

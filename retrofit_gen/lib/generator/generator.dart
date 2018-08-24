@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
-import 'package:jaguar_http/jaguar_http.dart';
+import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:logging/logging.dart';
 
@@ -34,5 +34,5 @@ class JaguarHttpGenerator extends GeneratorForAnnotation<GenApiClient> {
   }
 }
 
-Builder jaguarHttpPartBuilder({String header}) =>
+Builder jaguarRetrofitPartBuilder({String header}) =>
     PartBuilder([JaguarHttpGenerator()], '.jhttp.dart', header: header);

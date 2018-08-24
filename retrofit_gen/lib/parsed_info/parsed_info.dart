@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/element/element.dart' show MethodElement;
 import 'package:analyzer/dart/element/type.dart';
-import 'package:jaguar_http_gen/utils/utils.dart';
+import 'package:jaguar_retrofit_gen/utils/utils.dart';
 
 abstract class Body {}
 

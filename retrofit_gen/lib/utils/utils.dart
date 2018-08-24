@@ -1,5 +1,5 @@
 import 'package:source_gen/source_gen.dart';
-import 'package:jaguar_http/jaguar_http.dart';
+import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:analyzer/dart/element/type.dart';
 
 const isReq = const TypeChecker.fromRuntime(Req);

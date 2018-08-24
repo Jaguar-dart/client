@@ -1,8 +1,0 @@
-# Read about `build.yaml` at https://pub.dartlang.org/packages/build_config
-builders:
-  jaguar_http_gen:
-    import: "package:jaguar_http_gen/builder.dart"
-    builder_factories: ["jaguarHttpBuilder"]
-    build_extensions: {".dart": [".jhttp.dart"]}
-    auto_apply: root_package
-    build_to: source

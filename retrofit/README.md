@@ -1,6 +1,6 @@
 # jaguar_http
 
-An Http Api generator inspired by Retrofit for Dart
+An HTTP client API generator inspired by Retrofit for Dart.
 
 # TODO
 
@@ -11,16 +11,17 @@ An Http Api generator inspired by Retrofit for Dart
 
 ```yaml
 dependencies:
-  jaguar_http: ^2.1.1
+  jaguar_retrofit:
 
 dev_dependencies:
-  jaguar_http_gen: ^2.1.1
+  jaguar_retrofit_gen:
   build_runner:
 ```
 
 #### Defining and ApiClient
 
 ```dart
+/// Example showing how to define an [ApiClient]
 @GenApiClient()
 class UserApi extends _$UserApiClient implements ApiClient {
   final resty.Route base;

@@ -1,0 +1,8 @@
+# Read about `build.yaml` at https://pub.dartlang.org/packages/build_config
+builders:
+  jaguar_retrofit_gen:
+    import: "package:jaguar_retrofit_gen/builder.dart"
+    builder_factories: ["jaguarRetrofitBuilder"]
+    build_extensions: {".dart": [".jretro.dart"]}
+    auto_apply: root_package
+    build_to: source

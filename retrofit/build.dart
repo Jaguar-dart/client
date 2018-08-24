@@ -1,6 +1,6 @@
 import 'package:build_runner/build_runner.dart' as _i1;
 import 'package:jaguar_serializer_cli/builder.dart' as _i2;
-import 'package:jaguar_http_gen/builder.dart' as _i3;
+import 'package:jaguar_retrofit_gen/builder.dart' as _i3;
 import 'dart:isolate' as _i4;
 
 final _builders = <_i1.BuilderApplication>[
@@ -8,7 +8,7 @@ final _builders = <_i1.BuilderApplication>[
       [_i2.jaguarSerializer], _i1.toRoot(),
       hideOutput: false),
   _i1.apply('declarative_client_gen|declarative_client_gen',
-      [_i3.jaguarHttpBuilder], _i1.toRoot(),
+      [_i3.jaguarRetrofitBuilder], _i1.toRoot(),
       hideOutput: false)
 ];
 main(List<String> args, [_i4.SendPort sendPort]) async {
