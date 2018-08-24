@@ -35,4 +35,4 @@ class JaguarHttpGenerator extends GeneratorForAnnotation<GenApiClient> {
 }
 
 Builder jaguarRetrofitPartBuilder({String header}) =>
-    PartBuilder([JaguarHttpGenerator()], '.jhttp.dart', header: header);
+    PartBuilder([JaguarHttpGenerator()], '.jretro.dart', header: header);

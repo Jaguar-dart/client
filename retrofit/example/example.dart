@@ -10,7 +10,7 @@ import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:jaguar/jaguar.dart';
 
-part 'example.jhttp.dart';
+part 'example.jretro.dart';
 
 /// Example showing how to define an [ApiClient]
 @GenApiClient()

@@ -1,9 +1,7 @@
 # Changelog
 
-## 0.0.2+1
+## 2.2.1
 
-- Remove unneccesary code
+## Breaking changes
 
-## 0.0.2
-
-- Initial version, created by Stagehand
++ Change extension to `.jretro.dart`

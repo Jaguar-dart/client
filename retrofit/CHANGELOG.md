@@ -1,10 +1,7 @@
 # Changelog
 
-## 0.0.2
+## 2.2.1
 
-- move cli to `jaguar_http_cli`
-- async call on interceptors
+## Breaking changes
 
-## 0.0.1
-
-- Initial version, created by Stagehand
++ Change extension to `.jretro.dart`
