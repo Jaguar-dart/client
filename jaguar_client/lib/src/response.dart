@@ -7,9 +7,6 @@ class AsyncJsonResponse extends DelegatingFuture<JsonResponse>
 
   AsyncJsonResponse(this.repo, Future<JsonResponse> inner) : super(inner);
 
-  AsyncJsonResponse.from(this.repo, Future<http.Response> inner)
-      : super(inner.then((r) => new JsonResponse.from(repo, r)));
-
   AsyncJsonResponse.fromAsyncStringResponse(
       this.repo, resty.AsyncStringResponse resp)
       : super(resp.then((resty.StringResponse r) =>
@@ -36,6 +33,8 @@ class AsyncJsonResponse extends DelegatingFuture<JsonResponse>
   Future<String> get mimeType => then((r) => r.mimeType);
 
   Future<String> get encoding => then((r) => r.encoding);
+
+  Future<resty.StringResponse> get toStringResponse => this;
 
   Future<bool> get isSuccess => then((r) => r.isSuccess);
 
@@ -124,7 +123,6 @@ class JsonResponse extends resty.StringResponse {
       String encoding})
       : super(
             statusCode: statusCode,
-            body: body,
             bytes: bytes,
             headers: headers,
             isRedirect: isRedirect,
@@ -138,7 +136,6 @@ class JsonResponse extends resty.StringResponse {
   JsonResponse.fromStringResponse(this.repo, resty.StringResponse resp)
       : super(
             statusCode: resp.statusCode,
-            body: resp.body,
             bytes: resp.bytes,
             headers: resp.headers,
             isRedirect: resp.isRedirect,
@@ -149,21 +146,9 @@ class JsonResponse extends resty.StringResponse {
             mimeType: resp.mimeType,
             encoding: resp.encoding);
 
-  factory JsonResponse.from(JsonRepo repo, http.Response resp) =>
-      new JsonResponse(repo,
-          statusCode: resp.statusCode,
-          body: resp.body,
-          bytes: resp.bodyBytes,
-          headers: resp.headers,
-          isRedirect: resp.isRedirect,
-          persistentConnection: resp.persistentConnection,
-          reasonPhrase: resp.reasonPhrase,
-          contentLength: resp.contentLength,
-          request: resp.request,
-          mimeType: resty.Response.parseMimeType(resp.headers['content-type']),
-          encoding: resty.Response.parseEncoding(resp.headers['content-type']));
-
   JsonResponse onSuccess(resty.After<String> func) => super.onSuccess(func);
+
+  resty.StringResponse get toStringResponse => this;
 
   T decode<T>([T convert(Map<String, dynamic> d)]) {
     if (convert != null) return super.decode<T>(convert);
