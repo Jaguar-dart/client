@@ -26,14 +26,13 @@ class JaguarHttpGenerator extends GeneratorForAnnotation<GenApiClient> {
       WriteInfo wi = parse(element, annotation);
       // TODO
       return (Writer(wi)..generate()).toString();
-    } on Exception catch (e, s) {
+    } catch (e, s) {
       _log.severe(e);
       _log.severe(s);
-      return "// $e \n\n";
+      return "/* $e \n\n $s \n\n */";
     }
   }
 }
 
 Builder jaguarHttpPartBuilder({String header}) =>
-    new PartBuilder([JaguarHttpGenerator()],
-        header: header, generatedExtension: '.jhttp.dart');
+    PartBuilder([JaguarHttpGenerator()], '.jhttp.dart', header: header);

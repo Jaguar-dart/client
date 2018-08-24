@@ -8,7 +8,6 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   final reader = ConstantReader(annot);
   String path = reader.read('path').stringValue;
   var varPathSegs = <String>[];
-  print(path);
   if (path != null)
     varPathSegs = path
         .split('/')
@@ -65,10 +64,12 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
 
   return Req(httpMethod, method,
       path: path,
-      pathParams: pathParams,
       query: query,
       headers: headers,
-      body: body);
+      body: body,
+      pathParams: pathParams,
+      queryMap: queryMap,
+      headerMap: headerMap);
 }
 
 WriteInfo parse(ClassElement element, ConstantReader annotation) {
