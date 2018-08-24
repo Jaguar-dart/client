@@ -7,7 +7,7 @@ import 'package:jaguar_http/jaguar_http.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'models/user.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
-import 'package:jaguar_client/jaguar_client.dart';
+import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:jaguar/jaguar.dart';
 
 part 'example.jhttp.dart';
