@@ -339,9 +339,9 @@ class Get extends RouteBase {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
-    if (onError == null) throw resp;
+    if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
-    if(err != null) throw err;
+    if (err != null) throw err;
     return null;
   }
 
@@ -351,9 +351,9 @@ class Get extends RouteBase {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
-    if (onError == null) throw resp;
+    if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
-    if(err != null) throw err;
+    if (err != null) throw err;
     return null;
   }
 
@@ -549,9 +549,9 @@ class Post extends RouteBase {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
-    if (onError == null) throw resp;
+    if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
-    if(err != null) throw err;
+    if (err != null) throw err;
     return null;
   }
 
@@ -561,9 +561,9 @@ class Post extends RouteBase {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
-    if (onError == null) throw resp;
+    if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
-    if(err != null) throw err;
+    if (err != null) throw err;
     return null;
   }
 
@@ -759,9 +759,9 @@ class Put extends RouteBase {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
-    if (onError == null) throw resp;
+    if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
-    if(err != null) throw err;
+    if (err != null) throw err;
     return null;
   }
 
@@ -771,9 +771,9 @@ class Put extends RouteBase {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
-    if (onError == null) throw resp;
+    if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
-    if(err != null) throw err;
+    if (err != null) throw err;
     return null;
   }
 
@@ -830,7 +830,8 @@ class Delete extends RouteBase {
 
   Delete path(String path) => super.path(path);
 
-  Delete pathParams(String name, dynamic value) => super.pathParams(name, value);
+  Delete pathParams(String name, dynamic value) =>
+      super.pathParams(name, value);
 
   Delete query(String key, value) => super.query(key, value);
 
@@ -893,9 +894,9 @@ class Delete extends RouteBase {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
-    if (onError == null) throw resp;
+    if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
-    if(err != null) throw err;
+    if (err != null) throw err;
     return null;
   }
 
@@ -905,9 +906,9 @@ class Delete extends RouteBase {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
-    if (onError == null) throw resp;
+    if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
-    if(err != null) throw err;
+    if (err != null) throw err;
     return null;
   }
 
@@ -965,7 +966,8 @@ class OptionsMethod extends RouteBase {
 
   OptionsMethod path(String path) => super.path(path);
 
-  OptionsMethod pathParams(String name, dynamic value) => super.pathParams(name, value);
+  OptionsMethod pathParams(String name, dynamic value) =>
+      super.pathParams(name, value);
 
   OptionsMethod query(String key, value) => super.query(key, value);
 
@@ -1034,9 +1036,9 @@ class OptionsMethod extends RouteBase {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
-    if (onError == null) throw resp;
+    if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
-    if(err != null) throw err;
+    if (err != null) throw err;
     return null;
   }
 
@@ -1046,9 +1048,9 @@ class OptionsMethod extends RouteBase {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
-    if (onError == null) throw resp;
+    if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
-    if(err != null) throw err;
+    if (err != null) throw err;
     return null;
   }
 
@@ -1099,4 +1101,16 @@ class _MultipartStringFile implements Multipart {
   final String value;
 
   _MultipartStringFile(this.value, {this.filename, this.contentType});
+}
+
+class ErrorResponse {
+  final Response response;
+
+  ErrorResponse(this.response);
+
+  int get statusCode => response.statusCode;
+
+  String get body => response.body;
+
+  String toString() => 'Http error! Status code: $statusCode body: $body';
 }
