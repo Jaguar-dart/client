@@ -39,4 +39,9 @@ abstract class _$UserApiClient implements ApiClient {
     var req = base.post.path("/login").urlEncodedForm(serializers.to(login));
     await req.go();
   }
+
+  Future<void> loginMultipart(Login login) async {
+    var req = base.post.path("/login").multipart((serializers.to(login) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())));
+    await req.go();
+  }
 }
