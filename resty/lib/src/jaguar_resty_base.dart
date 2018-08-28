@@ -194,20 +194,17 @@ class RouteBase {
     }
 
     void writeQueries(String key, value, [bool isFirst = false]) {
-      if (value == null || value is String) {
-        writeQuery(key, value, isFirst);
-        return;
-      }
-      if (value is Iterable<String>) {
+      if (value is Iterable) {
         for (int i = 0; i < value.length; i++) {
           if (i == 0) {
-            writeQuery(key, value.elementAt(i), isFirst);
+            writeQuery(key, value.elementAt(i)?.toString() ?? '', isFirst);
           } else {
-            writeQuery(key, value.elementAt(i), false);
+            writeQuery(key, value.elementAt(i)?.toString() ?? '', false);
           }
         }
         return;
       }
+      writeQuery(key, value?.toString() ?? '', isFirst);
     }
 
     for (int i = 0; i < query.length; i++) {
@@ -447,41 +444,53 @@ class Post extends RouteBase {
     return this;
   }
 
-  Post multipart(Map<String, String> values) {
-    if (_body is! Map<String, Multipart>) {
-      _body = <String, Multipart>{};
-    }
+  Post multipart(Map<String, dynamic> values) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
     for (String field in values.keys) {
-      _body[field] = new _MultipartString(values[field]);
+      dynamic value = values[field];
+      if (value is List<int>)
+        multipartFile(field, value);
+      else if (value is Multipart)
+        _body[field] = value;
+      else
+        multipartField(field, value?.toString() ?? '');
     }
+    return this;
+  }
+
+  Post multipartField(String field, value) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    _body[field] = MultipartString(value?.toString() ?? '');
     return this;
   }
 
   Post multipartFile(String field, List<int> value,
       {String filename, MediaType contentType}) {
-    if (_body is! Map<String, Multipart>) {
-      _body = <String, Multipart>{};
-    }
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
     _body[field] =
-        new _MultipartFile(value, filename: filename, contentType: contentType);
+        MultipartFile(value, filename: filename, contentType: contentType);
     return this;
   }
 
   Post multipartStringFile(String field, String value,
       {String filename, MediaType contentType}) {
-    if (_body is! Map<String, Multipart>) {
-      _body = <String, Multipart>{};
-    }
-    _body[field] = new _MultipartStringFile(value,
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    _body[field] = MultipartStringFile(value,
         filename: filename, contentType: contentType);
     return this;
   }
 
-  Post urlEncodedForm(Map<String, String> values) {
-    if (_body is! Map<String, String>) {
-      _body = <String, String>{};
+  Post urlEncodedForm(Map<String, dynamic> values) {
+    if (_body is! Map<String, String>) _body = <String, String>{};
+    for (String field in values.keys) {
+      _body[field] = values[field]?.toString() ?? '';
     }
-    _body.addAll(values);
+    return this;
+  }
+
+  Post urlEncodedFormField(String name, value) {
+    if (_body is! Map<String, String>) _body = <String, String>{};
+    _body[name] = value?.toString() ?? '';
     return this;
   }
 
@@ -517,12 +526,12 @@ class Post extends RouteBase {
       final r = new ht.MultipartRequest('POST', Uri.parse(url));
       for (final String field in body.keys) {
         final Multipart value = body[field];
-        if (value is _MultipartString) {
+        if (value is MultipartString) {
           r.fields[field] = value.value;
-        } else if (value is _MultipartStringFile) {
+        } else if (value is MultipartStringFile) {
           r.files.add(new ht.MultipartFile.fromString(field, value.value,
               filename: value.filename, contentType: value.contentType));
-        } else if (value is _MultipartFile) {
+        } else if (value is MultipartFile) {
           r.files.add(new ht.MultipartFile.fromBytes(field, value.value,
               filename: value.filename, contentType: value.contentType));
         }
@@ -657,41 +666,53 @@ class Put extends RouteBase {
     return this;
   }
 
-  Put multipart(Map<String, String> values) {
-    if (_body is! Map<String, Multipart>) {
-      _body = <String, Multipart>{};
-    }
+  Put multipart(Map<String, dynamic> values) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
     for (String field in values.keys) {
-      _body[field] = new _MultipartString(values[field]);
+      dynamic value = values[field];
+      if (value is List<int>)
+        multipartFile(field, value);
+      else if (value is Multipart)
+        _body[field] = value;
+      else
+        multipartField(field, value?.toString() ?? '');
     }
+    return this;
+  }
+
+  Put multipartField(String field, value) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    _body[field] = MultipartString(value?.toString() ?? '');
     return this;
   }
 
   Put multipartFile(String field, List<int> value,
       {String filename, MediaType contentType}) {
-    if (_body is! Map<String, Multipart>) {
-      _body = <String, Multipart>{};
-    }
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
     _body[field] =
-        new _MultipartFile(value, filename: filename, contentType: contentType);
+        MultipartFile(value, filename: filename, contentType: contentType);
     return this;
   }
 
   Put multipartStringFile(String field, String value,
       {String filename, MediaType contentType}) {
-    if (_body is! Map<String, Multipart>) {
-      _body = <String, Multipart>{};
-    }
-    _body[field] = new _MultipartStringFile(value,
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    _body[field] = MultipartStringFile(value,
         filename: filename, contentType: contentType);
     return this;
   }
 
-  Put urlEncodedForm(Map<String, String> values) {
-    if (_body is! Map<String, String>) {
-      _body = <String, String>{};
+  Put urlEncodedForm(Map<String, dynamic> values) {
+    if (_body is! Map<String, String>) _body = <String, String>{};
+    for (String field in values.keys) {
+      _body[field] = values[field]?.toString() ?? '';
     }
-    _body.addAll(values);
+    return this;
+  }
+
+  Put urlEncodedFormField(String name, value) {
+    if (_body is! Map<String, String>) _body = <String, String>{};
+    _body[name] = value?.toString() ?? '';
     return this;
   }
 
@@ -726,12 +747,12 @@ class Put extends RouteBase {
       final r = new ht.MultipartRequest('PUT', Uri.parse(url));
       for (final String field in body.keys) {
         final Multipart value = body[field];
-        if (value is _MultipartString) {
+        if (value is MultipartString) {
           r.fields[field] = value.value;
-        } else if (value is _MultipartStringFile) {
+        } else if (value is MultipartStringFile) {
           r.files.add(new ht.MultipartFile.fromString(field, value.value,
               filename: value.filename, contentType: value.contentType));
-        } else if (value is _MultipartFile) {
+        } else if (value is MultipartFile) {
           r.files.add(new ht.MultipartFile.fromBytes(field, value.value,
               filename: value.filename, contentType: value.contentType));
         }
@@ -1077,30 +1098,30 @@ class OptionsMethod extends RouteBase {
 
 abstract class Multipart {}
 
-class _MultipartString implements Multipart {
+class MultipartString implements Multipart {
   final String value;
 
-  _MultipartString(this.value);
+  MultipartString(this.value);
 }
 
-class _MultipartFile implements Multipart {
+class MultipartFile implements Multipart {
   final String filename;
 
   final MediaType contentType;
 
   final List<int> value;
 
-  _MultipartFile(this.value, {this.filename, this.contentType});
+  MultipartFile(this.value, {this.filename, this.contentType});
 }
 
-class _MultipartStringFile implements Multipart {
+class MultipartStringFile implements Multipart {
   final String filename;
 
   final MediaType contentType;
 
   final String value;
 
-  _MultipartStringFile(this.value, {this.filename, this.contentType});
+  MultipartStringFile(this.value, {this.filename, this.contentType});
 }
 
 class ErrorResponse {
