@@ -8,7 +8,7 @@ import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'models/user.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_resty/jaguar_resty.dart';
-import 'package:jaguar/jaguar.dart';
+import 'package:jaguar/jaguar.dart' as jaguar;
 
 part 'example.jretro.dart';
 
@@ -35,14 +35,17 @@ class UserApi extends _$UserApiClient implements ApiClient {
 
   @GetReq("/users")
   Future<List<User>> all({String name, String email});
+
+  @PostReq("/login")
+  Future<void> login(@AsForm() Login login);
 }
 
-final repo = JsonRepo()..add(UserSerializer());
+final repo = JsonRepo()..add(UserSerializer())..add(LoginSerializer());
 
 void server() async {
   final users = <String, User>{};
 
-  final server = Jaguar(port: 10000);
+  final server = jaguar.Jaguar(port: 10000);
   server.getJson('/users/:id', (c) => users[c.pathParams['id']]);
   server.getJson('/users', (c) => users.values.toList());
   server.postJson('/users', (c) async {
@@ -56,6 +59,14 @@ void server() async {
     return user;
   });
   server.deleteJson('/users/:id', (c) => users.remove(c.pathParams['id']));
+  server.postJson('/user/login', (c) async {
+    Map<String, String> body = await c.bodyAsUrlEncodedForm();
+    if (body['username'] == "teja" && body["password"] == "pass") {
+      c.response = jaguar.Response("Success!");
+    } else {
+      c.response = jaguar.Response("Failed!", statusCode: 401);
+    }
+  });
   await server.serve();
 }
 
@@ -64,6 +75,7 @@ void client() async {
   var api = UserApi(base: route("http://localhost:10000"), serializers: repo);
 
   try {
+    await api.login(Login(username: 'teja', password: 'pass'));
     User user5 = await api
         .createUser(User(id: '5', name: 'five', email: 'five@five.com'));
     print('Created $user5');

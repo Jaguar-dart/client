@@ -20,3 +20,12 @@ class User {
 
 @GenSerializer()
 class UserSerializer extends Serializer<User> with _$UserSerializer {}
+
+class Login {
+  String username;
+  String password;
+  Login({this.username, this.password});
+}
+
+@GenSerializer()
+class LoginSerializer extends Serializer<Login> with _$LoginSerializer {}

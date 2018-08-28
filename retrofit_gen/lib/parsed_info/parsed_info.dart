@@ -9,7 +9,16 @@ class JsonBody implements Body {
   JsonBody(this.name);
 }
 
-class UrlEncodedForm implements Body {}
+class FormBody implements Body {
+  final String name;
+  FormBody(this.name);
+}
+
+class FormFieldBody implements Body {
+  final String key;
+  final String name;
+  FormFieldBody(this.key, this.name);
+}
 
 class MultipartForm implements Body {}
 
@@ -80,7 +89,7 @@ class Req {
 
   final Set<String> headerMap;
 
-  final Body body;
+  final List<Body> body;
 
   final MethodElement me;
 

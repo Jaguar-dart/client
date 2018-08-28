@@ -34,4 +34,9 @@ abstract class _$UserApiClient implements ApiClient {
     var req = base.get.path("/users");
     return req.list(convert: serializers.oneFrom);
   }
+
+  Future<void> login(Login login) async {
+    var req = base.post.path("/login").urlEncodedForm(serializers.to(login));
+    await req.go();
+  }
 }

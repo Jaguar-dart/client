@@ -15,6 +15,8 @@ const isQueryMap = const TypeChecker.fromRuntime(QueryMap);
 const isHeader = const TypeChecker.fromRuntime(Header);
 const isHeaderMap = const TypeChecker.fromRuntime(HeaderMap);
 const isAsJson = const TypeChecker.fromRuntime(AsJson);
+const isAsForm = const TypeChecker.fromRuntime(AsForm);
+const isAsFormField = const TypeChecker.fromRuntime(AsFormField);
 
 const isList = const TypeChecker.fromRuntime(List);
 const isMap = const TypeChecker.fromRuntime(Map);

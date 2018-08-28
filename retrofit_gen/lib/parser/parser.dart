@@ -21,7 +21,7 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   final headers = <String, String>{};
   final queryMap = Set<String>();
   final headerMap = Set<String>();
-  Body body;
+  final body = List<Body>();
 
   for (ParameterElement pe in method.parameters) {
     if (varPathSegs.contains(pe.displayName)) pathParams.add(pe.displayName);
@@ -58,7 +58,20 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
 
     {
       DartObject json = isAsJson.firstAnnotationOfExact(pe);
-      if (json != null) body = JsonBody(pe.displayName);
+      if (json != null) body.add(JsonBody(pe.displayName));
+    }
+
+    {
+      DartObject form = isAsForm.firstAnnotationOfExact(pe);
+      if (form != null) body.add(FormBody(pe.displayName));
+    }
+
+    {
+      DartObject formField = isAsFormField.firstAnnotationOfExact(pe);
+      if (formField != null)
+        body.add(FormFieldBody(
+            formField.getField('alias').toStringValue() ?? pe.displayName,
+            pe.displayName));
     }
   }
 

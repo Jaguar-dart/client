@@ -42,8 +42,18 @@ class Writer {
       sb.write('.headers($name)');
     });
 
-    if (r.body is JsonBody) {
-      sb.write('.json(serializers.to(${(r.body as JsonBody).name}))');
+    for (Body body in r.body) {
+      if (body is JsonBody) {
+        sb.write('.json(serializers.to(${body.name}))');
+      }
+
+      if (body is FormBody) {
+        sb.write('.urlEncodedForm(serializers.to(${body.name}))');
+      }
+
+      if (body is FormFieldBody) {
+        sb.write('.urlEncodedFormField(${body.key}, ${body.name})');
+      }
     }
 
     sb.writeln(';');

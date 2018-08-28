@@ -27,3 +27,23 @@ abstract class _$UserSerializer implements Serializer<User> {
     return obj;
   }
 }
+
+abstract class _$LoginSerializer implements Serializer<Login> {
+  @override
+  Map<String, dynamic> toMap(Login model) {
+    if (model == null) return null;
+    Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValue(ret, 'username', model.username);
+    setMapValue(ret, 'password', model.password);
+    return ret;
+  }
+
+  @override
+  Login fromMap(Map map) {
+    if (map == null) return null;
+    final obj = new Login();
+    obj.username = map['username'] as String;
+    obj.password = map['password'] as String;
+    return obj;
+  }
+}
