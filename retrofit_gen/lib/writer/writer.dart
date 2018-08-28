@@ -54,6 +54,14 @@ class Writer {
       if (body is FormFieldBody) {
         sb.write('.urlEncodedFormField(${body.key}, ${body.name})');
       }
+
+      if (body is MultipartForm) {
+        sb.write('.multipart((serializers.to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
+      }
+
+      if (body is MultipartFormField) {
+        sb.write('.multipartField(${body.key}, ${body.name})');
+      }
     }
 
     sb.writeln(';');

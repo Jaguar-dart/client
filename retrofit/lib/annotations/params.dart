@@ -29,7 +29,6 @@ class AsFormField {
   const AsFormField([this.alias]);
 }
 
-/* TODO
 class AsMultipart {
   const AsMultipart();
 }
@@ -39,6 +38,7 @@ class AsMultipartField {
   const AsMultipartField([this.alias]);
 }
 
+/* TODO
 class AsMultipartFile {
   final String alias;
   const AsMultipartFile([this.alias]);

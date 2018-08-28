@@ -73,6 +73,19 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
             formField.getField('alias').toStringValue() ?? pe.displayName,
             pe.displayName));
     }
+
+    {
+      DartObject data = isAsMultipart.firstAnnotationOfExact(pe);
+      if (data != null) body.add(MultipartForm(pe.displayName));
+    }
+
+    {
+      DartObject multipartField = isAsMultipartField.firstAnnotationOfExact(pe);
+      if (multipartField != null)
+        body.add(MultipartFormField(
+            multipartField.getField('alias').toStringValue() ?? pe.displayName,
+            pe.displayName));
+    }
   }
 
   return Req(httpMethod, method,
