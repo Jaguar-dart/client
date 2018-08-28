@@ -14,6 +14,12 @@ class MultipartForm implements Body {
   MultipartForm(this.name);
 }
 
+class MultipartFormField implements Body {
+  final String key;
+  final String name;
+  MultipartFormField(this.key, this.name);
+}
+
 class FormBody implements Body {
   final String name;
   FormBody(this.name);

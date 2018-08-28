@@ -19,6 +19,7 @@ const isAsJson = const TypeChecker.fromRuntime(AsJson);
 const isAsForm = const TypeChecker.fromRuntime(AsForm);
 const isAsFormField = const TypeChecker.fromRuntime(AsFormField);
 const isAsMultipart = const TypeChecker.fromRuntime(AsMultipart);
+const isAsMultipartField = const TypeChecker.fromRuntime(AsMultipartField);
 
 const isList = const TypeChecker.fromRuntime(List);
 const isMap = const TypeChecker.fromRuntime(Map);
