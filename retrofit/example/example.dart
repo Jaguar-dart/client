@@ -38,6 +38,9 @@ class UserApi extends _$UserApiClient implements ApiClient {
 
   @PostReq("/login")
   Future<void> login(@AsForm() Login login);
+
+  @PostReq("/login")
+  Future<void> loginMultipart(@AsMultipart() Login login);
 }
 
 final repo = JsonRepo()..add(UserSerializer())..add(LoginSerializer());
@@ -76,6 +79,9 @@ void client() async {
 
   try {
     await api.login(Login(username: 'teja', password: 'pass'));
+
+    await api.loginMultipart(Login(username: 'teja', password: 'pass'));
+
     User user5 = await api
         .createUser(User(id: '5', name: 'five', email: 'five@five.com'));
     print('Created $user5');
