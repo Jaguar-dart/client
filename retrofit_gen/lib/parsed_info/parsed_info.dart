@@ -6,7 +6,7 @@ abstract class Body {}
 
 class JsonBody implements Body {
   final String name;
-  JsonBody(this.name);
+  const JsonBody(this.name);
 }
 
 class FormBody implements Body {
@@ -20,7 +20,10 @@ class FormFieldBody implements Body {
   FormFieldBody(this.key, this.name);
 }
 
-class MultipartForm implements Body {}
+class MultipartForm implements Body {
+  final String name;
+  const MultipartForm(this.name);
+}
 
 class Result {
   final MethodElement me;

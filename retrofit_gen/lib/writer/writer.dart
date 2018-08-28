@@ -56,6 +56,10 @@ class Writer {
       }
     }
 
+    if (r.body is MultipartForm) {
+      sb.write('.multipart((serializers.to(${(r.body as MultipartForm).name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
+    }
+
     sb.writeln(';');
 
     if (r.result.returnsVoid) {
