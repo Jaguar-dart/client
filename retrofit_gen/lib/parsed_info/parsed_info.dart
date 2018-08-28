@@ -9,6 +9,11 @@ class JsonBody implements Body {
   JsonBody(this.name);
 }
 
+class MultipartForm implements Body {
+  final String name;
+  MultipartForm(this.name);
+}
+
 class FormBody implements Body {
   final String name;
   FormBody(this.name);
@@ -19,8 +24,6 @@ class FormFieldBody implements Body {
   final String name;
   FormFieldBody(this.key, this.name);
 }
-
-class MultipartForm implements Body {}
 
 class Result {
   final MethodElement me;
