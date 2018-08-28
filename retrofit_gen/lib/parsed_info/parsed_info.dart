@@ -6,12 +6,15 @@ abstract class Body {}
 
 class JsonBody implements Body {
   final String name;
-  JsonBody(this.name);
+  const JsonBody(this.name);
 }
 
 class UrlEncodedForm implements Body {}
 
-class MultipartForm implements Body {}
+class MultipartForm implements Body {
+  final String name;
+  const MultipartForm(this.name);
+}
 
 class Result {
   final MethodElement me;

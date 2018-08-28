@@ -19,3 +19,7 @@ class HeaderMap {
 class AsJson {
   const AsJson();
 }
+
+class AsMultipart {
+  const AsMultipart();
+}
