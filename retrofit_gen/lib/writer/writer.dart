@@ -56,7 +56,7 @@ class Writer {
       }
 
       if (body is MultipartForm) {
-        sb.write('.multipart((serializers.to(${(r.body as MultipartForm).name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
+        sb.write('.multipart((serializers.to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
       }
     }
 
