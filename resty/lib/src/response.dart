@@ -5,7 +5,7 @@ import 'package:async/async.dart';
 import 'dart:convert' as codec;
 import 'package:http_parser/http_parser.dart' show MediaType;
 
-typedef dynamic After<T>(Response<T> response);
+typedef FutureOr<void> After<T>(Response<T> response);
 
 abstract class AsyncResponse<BT> {
   FutureOr<int> get statusCode;

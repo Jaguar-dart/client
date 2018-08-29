@@ -7,19 +7,19 @@ import 'package:http_parser/http_parser.dart';
 import 'package:client_cookie/client_cookie.dart';
 import 'package:auth_header/auth_header.dart';
 
-typedef void Before(RouteBase route);
+typedef FutureOr<void> Before(RouteBase route);
 
-Route route(String url) => new Route(url);
+Route route(String url) => Route(url);
 
-Get get(String url) => new Get(url);
+Get get(String url) => Get(url);
 
-Post post(String url) => new Post(url);
+Post post(String url) => Post(url);
 
-Put put(String url) => new Put(url);
+Put put(String url) => Put(url);
 
-Delete delete(String url) => new Delete(url);
+Delete delete(String url) => Delete(url);
 
-OptionsMethod options(String url) => new OptionsMethod(url);
+OptionsMethod options(String url) => OptionsMethod(url);
 
 ht.BaseClient globalClient;
 
@@ -42,9 +42,9 @@ class RouteBase {
 
   Map<String, String> authHeaders = {};
 
-  final List<ClientCookie> _cookies = new List<ClientCookie>();
+  final List<ClientCookie> _cookies = List<ClientCookie>();
 
-  final List<Before> before = new List<Before>();
+  final List<Before> before = List<Before>();
   final List<After<String>> after = <After<String>>[];
   final List<After<String>> successHooks = <After<String>>[];
 
@@ -223,24 +223,24 @@ class RouteBase {
 /// Example:
 ///     route('/book')
 ///       .query('count', '10')
-///       .get.fetchList((m) => new Book.fromMap(m));
+///       .get.fetchList((m) => Book.fromMap(m));
 class Route extends RouteBase {
   /// Construct [Route] object with [path]
   Route(String url) : super(url);
 
   /// Converts to [Get] requester
-  Get get get => new Get.copy(this);
+  Get get get => Get.copy(this);
 
   /// Converts to [Post] requester
-  Post get post => new Post.copy(this);
+  Post get post => Post.copy(this);
 
   /// Converts to [Put] requester
-  Put get put => new Put.copy(this);
+  Put get put => Put.copy(this);
 
   /// Converts to [Delete] requester
-  Delete get delete => new Delete.copy(this);
+  Delete get delete => Delete.copy(this);
 
-  OptionsMethod get options => new OptionsMethod.copy(this);
+  OptionsMethod get options => OptionsMethod.copy(this);
 }
 
 /// Build fluent REST GET APIs
@@ -248,7 +248,7 @@ class Route extends RouteBase {
 /// Example:
 ///     get('/book')
 ///       .query('count', '10')
-///       .fetchList((m) => new Book.fromMap(m));
+///       .fetchList((m) => Book.fromMap(m));
 class Get extends RouteBase {
   Get(String url) : super(url);
 
@@ -306,20 +306,23 @@ class Get extends RouteBase {
   Get setUrl(String url) => super.setUrl(url);
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
-    for (Before mod in before) mod(this);
+    final _Requester htResp = () async {
+      for (Before mod in before) await mod(this);
 
-    if (_cookies.length != 0)
-      headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
-    if (authHeaders.isNotEmpty) {
-      final auth = new AuthHeaders.fromHeaderStr(headersMap['authorization']);
-      for (String scheme in authHeaders.keys) {
-        auth.addItem(new AuthHeaderItem(scheme, authHeaders[scheme]));
+      if (_cookies.length != 0)
+        headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
+      if (authHeaders.isNotEmpty) {
+        final auth = AuthHeaders.fromHeaderStr(headersMap['authorization']);
+        for (String scheme in authHeaders.keys) {
+          auth.addItem(AuthHeaderItem(scheme, authHeaders[scheme]));
+        }
+        headersMap['authorization'] = auth.toString();
       }
-      headersMap['authorization'] = auth.toString();
-    }
 
-    AsyncStringResponse resp = new AsyncStringResponse.from(
-        (_client ?? globalClient).get(url, headers: headersMap));
+      return (_client ?? globalClient).get(url, headers: headersMap);
+    };
+
+    var resp = AsyncStringResponse.from(htResp());
     if (after.isNotEmpty) resp = resp.runAll(after);
     if (successHooks.isNotEmpty) {
       resp = resp.run((r) async {
@@ -380,7 +383,7 @@ class Get extends RouteBase {
 /// Example:
 ///     post('/book/${id}')
 ///       .json(book.toMap)
-///       .fetch((m) => new Book.fromMap(m));
+///       .fetch((m) => Book.fromMap(m));
 class Post extends RouteBase {
   dynamic _body;
 
@@ -505,43 +508,45 @@ class Post extends RouteBase {
   Post setUrl(String url) => super.setUrl(url);
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
-    AsyncStringResponse resp;
-    for (Before mod in before) mod(this);
+    final _Requester htResp = () async {
+      for (Before mod in before) await mod(this);
 
-    if (_cookies.length != 0)
-      headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
-    if (authHeaders.isNotEmpty) {
-      final auth = new AuthHeaders.fromHeaderStr(headersMap['authorization']);
-      for (String scheme in authHeaders.keys) {
-        auth.addItem(new AuthHeaderItem(scheme, authHeaders[scheme]));
-      }
-      headersMap['authorization'] = auth.toString();
-    }
-
-    if (_body is String || _body is Map<String, String> || _body == null) {
-      resp = new AsyncStringResponse.from((_client ?? globalClient)
-          .post(url, headers: headersMap, body: _body));
-    } else if (_body is Map<String, Multipart>) {
-      final body = _body as Map<String, Multipart>;
-      final r = new ht.MultipartRequest('POST', Uri.parse(url));
-      for (final String field in body.keys) {
-        final Multipart value = body[field];
-        if (value is MultipartString) {
-          r.fields[field] = value.value;
-        } else if (value is MultipartStringFile) {
-          r.files.add(new ht.MultipartFile.fromString(field, value.value,
-              filename: value.filename, contentType: value.contentType));
-        } else if (value is MultipartFile) {
-          r.files.add(new ht.MultipartFile.fromBytes(field, value.value,
-              filename: value.filename, contentType: value.contentType));
+      if (_cookies.length != 0)
+        headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
+      if (authHeaders.isNotEmpty) {
+        final auth = AuthHeaders.fromHeaderStr(headersMap['authorization']);
+        for (String scheme in authHeaders.keys) {
+          auth.addItem(AuthHeaderItem(scheme, authHeaders[scheme]));
         }
+        headersMap['authorization'] = auth.toString();
       }
-      r.headers.addAll(headersMap);
-      resp = new AsyncStringResponse.from(
-          r.send().then((r) => ht.Response.fromStream(r)));
-    } else {
-      throw new Exception('Invalid body!');
-    }
+
+      if (_body is String || _body is Map<String, String> || _body == null) {
+        return (_client ?? globalClient)
+            .post(url, headers: headersMap, body: _body);
+      } else if (_body is Map<String, Multipart>) {
+        final body = _body as Map<String, Multipart>;
+        final r = ht.MultipartRequest('POST', Uri.parse(url));
+        for (final String field in body.keys) {
+          final Multipart value = body[field];
+          if (value is MultipartString) {
+            r.fields[field] = value.value;
+          } else if (value is MultipartStringFile) {
+            r.files.add(ht.MultipartFile.fromString(field, value.value,
+                filename: value.filename, contentType: value.contentType));
+          } else if (value is MultipartFile) {
+            r.files.add(ht.MultipartFile.fromBytes(field, value.value,
+                filename: value.filename, contentType: value.contentType));
+          }
+        }
+        r.headers.addAll(headersMap);
+        return r.send().then((r) => ht.Response.fromStream(r));
+      } else {
+        throw Exception('Invalid body!');
+      }
+    };
+
+    var resp = AsyncStringResponse.from(htResp());
     if (after.isNotEmpty) resp = resp.runAll(after);
     if (successHooks.isNotEmpty) {
       resp = resp.run((r) async {
@@ -602,7 +607,7 @@ class Post extends RouteBase {
 /// Example:
 ///     put('/book/${id}')
 ///       .json(book.toMap)
-///       .fetch((m) => new Book.fromMap(m));
+///       .fetch((m) => Book.fromMap(m));
 class Put extends RouteBase {
   dynamic _body;
 
@@ -726,44 +731,45 @@ class Put extends RouteBase {
   Put setUrl(String url) => super.setUrl(url);
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
-    for (Before mod in before) mod(this);
+    final _Requester htResp = () async {
+      for (Before mod in before) await mod(this);
 
-    if (_cookies.length != 0)
-      headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
-    if (authHeaders.isNotEmpty) {
-      final auth = new AuthHeaders.fromHeaderStr(headersMap['authorization']);
-      for (String scheme in authHeaders.keys) {
-        auth.addItem(new AuthHeaderItem(scheme, authHeaders[scheme]));
-      }
-      headersMap['authorization'] = auth.toString();
-    }
-
-    AsyncStringResponse resp;
-    if (_body is String || _body is Map<String, String> || _body == null) {
-      resp = new AsyncStringResponse.from(
-          (_client ?? globalClient).put(url, headers: headersMap, body: _body));
-    } else if (_body is Map<String, Multipart>) {
-      final body = _body as Map<String, Multipart>;
-      final r = new ht.MultipartRequest('PUT', Uri.parse(url));
-      for (final String field in body.keys) {
-        final Multipart value = body[field];
-        if (value is MultipartString) {
-          r.fields[field] = value.value;
-        } else if (value is MultipartStringFile) {
-          r.files.add(new ht.MultipartFile.fromString(field, value.value,
-              filename: value.filename, contentType: value.contentType));
-        } else if (value is MultipartFile) {
-          r.files.add(new ht.MultipartFile.fromBytes(field, value.value,
-              filename: value.filename, contentType: value.contentType));
+      if (_cookies.length != 0)
+        headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
+      if (authHeaders.isNotEmpty) {
+        final auth = AuthHeaders.fromHeaderStr(headersMap['authorization']);
+        for (String scheme in authHeaders.keys) {
+          auth.addItem(AuthHeaderItem(scheme, authHeaders[scheme]));
         }
+        headersMap['authorization'] = auth.toString();
       }
-      r.headers.addAll(headersMap);
-      resp = new AsyncStringResponse.from(
-          r.send().then((r) => ht.Response.fromStream(r)));
-    } else {
-      throw new Exception('Invalid body!');
-    }
 
+      if (_body is String || _body is Map<String, String> || _body == null) {
+        return (_client ?? globalClient)
+            .put(url, headers: headersMap, body: _body);
+      } else if (_body is Map<String, Multipart>) {
+        final body = _body as Map<String, Multipart>;
+        final r = ht.MultipartRequest('PUT', Uri.parse(url));
+        for (final String field in body.keys) {
+          final Multipart value = body[field];
+          if (value is MultipartString) {
+            r.fields[field] = value.value;
+          } else if (value is MultipartStringFile) {
+            r.files.add(ht.MultipartFile.fromString(field, value.value,
+                filename: value.filename, contentType: value.contentType));
+          } else if (value is MultipartFile) {
+            r.files.add(ht.MultipartFile.fromBytes(field, value.value,
+                filename: value.filename, contentType: value.contentType));
+          }
+        }
+        r.headers.addAll(headersMap);
+        return r.send().then((r) => ht.Response.fromStream(r));
+      } else {
+        throw Exception('Invalid body!');
+      }
+    };
+
+    var resp = AsyncStringResponse.from(htResp());
     if (after.isNotEmpty) resp = resp.runAll(after);
     if (successHooks.isNotEmpty) {
       resp = resp.run((r) async {
@@ -823,7 +829,7 @@ class Put extends RouteBase {
 ///
 /// Example:
 ///     delete('/book/${id}')
-///       .fetchList((m) => new Book.fromMap(m));
+///       .fetchList((m) => Book.fromMap(m));
 class Delete extends RouteBase {
   dynamic _body;
 
@@ -885,20 +891,22 @@ class Delete extends RouteBase {
   Delete setUrl(String url) => super.setUrl(url);
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
-    for (Before mod in before) mod(this);
+    final _Requester htResp = () async {
+      for (Before mod in before) await mod(this);
 
-    if (_cookies.length != 0)
-      headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
-    if (authHeaders.isNotEmpty) {
-      final auth = new AuthHeaders.fromHeaderStr(headersMap['authorization']);
-      for (String scheme in authHeaders.keys) {
-        auth.addItem(new AuthHeaderItem(scheme, authHeaders[scheme]));
+      if (_cookies.length != 0)
+        headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
+      if (authHeaders.isNotEmpty) {
+        final auth = AuthHeaders.fromHeaderStr(headersMap['authorization']);
+        for (String scheme in authHeaders.keys) {
+          auth.addItem(AuthHeaderItem(scheme, authHeaders[scheme]));
+        }
+        headersMap['authorization'] = auth.toString();
       }
-      headersMap['authorization'] = auth.toString();
-    }
+      return (_client ?? globalClient).delete(url, headers: headersMap);
+    };
 
-    AsyncStringResponse resp = new AsyncStringResponse.from(
-        (_client ?? globalClient).delete(url, headers: headersMap));
+    var resp = AsyncStringResponse.from(htResp());
     if (after.isNotEmpty) resp = resp.runAll(after);
     if (successHooks.isNotEmpty) {
       resp = resp.run((r) async {
@@ -1022,25 +1030,28 @@ class OptionsMethod extends RouteBase {
   OptionsMethod setUrl(String url) => super.setUrl(url);
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
-    for (Before mod in before) mod(this);
+    final _Requester htResp = () async {
+      for (Before mod in before) mod(this);
 
-    if (_cookies.length != 0)
-      headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
-    if (authHeaders.isNotEmpty) {
-      final auth = new AuthHeaders.fromHeaderStr(headersMap['authorization']);
-      for (String scheme in authHeaders.keys) {
-        auth.addItem(new AuthHeaderItem(scheme, authHeaders[scheme]));
+      if (_cookies.length != 0)
+        headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
+      if (authHeaders.isNotEmpty) {
+        final auth = AuthHeaders.fromHeaderStr(headersMap['authorization']);
+        for (String scheme in authHeaders.keys) {
+          auth.addItem(AuthHeaderItem(scheme, authHeaders[scheme]));
+        }
+        headersMap['authorization'] = auth.toString();
       }
-      headersMap['authorization'] = auth.toString();
-    }
 
-    final req = new ht.Request('OPTIONS', Uri.parse(url));
-    req.headers.addAll(headersMap);
+      final req = ht.Request('OPTIONS', Uri.parse(url));
+      req.headers.addAll(headersMap);
 
-    AsyncStringResponse resp = new AsyncStringResponse.from(
-        (_client ?? globalClient)
-            .send(req)
-            .then((r) => ht.Response.fromStream(r)));
+      return (_client ?? globalClient)
+          .send(req)
+          .then((r) => ht.Response.fromStream(r));
+    };
+
+    var resp = AsyncStringResponse.from(htResp());
     if (after.isNotEmpty) resp = resp.runAll(after);
     if (successHooks.isNotEmpty) {
       resp = resp.run((r) async {
@@ -1135,3 +1146,5 @@ class ErrorResponse {
 
   String toString() => 'Http error! Status code: $statusCode body: $body';
 }
+
+typedef Future<ht.Response> _Requester();
