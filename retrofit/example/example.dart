@@ -13,7 +13,7 @@ import 'package:jaguar/jaguar.dart' as jaguar;
 part 'example.jretro.dart';
 
 /// Example showing how to define an [ApiClient]
-@GenApiClient("/users")
+@GenApiClient(path: "/users")
 class UserApi extends _$UserApiClient implements ApiClient {
   final resty.Route base;
 
