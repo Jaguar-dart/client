@@ -22,7 +22,7 @@ class UserApi extends _$UserApiClient implements ApiClient {
   UserApi({this.base, this.serializers});
 
   @GetReq("/:id")
-  Future<User> getUserById(String id);
+  Future<User> getUserById(String id, @QueryParam("test") String test);
 
   @PostReq("/")
   Future<User> createUser(@AsJson() User user);
@@ -88,7 +88,7 @@ void client() async {
     User user10 =
         await api.createUser(User(id: '10', name: 'ten', email: 'ten@ten.com'));
     print('Created $user10');
-    user5 = await api.getUserById("5");
+    user5 = await api.getUserById("5", "test");
     print('Fetched $user5');
     List<User> users = await api.all();
     print('Fetched all users $users');

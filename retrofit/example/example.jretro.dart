@@ -8,8 +8,9 @@ part of jaguar_http.example;
 
 abstract class _$UserApiClient implements ApiClient {
   final String basePath = "/users";
-  Future<User> getUserById(String id) async {
-    var req = base.get.path("$basePath/:id").pathParams("id", id);
+  Future<User> getUserById(String id, String test) async {
+    var req =
+        base.get.path("$basePath/:id").pathParams("id", id).query("test", test);
     return req.one(convert: serializers.oneFrom);
   }
 
@@ -43,7 +44,7 @@ abstract class _$UserApiClient implements ApiClient {
   }
 
   Future<void> loginMultipart(Login login) async {
-    var req = base.post.path("/login").multipart(
+    var req = base.post.path("$basePath/login").multipart(
         (serializers.to(login) as Map<String, dynamic>)
             .map((key, value) => MapEntry(key, value.toString())));
     await req.go();
