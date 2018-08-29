@@ -22,7 +22,8 @@ class Writer {
 
     sb.write('var req = base.${r.method}');
 
-    if (r.path != null) sb.write('.path("\$basePath${r.path}")');
+    if (i.basePath != null) sb.write('.path(basePath)');
+    if (r.path != null) sb.write('.path("${r.path}")');
 
     for (String path in r.pathParams) sb.write('.pathParams("$path", $path)');
 

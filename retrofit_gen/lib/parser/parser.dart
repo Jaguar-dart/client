@@ -101,7 +101,7 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
 WriteInfo parse(ClassElement element, ConstantReader annotation) {
 
   final an = isGenApiClient.firstAnnotationOfExact(element);
-  final basePath = an.getField("basePath").toStringValue();
+  final basePath = an.getField("path").toStringValue();
 
   final reqs = <Req>[];
 
