@@ -29,8 +29,8 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
     {
       DartObject qp = isQueryParam.firstAnnotationOfExact(pe);
       if (qp != null) {
-        query[pe.displayName] =
-            qp.getField('alias').toStringValue() ?? pe.displayName;
+        query[qp.getField('alias').toStringValue() ?? pe.displayName] =
+            pe.displayName;
       }
     }
 
@@ -51,8 +51,8 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
     {
       DartObject hp = isHeader.firstAnnotationOfExact(pe);
       if (hp != null) {
-        headers[pe.displayName] =
-            hp.getField('alias').toStringValue() ?? pe.displayName;
+        headers[hp.getField('alias').toStringValue() ?? pe.displayName] =
+            pe.displayName;
       }
     }
 
