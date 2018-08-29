@@ -2,5 +2,6 @@ export 'requests.dart';
 export 'params.dart';
 
 class GenApiClient {
-  const GenApiClient();
+  final String basePath;
+  const GenApiClient([this.basePath = ""]);
 }

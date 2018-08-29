@@ -7,36 +7,38 @@ part of jaguar_http.example;
 // **************************************************************************
 
 abstract class _$UserApiClient implements ApiClient {
+  final String basePath = "/users";
   Future<User> getUserById(String id) async {
-    var req = base.get.path("/users/:id").pathParams("id", id);
+    var req = base.get.path("$basePath/:id").pathParams("id", id);
     return req.one(convert: serializers.oneFrom);
   }
 
   Future<User> createUser(User user) async {
-    var req = base.post.path("/users").json(serializers.to(user));
+    var req = base.post.path("$basePath/").json(serializers.to(user));
     return req.one(convert: serializers.oneFrom);
   }
 
   Future<User> updateUser(String id, User user) async {
     var req = base.put
-        .path("/users/:id")
+        .path("$basePath/:id")
         .pathParams("id", id)
         .json(serializers.to(user));
     return req.one(convert: serializers.oneFrom);
   }
 
   Future<void> deleteUser(String id) async {
-    var req = base.delete.path("/users/:id").pathParams("id", id);
+    var req = base.delete.path("$basePath/:id").pathParams("id", id);
     await req.go();
   }
 
   Future<List<User>> all({String name, String email}) async {
-    var req = base.get.path("/users");
+    var req = base.get.path("$basePath/");
     return req.list(convert: serializers.oneFrom);
   }
 
   Future<void> login(Login login) async {
-    var req = base.post.path("/login").urlEncodedForm(serializers.to(login));
+    var req =
+        base.post.path("$basePath/login").urlEncodedForm(serializers.to(login));
     await req.go();
   }
 }

@@ -108,8 +108,9 @@ class Req {
 
 class WriteInfo {
   final String name;
+  final String basePath;
 
   final List<Req> requests;
 
-  WriteInfo(this.name, this.requests);
+  WriteInfo(this.name, this.basePath, this.requests);
 }

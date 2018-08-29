@@ -13,7 +13,7 @@ import 'package:jaguar/jaguar.dart' as jaguar;
 part 'example.jretro.dart';
 
 /// Example showing how to define an [ApiClient]
-@GenApiClient()
+@GenApiClient("/users")
 class UserApi extends _$UserApiClient implements ApiClient {
   final resty.Route base;
 
@@ -21,19 +21,19 @@ class UserApi extends _$UserApiClient implements ApiClient {
 
   UserApi({this.base, this.serializers});
 
-  @GetReq("/users/:id")
+  @GetReq("/:id")
   Future<User> getUserById(String id);
 
-  @PostReq("/users")
+  @PostReq("/")
   Future<User> createUser(@AsJson() User user);
 
-  @PutReq("/users/:id")
+  @PutReq("/:id")
   Future<User> updateUser(String id, @AsJson() User user);
 
-  @DeleteReq("/users/:id")
+  @DeleteReq("/:id")
   Future<void> deleteUser(String id);
 
-  @GetReq("/users")
+  @GetReq("/")
   Future<List<User>> all({String name, String email});
 
   @PostReq("/login")

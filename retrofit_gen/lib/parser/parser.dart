@@ -86,6 +86,10 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
 }
 
 WriteInfo parse(ClassElement element, ConstantReader annotation) {
+
+  final an = isGenApiClient.firstAnnotationOfExact(element);
+  final basePath = an.getField("basePath").toStringValue();
+
   final reqs = <Req>[];
 
   for (MethodElement me in element.methods) {
@@ -106,5 +110,5 @@ WriteInfo parse(ClassElement element, ConstantReader annotation) {
     }
   }
 
-  return WriteInfo(element.displayName, reqs);
+  return WriteInfo(element.displayName, basePath, reqs);
 }
