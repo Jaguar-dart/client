@@ -30,7 +30,7 @@ class Writer {
       sb.write('.query("$key", $valueField)');
     });
 
-    r.query.forEach((String key, String valueField) {
+    r.headers.forEach((String key, String valueField) {
       sb.write('.header("$key", $valueField)');
     });
 

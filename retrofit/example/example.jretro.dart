@@ -7,8 +7,9 @@ part of jaguar_http.example;
 // **************************************************************************
 
 abstract class _$UserApiClient implements ApiClient {
-  Future<User> getUserById(String id) async {
-    var req = base.get.path("/users/:id").pathParams("id", id);
+  Future<User> getUserById(String id, String test) async {
+    var req =
+        base.get.path("/users/:id").pathParams("id", id).query("test", test);
     return req.one(convert: serializers.oneFrom);
   }
 
