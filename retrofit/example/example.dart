@@ -22,7 +22,7 @@ class UserApi extends _$UserApiClient implements ApiClient {
   UserApi({this.base, this.serializers});
 
   @GetReq("/users/:id")
-  Future<User> getUserById(String id);
+  Future<User> getUserById(String id, @QueryParam("test") String test);
 
   @PostReq("/users")
   Future<User> createUser(@AsJson() User user);
