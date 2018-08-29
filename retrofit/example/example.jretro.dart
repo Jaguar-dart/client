@@ -9,8 +9,7 @@ part of jaguar_http.example;
 abstract class _$UserApiClient implements ApiClient {
   final String basePath = "/users";
   Future<User> getUserById(String id, String test) async {
-    var req =
-        base.get.path("$basePath/:id").pathParams("id", id).query("test", test);
+    var req = base.get.path("$basePath/:id").pathParams("id", id).query("test", test);
     return req.one(convert: serializers.oneFrom);
   }
 
