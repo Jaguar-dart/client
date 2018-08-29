@@ -9,7 +9,7 @@ class Writer {
 
   void generate() {
     sb.writeln('abstract class _\$${i.name}Client implements ApiClient {');
-
+    sb.writeln('final String basePath = "${i.basePath}";');
     for (Req req in i.requests) _writeRequest(req);
 
     sb.writeln('}');
@@ -22,6 +22,7 @@ class Writer {
 
     sb.write('var req = base.${r.method}');
 
+    if (i.basePath != null) sb.write('.path(basePath)');
     if (r.path != null) sb.write('.path("${r.path}")');
 
     for (String path in r.pathParams) sb.write('.pathParams("$path", $path)');

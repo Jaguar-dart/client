@@ -13,7 +13,7 @@ import 'package:jaguar/jaguar.dart' as jaguar;
 part 'example.jretro.dart';
 
 /// Example showing how to define an [ApiClient]
-@GenApiClient()
+@GenApiClient(path: "/users")
 class UserApi extends _$UserApiClient implements ApiClient {
   final resty.Route base;
 
@@ -21,19 +21,19 @@ class UserApi extends _$UserApiClient implements ApiClient {
 
   UserApi({this.base, this.serializers});
 
-  @GetReq("/users/:id")
+  @GetReq("/:id")
   Future<User> getUserById(String id, @QueryParam("test") String test);
 
-  @PostReq("/users")
+  @PostReq("/")
   Future<User> createUser(@AsJson() User user);
 
-  @PutReq("/users/:id")
+  @PutReq("/:id")
   Future<User> updateUser(String id, @AsJson() User user);
 
-  @DeleteReq("/users/:id")
+  @DeleteReq("/:id")
   Future<void> deleteUser(String id);
 
-  @GetReq("/users")
+  @GetReq("/")
   Future<List<User>> all({String name, String email});
 
   @PostReq("/login")
@@ -88,7 +88,7 @@ void client() async {
     User user10 =
         await api.createUser(User(id: '10', name: 'ten', email: 'ten@ten.com'));
     print('Created $user10');
-    user5 = await api.getUserById("5");
+    user5 = await api.getUserById("5", "test");
     print('Fetched $user5');
     List<User> users = await api.all();
     print('Fetched all users $users');

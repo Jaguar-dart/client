@@ -2,6 +2,7 @@ import 'package:source_gen/source_gen.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:analyzer/dart/element/type.dart';
 
+const isGenApiClient = const TypeChecker.fromRuntime(GenApiClient);
 const isReq = const TypeChecker.fromRuntime(Req);
 const isGetReq = const TypeChecker.fromRuntime(GetReq);
 const isPostReq = const TypeChecker.fromRuntime(PostReq);
