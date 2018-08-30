@@ -1,3 +1,4 @@
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart' show MethodElement;
 import 'package:analyzer/dart/element/type.dart';
 import 'package:jaguar_retrofit_gen/utils/utils.dart';
@@ -88,6 +89,8 @@ class Req {
 
   final String path;
 
+  final Map<DartObject, DartObject> metaData;
+
   final Set<String> pathParams;
 
   final Map<String, String> query;
@@ -106,6 +109,7 @@ class Req {
 
   Req(this.method, this.me,
       {this.path,
+      this.metaData,
       this.query,
       this.headers,
       this.body,
@@ -118,8 +122,9 @@ class Req {
 class WriteInfo {
   final String name;
   final String basePath;
+  final Map<DartObject, DartObject> baseMetaData;
 
   final List<Req> requests;
 
-  WriteInfo(this.name, this.basePath, this.requests);
+  WriteInfo(this.name, this.basePath, this.baseMetaData, this.requests);
 }

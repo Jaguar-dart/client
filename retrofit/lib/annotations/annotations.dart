@@ -3,5 +3,6 @@ export 'params.dart';
 
 class GenApiClient {
   final String path;
-  const GenApiClient({this.path});
+  final Map<String, dynamic> metaData;
+  const GenApiClient({this.path, this.metaData});
 }

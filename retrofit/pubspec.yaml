@@ -13,7 +13,6 @@ dependencies:
   jaguar_serializer: ^2.2.0
   http: ^0.11.3
   meta: ^1.1.5
-  jaguar_resty: ^2.6.10
 
 dev_dependencies:
   test: ^1.3.0
@@ -22,3 +21,5 @@ dev_dependencies:
   jaguar: ^2.2.20
   jaguar_retrofit_gen:
     path: ../retrofit_gen
+  jaguar_resty:
+    path: ../resty
