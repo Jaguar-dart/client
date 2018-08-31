@@ -13,7 +13,7 @@ import 'package:jaguar/jaguar.dart' as jaguar;
 part 'example.jretro.dart';
 
 /// Example showing how to define an [ApiClient]
-@GenApiClient(path: "/users")
+@GenApiClient(path: "/users", metaData: {"base": "test"})
 class UserApi extends _$UserApiClient implements ApiClient {
   final resty.Route base;
 
@@ -21,7 +21,7 @@ class UserApi extends _$UserApiClient implements ApiClient {
 
   UserApi({this.base, this.serializers});
 
-  @GetReq("/:id")
+  @GetReq("/:id", {"token": "test", "bool": true, "int": 1, "double": 2.2})
   Future<User> getUserById(String id, @QueryParam("test") String test);
 
   @PostReq("/")
@@ -75,7 +75,12 @@ void server() async {
 
 void client() async {
   globalClient = IOClient();
-  var api = UserApi(base: route("http://localhost:10000"), serializers: repo);
+  var api = UserApi(base: route("http://localhost:10000")..interceptBefore((route) {
+    if(route.metaData != null) {
+      print("Meta data");
+      print(route.metaData);
+    }
+  }), serializers: repo);
 
   try {
     await api.login(Login(username: 'teja', password: 'pass'));

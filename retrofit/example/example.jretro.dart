@@ -10,6 +10,12 @@ abstract class _$UserApiClient implements ApiClient {
   final String basePath = "/users";
   Future<User> getUserById(String id, String test) async {
     var req = base.get
+        .setMetaData({
+          "token": "test",
+          "bool": true,
+          "int": 1,
+          "double": 2.2,
+        })
         .path(basePath)
         .path("/:id")
         .pathParams("id", id)
@@ -18,12 +24,21 @@ abstract class _$UserApiClient implements ApiClient {
   }
 
   Future<User> createUser(User user) async {
-    var req = base.post.path(basePath).path("/").json(serializers.to(user));
+    var req = base.post
+        .setMetaData({
+          "base": "test",
+        })
+        .path(basePath)
+        .path("/")
+        .json(serializers.to(user));
     return req.one(convert: serializers.oneFrom);
   }
 
   Future<User> updateUser(String id, User user) async {
     var req = base.put
+        .setMetaData({
+          "base": "test",
+        })
         .path(basePath)
         .path("/:id")
         .pathParams("id", id)
@@ -32,17 +47,31 @@ abstract class _$UserApiClient implements ApiClient {
   }
 
   Future<void> deleteUser(String id) async {
-    var req = base.delete.path(basePath).path("/:id").pathParams("id", id);
+    var req = base.delete
+        .setMetaData({
+          "base": "test",
+        })
+        .path(basePath)
+        .path("/:id")
+        .pathParams("id", id);
     await req.go();
   }
 
   Future<List<User>> all({String name, String email}) async {
-    var req = base.get.path(basePath).path("/");
+    var req = base.get
+        .setMetaData({
+          "base": "test",
+        })
+        .path(basePath)
+        .path("/");
     return req.list(convert: serializers.oneFrom);
   }
 
   Future<void> login(Login login) async {
     var req = base.post
+        .setMetaData({
+          "base": "test",
+        })
         .path(basePath)
         .path("/login")
         .urlEncodedForm(serializers.to(login));
@@ -50,8 +79,13 @@ abstract class _$UserApiClient implements ApiClient {
   }
 
   Future<void> loginMultipart(Login login) async {
-    var req = base.post.path(basePath).path("/login").multipart(
-        (serializers.to(login) as Map<String, dynamic>)
+    var req = base.post
+        .setMetaData({
+          "base": "test",
+        })
+        .path(basePath)
+        .path("/login")
+        .multipart((serializers.to(login) as Map<String, dynamic>)
             .map((key, value) => MapEntry(key, value.toString())));
     await req.go();
   }

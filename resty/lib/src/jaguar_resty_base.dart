@@ -24,7 +24,9 @@ OptionsMethod options(String url) => OptionsMethod(url);
 ht.BaseClient globalClient;
 
 class RouteBase {
-  RouteBase([String url]) {
+  Map<String, dynamic> metaData;
+
+  RouteBase([String url, Map<String, dynamic> metaData]) {
     if (url != null) setUrl(url);
   }
 
@@ -153,6 +155,11 @@ class RouteBase {
     return this;
   }
 
+  RouteBase setMetaData(Map<String, dynamic> metaData) {
+    this.metaData = metaData;
+    return this;
+  }
+
   RouteBase setUrl(String url) {
     final purl = Uri.parse(url);
     if (purl.hasAuthority) origin(purl.origin);
@@ -277,6 +284,8 @@ class Get extends RouteBase {
   Get pathParams(String name, dynamic value) => super.pathParams(name, value);
 
   Get query(String key, value) => super.query(key, value);
+
+  Get setMetaData(Map<String, dynamic> metaData) => super.setMetaData(metaData);
 
   Get queries(Map<String, dynamic> value) => super.queries(value);
 
@@ -414,6 +423,8 @@ class Post extends RouteBase {
   Post pathParams(String name, dynamic value) => super.pathParams(name, value);
 
   Post query(String key, value) => super.query(key, value);
+
+  Post setMetaData(Map<String, dynamic> metaData) => super.setMetaData(metaData);
 
   Post queries(Map<String, dynamic> value) => super.queries(value);
 
@@ -639,6 +650,8 @@ class Put extends RouteBase {
 
   Put query(String key, value) => super.query(key, value);
 
+  Put setMetaData(Map<String, dynamic> metaData) => super.setMetaData(metaData);
+
   Put queries(Map<String, dynamic> value) => super.queries(value);
 
   Put header(String key, String value) => super.header(key, value);
@@ -862,6 +875,8 @@ class Delete extends RouteBase {
 
   Delete query(String key, value) => super.query(key, value);
 
+  Delete setMetaData(Map<String, dynamic> metaData) => super.setMetaData(metaData);
+
   Delete queries(Map<String, dynamic> value) => super.queries(value);
 
   Delete header(String key, String value) => super.header(key, value);
@@ -999,6 +1014,8 @@ class OptionsMethod extends RouteBase {
       super.pathParams(name, value);
 
   OptionsMethod query(String key, value) => super.query(key, value);
+
+  OptionsMethod setMetaData(Map<String, dynamic> metaData) => super.setMetaData(metaData);
 
   OptionsMethod queries(Map<String, dynamic> value) => super.queries(value);
 

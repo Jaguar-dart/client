@@ -7,6 +7,8 @@ import '../parsed_info/parsed_info.dart';
 Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   final reader = ConstantReader(annot);
   String path = reader.read('path').stringValue;
+  final metaDataContent = reader.read('metaData');
+  Map<DartObject, DartObject> metaData = metaDataContent.isNull ? null : metaDataContent.mapValue;
   var varPathSegs = <String>[];
   if (path != null)
     varPathSegs = path
@@ -91,6 +93,7 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   return Req(httpMethod, method,
       path: path,
       query: query,
+      metaData: metaData,
       headers: headers,
       body: body,
       pathParams: pathParams,
@@ -102,6 +105,7 @@ WriteInfo parse(ClassElement element, ConstantReader annotation) {
 
   final an = isGenApiClient.firstAnnotationOfExact(element);
   final basePath = an.getField("path").toStringValue();
+  final baseMetaData = an.getField("metaData").toMapValue();
 
   final reqs = <Req>[];
 
@@ -123,5 +127,5 @@ WriteInfo parse(ClassElement element, ConstantReader annotation) {
     }
   }
 
-  return WriteInfo(element.displayName, basePath, reqs);
+  return WriteInfo(element.displayName, basePath, baseMetaData, reqs);
 }
