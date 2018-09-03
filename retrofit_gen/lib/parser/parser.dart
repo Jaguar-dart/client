@@ -106,6 +106,11 @@ WriteInfo parse(ClassElement element, ConstantReader annotation) {
   final an = isGenApiClient.firstAnnotationOfExact(element);
   final basePath = an.getField("path").toStringValue();
   final baseMetaData = an.getField("metaData").toMapValue();
+  final basePathParams = basePath
+      .split('/')
+      .where((p) => p.startsWith(':'))
+      .map((p) => p.substring(1))
+      .toSet();
 
   final reqs = <Req>[];
 
@@ -127,5 +132,5 @@ WriteInfo parse(ClassElement element, ConstantReader annotation) {
     }
   }
 
-  return WriteInfo(element.displayName, basePath, baseMetaData, reqs);
+  return WriteInfo(element.displayName, basePath, basePathParams, baseMetaData, reqs);
 }

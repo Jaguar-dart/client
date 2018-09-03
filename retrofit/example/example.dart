@@ -13,7 +13,7 @@ import 'package:jaguar/jaguar.dart' as jaguar;
 part 'example.jretro.dart';
 
 /// Example showing how to define an [ApiClient]
-@GenApiClient(path: "/users", metaData: {"base": "test"})
+@GenApiClient(path: "/users/:test", metaData: {"base": "test"})
 class UserApi extends _$UserApiClient implements ApiClient {
   final resty.Route base;
 
@@ -22,25 +22,25 @@ class UserApi extends _$UserApiClient implements ApiClient {
   UserApi({this.base, this.serializers});
 
   @GetReq("/:id", {"token": "test", "bool": true, "int": 1, "double": 2.2})
-  Future<User> getUserById(String id, @QueryParam("test") String test);
+  Future<User> getUserById(String test, String id, @QueryParam("qparam") String param);
 
   @PostReq("/")
-  Future<User> createUser(@AsJson() User user);
+  Future<User> createUser(String test, @AsJson() User user);
 
   @PutReq("/:id")
-  Future<User> updateUser(String id, @AsJson() User user);
+  Future<User> updateUser(String test, String id, @AsJson() User user);
 
   @DeleteReq("/:id")
-  Future<void> deleteUser(String id);
+  Future<void> deleteUser(String test, String id);
 
   @GetReq("/")
-  Future<List<User>> all({String name, String email});
+  Future<List<User>> all(String test, {String name, String email});
 
   @PostReq("/login")
-  Future<void> login(@AsForm() Login login);
+  Future<void> login(String test, @AsForm() Login login);
 
   @PostReq("/login")
-  Future<void> loginMultipart(@AsMultipart() Login login);
+  Future<void> loginMultipart(String test, @AsMultipart() Login login);
 }
 
 final repo = JsonRepo()..add(UserSerializer())..add(LoginSerializer());
@@ -49,20 +49,20 @@ void server() async {
   final users = <String, User>{};
 
   final server = jaguar.Jaguar(port: 10000);
-  server.getJson('/users/:id', (c) => users[c.pathParams['id']]);
-  server.getJson('/users', (c) => users.values.toList());
-  server.postJson('/users', (c) async {
+  server.getJson('/users/basePathParam/:id', (c) => users[c.pathParams['id']]);
+  server.getJson('/users/basePathParam', (c) => users.values.toList());
+  server.postJson('/users/basePathParam', (c) async {
     User user = await c.bodyAsJson(convert: User.fromMap);
     users[user.id] = user;
     return user;
   });
-  server.putJson('/users/:id', (c) async {
+  server.putJson('/users/basePathParam/:id', (c) async {
     User user = await c.bodyAsJson(convert: User.fromMap);
     users[user.id] = user;
     return user;
   });
-  server.deleteJson('/users/:id', (c) => users.remove(c.pathParams['id']));
-  server.postJson('/user/login', (c) async {
+  server.deleteJson('/users/basePathParam/:id', (c) => users.remove(c.pathParams['id']));
+  server.postJson('/users/basePathParam/login', (c) async {
     Map<String, String> body = await c.bodyAsUrlEncodedForm();
     if (body['username'] == "teja" && body["password"] == "pass") {
       c.response = jaguar.Response("Success!");
@@ -83,25 +83,25 @@ void client() async {
       serializers: repo);
 
   try {
-    await api.login(Login(username: 'teja', password: 'pass'));
+    await api.login("basePathParam", Login(username: 'teja', password: 'pass'));
 
-    await api.loginMultipart(Login(username: 'teja', password: 'pass'));
+    await api.loginMultipart("basePathParam", Login(username: 'teja', password: 'pass'));
 
     User user5 = await api
-        .createUser(User(id: '5', name: 'five', email: 'five@five.com'));
+        .createUser("basePathParam", User(id: '5', name: 'five', email: 'five@five.com'));
     print('Created $user5');
     User user10 =
-        await api.createUser(User(id: '10', name: 'ten', email: 'ten@ten.com'));
+        await api.createUser("basePathParam", User(id: '10', name: 'ten', email: 'ten@ten.com'));
     print('Created $user10');
-    user5 = await api.getUserById("5", "test");
+    user5 = await api.getUserById("basePathParam", "5", "test");
     print('Fetched $user5');
-    List<User> users = await api.all();
+    List<User> users = await api.all("basePathParam");
     print('Fetched all users $users');
-    user5 = await api.updateUser(
+    user5 = await api.updateUser("basePathParam",
         '5', User(id: '5', name: 'Five', email: 'five@five.com'));
     print('Updated $user5');
-    await api.deleteUser('5');
-    users = await api.all();
+    await api.deleteUser("basePathParam", '5');
+    users = await api.all("basePathParam");
     print('Deleted user $users');
   } on resty.Response catch (e) {
     print(e.body);
