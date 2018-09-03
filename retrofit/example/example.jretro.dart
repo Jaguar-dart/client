@@ -7,8 +7,8 @@ part of jaguar_http.example;
 // **************************************************************************
 
 abstract class _$UserApiClient implements ApiClient {
-  final String basePath = "/users";
-  Future<User> getUserById(String id, String test) async {
+  final String basePath = "/users/:test";
+  Future<User> getUserById(String test, String id, String param) async {
     var req = base.get
         .setMetaData({
           "token": "test",
@@ -19,22 +19,24 @@ abstract class _$UserApiClient implements ApiClient {
         .path(basePath)
         .path("/:id")
         .pathParams("id", id)
-        .query("test", test);
+        .pathParams("test", test)
+        .query("qparam", param);
     return req.one(convert: serializers.oneFrom);
   }
 
-  Future<User> createUser(User user) async {
+  Future<User> createUser(String test, User user) async {
     var req = base.post
         .setMetaData({
           "base": "test",
         })
         .path(basePath)
         .path("/")
+        .pathParams("test", test)
         .json(serializers.to(user));
     return req.one(convert: serializers.oneFrom);
   }
 
-  Future<User> updateUser(String id, User user) async {
+  Future<User> updateUser(String test, String id, User user) async {
     var req = base.put
         .setMetaData({
           "base": "test",
@@ -42,49 +44,54 @@ abstract class _$UserApiClient implements ApiClient {
         .path(basePath)
         .path("/:id")
         .pathParams("id", id)
+        .pathParams("test", test)
         .json(serializers.to(user));
     return req.one(convert: serializers.oneFrom);
   }
 
-  Future<void> deleteUser(String id) async {
+  Future<void> deleteUser(String test, String id) async {
     var req = base.delete
         .setMetaData({
           "base": "test",
         })
         .path(basePath)
         .path("/:id")
-        .pathParams("id", id);
+        .pathParams("id", id)
+        .pathParams("test", test);
     await req.go();
   }
 
-  Future<List<User>> all({String name, String email}) async {
+  Future<List<User>> all(String test, {String name, String email}) async {
     var req = base.get
         .setMetaData({
           "base": "test",
         })
         .path(basePath)
-        .path("/");
+        .path("/")
+        .pathParams("test", test);
     return req.list(convert: serializers.oneFrom);
   }
 
-  Future<void> login(Login login) async {
+  Future<void> login(String test, Login login) async {
     var req = base.post
         .setMetaData({
           "base": "test",
         })
         .path(basePath)
         .path("/login")
+        .pathParams("test", test)
         .urlEncodedForm(serializers.to(login));
     await req.go();
   }
 
-  Future<void> loginMultipart(Login login) async {
+  Future<void> loginMultipart(String test, Login login) async {
     var req = base.post
         .setMetaData({
           "base": "test",
         })
         .path(basePath)
         .path("/login")
+        .pathParams("test", test)
         .multipart((serializers.to(login) as Map<String, dynamic>)
             .map((key, value) => MapEntry(key, value.toString())));
     await req.go();

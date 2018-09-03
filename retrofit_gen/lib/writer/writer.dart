@@ -62,6 +62,7 @@ class Writer {
     if (r.path != null) sb.write('.path("${r.path}")');
 
     for (String path in r.pathParams) sb.write('.pathParams("$path", $path)');
+    for (String path in i.basePathParams) sb.write('.pathParams("$path", $path)');
 
     r.query.forEach((String key, String valueField) {
       sb.write('.query("$key", $valueField)');
