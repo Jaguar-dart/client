@@ -122,9 +122,10 @@ class Req {
 class WriteInfo {
   final String name;
   final String basePath;
+  final Set<String> basePathParams;
   final Map<DartObject, DartObject> baseMetaData;
 
   final List<Req> requests;
 
-  WriteInfo(this.name, this.basePath, this.baseMetaData, this.requests);
+  WriteInfo(this.name, this.basePath, this.basePathParams, this.baseMetaData, this.requests);
 }
