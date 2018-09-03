@@ -4,6 +4,8 @@ import 'expect.dart';
 import 'package:async/async.dart';
 import 'dart:convert' as codec;
 import 'package:http_parser/http_parser.dart' show MediaType;
+import 'jaguar_resty_base.dart';
+import 'package:meta/meta.dart';
 
 typedef FutureOr<dynamic> After(StringResponse response);
 
@@ -27,6 +29,10 @@ abstract class AsyncResponse<BT> {
   FutureOr<int> get contentLength;
 
   FutureOr<http.BaseRequest> get request;
+
+  FutureOr<RouteBase> get sender;
+
+  FutureOr<RouteBase> get sent;
 
   FutureOr<String> get mimeType;
 
@@ -71,6 +77,10 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
   Future<int> get contentLength => then((r) => r.contentLength);
 
   Future<http.BaseRequest> get request => then((r) => r.request);
+
+  Future<RouteBase> get sender => then((r) => r.sender);
+
+  Future<RouteBase> get sent => then((r) => r.sent);
 
   Future<String> get mimeType => then((r) => r.mimeType);
 
@@ -117,13 +127,6 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
         await func(r);
         return r;
       }));
-
-  /// Runs [funcs] with [Response] object after request completion
-  AsyncTResponse<BT> runAll(List<After<BT>> funcs) =>
-      new AsyncTResponse<BT>(then((r) async {
-        for (After<BT> func in funcs) await func(r);
-        return r;
-      }));
       */
 }
 
@@ -131,8 +134,10 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
     implements AsyncResponse<String> {
   AsyncStringResponse(Future<StringResponse> inner) : super(inner);
 
-  AsyncStringResponse.from(Future<http.Response> inner)
-      : super(inner.then((r) => new StringResponse.from(r)));
+  AsyncStringResponse.from(Future<http.Response> inner,
+      {@required RouteBase sender, @required RouteBase sent})
+      : super(inner.then(
+            (r) => new StringResponse.from(r, sender: sender, sent: sent)));
 
   Future<int> get statusCode => then((r) => r.statusCode);
 
@@ -157,6 +162,10 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
   Future<String> get encoding => then((r) => r.encoding);
 
   Future<bool> get isSuccess => then((r) => r.isSuccess);
+
+  Future<RouteBase> get sender => then((r) => r.sender);
+
+  Future<RouteBase> get sent => then((r) => r.sent);
 
   AsyncStringResponse get toStringResponse => this;
 
@@ -200,25 +209,11 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
   Future<List<T>> decodeList<T>([T convert(Map d)]) =>
       then((StringResponse r) => r.decodeList<T>(convert));
 
-  AsyncStringResponse after(After func) =>
-      AsyncStringResponse(then((StringResponse r) => r.after(func)));
-
-  /// Runs [funcs] with [Response] object after request completion
-  AsyncStringResponse manyAfter(Iterable<After> funcs) =>
-      AsyncStringResponse(then((StringResponse r) => r.manyAfter(funcs)));
-
   /*
   /// Runs [func] with [Response] object after request completion
   AsyncStringResponse run(After<String> func) =>
       new AsyncStringResponse(then((r) async {
         await func(r);
-        return r;
-      }));
-
-  /// Runs [funcs] with [Response] object after request completion
-  AsyncStringResponse runAll(List<After<String>> funcs) =>
-      new AsyncStringResponse(then((r) async {
-        for (After<String> func in funcs) await func(r);
         return r;
       }));
       */
@@ -244,6 +239,10 @@ abstract class Response<T> implements AsyncResponse<T> {
   int get contentLength;
 
   http.BaseRequest get request;
+
+  RouteBase get sender;
+
+  RouteBase get sent;
 
   String get mimeType;
 
@@ -286,6 +285,10 @@ class TResponse<T> implements Response<T> {
 
   final http.BaseRequest request;
 
+  final RouteBase sender;
+
+  final RouteBase sent;
+
   final String mimeType;
 
   final String encoding;
@@ -300,6 +303,8 @@ class TResponse<T> implements Response<T> {
       this.reasonPhrase,
       this.contentLength,
       this.request,
+      @required this.sender,
+      @required this.sent,
       this.mimeType,
       this.encoding});
 
@@ -311,9 +316,11 @@ class TResponse<T> implements Response<T> {
       contentLength: contentLength,
       encoding: encoding,
       isRedirect: isRedirect,
+      request: request,
+      sender: sender,
+      sent: sent,
       persistentConnection: persistentConnection,
-      reasonPhrase: reasonPhrase,
-      request: request);
+      reasonPhrase: reasonPhrase);
 
   bool get isSuccess => statusCode >= 200 && statusCode < 300;
 
@@ -358,12 +365,6 @@ class TResponse<T> implements Response<T> {
     func(this);
     return this;
   }
-
-  /// Runs [funcs] with [Response] object after request completion
-  TResponse<T> runAll(List<After<T>> funcs) {
-    for (After<T> func in funcs) func(this);
-    return this;
-  }
   */
 }
 
@@ -386,6 +387,10 @@ class StringResponse implements Response<String> {
 
   final http.BaseRequest request;
 
+  final RouteBase sender;
+
+  final RouteBase sent;
+
   final String mimeType;
 
   final String encoding;
@@ -399,10 +404,13 @@ class StringResponse implements Response<String> {
       this.reasonPhrase,
       this.contentLength,
       this.request,
+      @required this.sender,
+      @required this.sent,
       this.mimeType,
       this.encoding});
 
-  factory StringResponse.from(http.Response resp) {
+  factory StringResponse.from(http.Response resp,
+      {@required RouteBase sender, @required RouteBase sent}) {
     final mediaType = MediaType.parse(
         resp.headers['content-type'] ?? Response.defaultContentType);
     return StringResponse(
@@ -414,6 +422,8 @@ class StringResponse implements Response<String> {
         reasonPhrase: resp.reasonPhrase,
         contentLength: resp.contentLength,
         request: resp.request,
+        sender: sender,
+        sent: sent,
         mimeType: mediaType.mimeType,
         encoding: mediaType.parameters['charset'] ?? Response.defaultCharset);
   }
@@ -447,6 +457,8 @@ class StringResponse implements Response<String> {
       reasonPhrase: reasonPhrase,
       contentLength: contentLength,
       request: request,
+      sender: sender,
+      sent: sent,
       mimeType: mimeType,
       encoding: encoding,
     );
@@ -469,6 +481,8 @@ class StringResponse implements Response<String> {
       reasonPhrase: reasonPhrase,
       contentLength: contentLength,
       request: request,
+      sender: sender,
+      sent: sent,
       mimeType: mimeType,
       encoding: encoding,
     );
@@ -514,19 +528,6 @@ class StringResponse implements Response<String> {
           (String key, String value) => conditions.add(headersHas(key, value)));
     }
     return expect(conditions);
-  }
-
-  Future<StringResponse> after(After func) async {
-    var res = await func(this);
-    if (res is Response) return res;
-    return this;
-  }
-
-  /// Runs [funcs] with [Response] object after request completion
-  Future<StringResponse> manyAfter(Iterable<After> funcs) async {
-    StringResponse ret = this;
-    for (After f in funcs) ret = await after(f);
-    return ret;
   }
 }
 

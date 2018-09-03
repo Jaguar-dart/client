@@ -13,7 +13,7 @@ import 'package:jaguar/jaguar.dart' as jaguar;
 part 'example.jretro.dart';
 
 /// Example showing how to define an [ApiClient]
-@GenApiClient(path: "/users/:test", metaData: {"base": "test"})
+@GenApiClient(path: "/users/:test", metadata: {"base": "test"})
 class UserApi extends _$UserApiClient implements ApiClient {
   final resty.Route base;
 
@@ -21,25 +21,28 @@ class UserApi extends _$UserApiClient implements ApiClient {
 
   UserApi({this.base, this.serializers});
 
-  @GetReq("/:id", {"token": "test", "bool": true, "int": 1, "double": 2.2})
-  Future<User> getUserById(String test, String id, @QueryParam("qparam") String param);
+  @GetReq(
+      path: "/:id",
+      metadata: {"token": "test", "bool": true, "int": 1, "double": 2.2})
+  Future<User> getUserById(
+      String test, String id, @QueryParam("qparam") String param);
 
-  @PostReq("/")
+  @PostReq(path: "/")
   Future<User> createUser(String test, @AsJson() User user);
 
-  @PutReq("/:id")
+  @PutReq(path: "/:id")
   Future<User> updateUser(String test, String id, @AsJson() User user);
 
-  @DeleteReq("/:id")
+  @DeleteReq(path: "/:id")
   Future<void> deleteUser(String test, String id);
 
-  @GetReq("/")
+  @GetReq(path: "/")
   Future<List<User>> all(String test, {String name, String email});
 
-  @PostReq("/login")
+  @PostReq(path: "/login")
   Future<void> login(String test, @AsForm() Login login);
 
-  @PostReq("/login")
+  @PostReq(path: "/login")
   Future<void> loginMultipart(String test, @AsMultipart() Login login);
 }
 
@@ -61,7 +64,8 @@ void server() async {
     users[user.id] = user;
     return user;
   });
-  server.deleteJson('/users/basePathParam/:id', (c) => users.remove(c.pathParams['id']));
+  server.deleteJson(
+      '/users/basePathParam/:id', (c) => users.remove(c.pathParams['id']));
   server.postJson('/users/basePathParam/login', (c) async {
     Map<String, String> body = await c.bodyAsUrlEncodedForm();
     if (body['username'] == "teja" && body["password"] == "pass") {
@@ -85,20 +89,21 @@ void client() async {
   try {
     await api.login("basePathParam", Login(username: 'teja', password: 'pass'));
 
-    await api.loginMultipart("basePathParam", Login(username: 'teja', password: 'pass'));
+    await api.loginMultipart(
+        "basePathParam", Login(username: 'teja', password: 'pass'));
 
-    User user5 = await api
-        .createUser("basePathParam", User(id: '5', name: 'five', email: 'five@five.com'));
+    User user5 = await api.createUser(
+        "basePathParam", User(id: '5', name: 'five', email: 'five@five.com'));
     print('Created $user5');
-    User user10 =
-        await api.createUser("basePathParam", User(id: '10', name: 'ten', email: 'ten@ten.com'));
+    User user10 = await api.createUser(
+        "basePathParam", User(id: '10', name: 'ten', email: 'ten@ten.com'));
     print('Created $user10');
     user5 = await api.getUserById("basePathParam", "5", "test");
     print('Fetched $user5');
     List<User> users = await api.all("basePathParam");
     print('Fetched all users $users');
-    user5 = await api.updateUser("basePathParam",
-        '5', User(id: '5', name: 'Five', email: 'five@five.com'));
+    user5 = await api.updateUser("basePathParam", '5',
+        User(id: '5', name: 'Five', email: 'five@five.com'));
     print('Updated $user5');
     await api.deleteUser("basePathParam", '5');
     users = await api.all("basePathParam");

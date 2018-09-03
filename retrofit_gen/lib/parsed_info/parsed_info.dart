@@ -127,5 +127,6 @@ class WriteInfo {
 
   final List<Req> requests;
 
-  WriteInfo(this.name, this.basePath, this.basePathParams, this.baseMetaData, this.requests);
+  WriteInfo(this.name, this.basePath, this.basePathParams, this.baseMetaData,
+      this.requests);
 }

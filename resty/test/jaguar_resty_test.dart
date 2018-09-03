@@ -28,7 +28,8 @@ void main() {
           .get('http://localhost:10000/api/add')
           .query('a', '5')
           .query('b', '20')
-          .go((resp) => expect(resp.body, '25'));
+          .go()
+          .exact(body: '25');
     });
 
     test('JSON body', () async {
