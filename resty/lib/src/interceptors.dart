@@ -13,7 +13,7 @@ abstract class Interceptor {
     return null;
   }
 
-  FutureOr<void> after(Response response);
+  FutureOr<dynamic> after(StringResponse response);
 }
 
 class CookieJar extends Interceptor {
@@ -24,8 +24,9 @@ class CookieJar extends Interceptor {
     r.interceptAfter(after);
   }
 
-  void after(Response resp) {
+  StringResponse after(StringResponse resp) {
     store.addFromHeader(resp.headers['set-cookie']);
+    return null;
   }
 }
 
@@ -37,10 +38,11 @@ class BearerToken extends Interceptor {
     r.interceptAfter(after);
   }
 
-  void after(Response resp) {
+  StringResponse after(StringResponse resp) {
     final authHeaders =
         AuthHeaders.fromHeaderStr(resp.headers['authorization']);
     if (authHeaders.containsScheme('Bearer'))
       token = authHeaders.items['Bearer'].credentials;
+    return null;
   }
 }

@@ -12,7 +12,7 @@ resty.Before setQuery(int a, int b) => (resty.RouteBase route) {
       route.query("b", b);
     };
 
-void printResult(resty.Response<String> resp) {
+Response printResult(resty.Response<String> resp) {
   print(resp.body);
 }
 

@@ -42,8 +42,8 @@ class RouteBase {
   final _cookies = <ClientCookie>[];
 
   final before = List<Before>();
-  final after = <After<String>>[];
-  final successHooks = <After<String>>[];
+  final after = <After>[];
+  // TODO final successHooks = <After>[];
 
   RouteBase([String url]) {
     if (url != null) this.url(url);
@@ -150,15 +150,17 @@ class RouteBase {
     return this;
   }
 
-  RouteBase interceptAfter(After<String> interceptor) {
+  RouteBase interceptAfter(After interceptor) {
     after.add(interceptor);
     return this;
   }
 
-  RouteBase onSuccess(After<String> callback) {
+  /* TODO
+  RouteBase onSuccess(After callback) {
     successHooks.add(callback);
     return this;
   }
+  */
 
   RouteBase metadata(Map<String, dynamic> value) {
     metadataMap.addAll(value);
@@ -313,10 +315,10 @@ class Get extends RouteBase {
 
   Get interceptBefore(Before interceptor) => super.interceptBefore(interceptor);
 
-  Get interceptAfter(After<String> interceptor) =>
+  Get interceptAfter(After interceptor) =>
       super.interceptAfter(interceptor);
 
-  Get onSuccess(After<String> callback) => super.onSuccess(callback);
+  // TODO Get onSuccess(After callback) => super.onSuccess(callback);
 
   Get url(String url) => super.url(url);
 
@@ -338,13 +340,15 @@ class Get extends RouteBase {
     };
 
     var resp = AsyncStringResponse.from(htResp());
-    if (after.isNotEmpty) resp = resp.runAll(after);
+    if (after.isNotEmpty) resp = resp.manyAfter(after);
+    /* TODO
     if (successHooks.isNotEmpty) {
       resp = resp.run((r) async {
         if (r.isSuccess) await resp.runAll(successHooks);
       });
     }
-    if (then != null) resp = resp.run(then);
+    if (then != null) resp = resp.after(then);
+    */
     return resp;
   }
 
@@ -518,10 +522,10 @@ class Post extends RouteBase {
   Post interceptBefore(Before interceptor) =>
       super.interceptBefore(interceptor);
 
-  Post interceptAfter(After<String> interceptor) =>
+  Post interceptAfter(After interceptor) =>
       super.interceptAfter(interceptor);
 
-  Post onSuccess(After<String> callback) => super.onSuccess(callback);
+  // TODO Post onSuccess(After callback) => super.onSuccess(callback);
 
   Post url(String value) => super.url(value);
 
@@ -565,13 +569,15 @@ class Post extends RouteBase {
     };
 
     var resp = AsyncStringResponse.from(htResp());
-    if (after.isNotEmpty) resp = resp.runAll(after);
+    if (after.isNotEmpty) resp = resp.manyAfter(after);
+    /* TODO
     if (successHooks.isNotEmpty) {
       resp = resp.run((r) async {
         if (r.isSuccess) await resp.runAll(successHooks);
       });
     }
     if (then != null) resp = resp.run(then);
+    */
     return resp;
   }
 
@@ -744,10 +750,10 @@ class Put extends RouteBase {
 
   Put interceptBefore(Before interceptor) => super.interceptBefore(interceptor);
 
-  Put interceptAfter(After<String> interceptor) =>
+  Put interceptAfter(After interceptor) =>
       super.interceptAfter(interceptor);
 
-  Put onSuccess(After<String> callback) => super.onSuccess(callback);
+  // TODO Put onSuccess(After callback) => super.onSuccess(callback);
 
   Put url(String value) => super.url(value);
 
@@ -791,13 +797,15 @@ class Put extends RouteBase {
     };
 
     var resp = AsyncStringResponse.from(htResp());
-    if (after.isNotEmpty) resp = resp.runAll(after);
+    if (after.isNotEmpty) resp = resp.manyAfter(after);
+    /* TODO
     if (successHooks.isNotEmpty) {
       resp = resp.run((r) async {
         if (r.isSuccess) await resp.runAll(successHooks);
       });
     }
     if (then != null) resp = resp.run(then);
+    */
     return resp;
   }
 
@@ -907,10 +915,10 @@ class Delete extends RouteBase {
   Delete interceptBefore(Before interceptor) =>
       super.interceptBefore(interceptor);
 
-  Delete interceptAfter(After<String> interceptor) =>
+  Delete interceptAfter(After interceptor) =>
       super.interceptAfter(interceptor);
 
-  Delete onSuccess(After<String> callback) => super.onSuccess(callback);
+  // TODO Delete onSuccess(After callback) => super.onSuccess(callback);
 
   Delete url(String value) => super.url(value);
 
@@ -931,13 +939,15 @@ class Delete extends RouteBase {
     };
 
     var resp = AsyncStringResponse.from(htResp());
-    if (after.isNotEmpty) resp = resp.runAll(after);
+    if (after.isNotEmpty) resp = resp.manyAfter(after);
+    /* TODO
     if (successHooks.isNotEmpty) {
       resp = resp.run((r) async {
         if (r.isSuccess) await resp.runAll(successHooks);
       });
     }
     if (then != null) resp = resp.run(then);
+    */
     return resp;
   }
 
@@ -1049,10 +1059,10 @@ class OptionsMethod extends RouteBase {
   OptionsMethod interceptBefore(Before interceptor) =>
       super.interceptBefore(interceptor);
 
-  OptionsMethod interceptAfter(After<String> interceptor) =>
+  OptionsMethod interceptAfter(After interceptor) =>
       super.interceptAfter(interceptor);
 
-  OptionsMethod onSuccess(After<String> callback) => super.onSuccess(callback);
+  // TODO OptionsMethod onSuccess(After callback) => super.onSuccess(callback);
 
   OptionsMethod url(String value) => super.url(value);
 
@@ -1079,13 +1089,15 @@ class OptionsMethod extends RouteBase {
     };
 
     var resp = AsyncStringResponse.from(htResp());
-    if (after.isNotEmpty) resp = resp.runAll(after);
+    if (after.isNotEmpty) resp = resp.manyAfter(after);
+    /* TODO
     if (successHooks.isNotEmpty) {
       resp = resp.run((r) async {
         if (r.isSuccess) await resp.runAll(successHooks);
       });
     }
     if (then != null) resp = resp.run(then);
+    */
     return resp;
   }
 
