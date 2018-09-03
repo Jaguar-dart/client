@@ -17,28 +17,22 @@ class Writer {
 
   void _writeMetaData(Map<dynamic, dynamic> metaData) {
     sb.write('.setMetaData({');
-    metaData.forEach((key, value)  {
+    metaData.forEach((key, value) {
       sb.write('"${key.toStringValue()}":');
 
-      if(value.toStringValue() != null) {
+      if (value.toStringValue() != null) {
         sb.write('"${value.toStringValue()}",');
-      }
-      else if(value.toBoolValue() != null) {
+      } else if (value.toBoolValue() != null) {
         sb.write('${value.toBoolValue()},');
-      }
-      else if(value.toIntValue() != null) {
+      } else if (value.toIntValue() != null) {
         sb.write('${value.toIntValue()},');
-      }
-      else if(value.toDoubleValue() != null) {
+      } else if (value.toDoubleValue() != null) {
         sb.write('${value.toDoubleValue()},');
-      }
-      else if(value is List) {
+      } else if (value is List) {
         throw UnsupportedError("$key: List is not supported as meta data");
-      }
-      else if(value is Map) {
+      } else if (value is Map) {
         throw UnsupportedError("$key: Map is not supported as meta data");
-      }
-      else {
+      } else {
         throw UnsupportedError("$key: Type is not supported as meta data");
       }
     });
@@ -54,7 +48,7 @@ class Writer {
 
     if (r.metaData != null) {
       _writeMetaData(r.metaData);
-    } else if(i.baseMetaData != null) {
+    } else if (i.baseMetaData != null) {
       _writeMetaData(i.baseMetaData);
     }
 
@@ -62,7 +56,8 @@ class Writer {
     if (r.path != null) sb.write('.path("${r.path}")');
 
     for (String path in r.pathParams) sb.write('.pathParams("$path", $path)');
-    for (String path in i.basePathParams) sb.write('.pathParams("$path", $path)');
+    for (String path in i.basePathParams)
+      sb.write('.pathParams("$path", $path)');
 
     r.query.forEach((String key, String valueField) {
       sb.write('.query("$key", $valueField)');

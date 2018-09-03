@@ -315,8 +315,7 @@ class Get extends RouteBase {
 
   Get interceptBefore(Before interceptor) => super.interceptBefore(interceptor);
 
-  Get interceptAfter(After interceptor) =>
-      super.interceptAfter(interceptor);
+  Get interceptAfter(After interceptor) => super.interceptAfter(interceptor);
 
   // TODO Get onSuccess(After callback) => super.onSuccess(callback);
 
@@ -522,8 +521,7 @@ class Post extends RouteBase {
   Post interceptBefore(Before interceptor) =>
       super.interceptBefore(interceptor);
 
-  Post interceptAfter(After interceptor) =>
-      super.interceptAfter(interceptor);
+  Post interceptAfter(After interceptor) => super.interceptAfter(interceptor);
 
   // TODO Post onSuccess(After callback) => super.onSuccess(callback);
 
@@ -750,8 +748,7 @@ class Put extends RouteBase {
 
   Put interceptBefore(Before interceptor) => super.interceptBefore(interceptor);
 
-  Put interceptAfter(After interceptor) =>
-      super.interceptAfter(interceptor);
+  Put interceptAfter(After interceptor) => super.interceptAfter(interceptor);
 
   // TODO Put onSuccess(After callback) => super.onSuccess(callback);
 
@@ -915,8 +912,7 @@ class Delete extends RouteBase {
   Delete interceptBefore(Before interceptor) =>
       super.interceptBefore(interceptor);
 
-  Delete interceptAfter(After interceptor) =>
-      super.interceptAfter(interceptor);
+  Delete interceptAfter(After interceptor) => super.interceptAfter(interceptor);
 
   // TODO Delete onSuccess(After callback) => super.onSuccess(callback);
 
