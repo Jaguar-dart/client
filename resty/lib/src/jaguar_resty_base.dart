@@ -1068,7 +1068,7 @@ class OptionsMethod extends RouteBase {
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     final _Requester htResp = () async {
-      for (Before mod in before) mod(this);
+      for (Before mod in before) await mod(this);
 
       if (_cookies.length != 0)
         headersMap['Cookie'] = ClientCookie.toHeader(_cookies);
