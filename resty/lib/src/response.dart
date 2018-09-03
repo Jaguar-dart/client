@@ -5,7 +5,7 @@ import 'package:async/async.dart';
 import 'dart:convert' as codec;
 import 'package:http_parser/http_parser.dart' show MediaType;
 
-typedef FutureOr<void> After<T>(Response<T> response);
+typedef FutureOr<dynamic> After(StringResponse response);
 
 abstract class AsyncResponse<BT> {
   FutureOr<int> get statusCode;
@@ -34,7 +34,9 @@ abstract class AsyncResponse<BT> {
 
   FutureOr<StringResponse> get toStringResponse;
 
+  /*
   AsyncResponse<BT> onSuccess(After<BT> func);
+  */
 
   AsyncResponse<BT> expect(List<Checker<Response>> conditions);
 
@@ -46,12 +48,6 @@ abstract class AsyncResponse<BT> {
       String encoding,
       Map<String, String> headers,
       int contentLength});
-
-  /// Runs [func] with [Response] object after request completion
-  AsyncResponse<BT> run(dynamic func(Response<BT> resp));
-
-  /// Runs [funcs] with [Response] object after request completion
-  AsyncResponse<BT> runAll(List<After<BT>> funcs);
 }
 
 class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
@@ -84,9 +80,11 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
 
   AsyncStringResponse get toStringResponse => then((r) => r.toStringResponse);
 
+  /*
   AsyncTResponse<BT> onSuccess(After<BT> func) => run((r) async {
         if (r.isSuccess) await func(r);
       });
+      */
 
   AsyncTResponse<BT> expect(List<Checker<Response>> conditions) {
     return new AsyncTResponse<BT>(then((r) => r.expect(conditions)));
@@ -112,6 +110,7 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
     }));
   }
 
+  /*
   /// Runs [func] with [Response] object after request completion
   AsyncTResponse<BT> run(After<BT> func) =>
       new AsyncTResponse<BT>(then((r) async {
@@ -125,6 +124,7 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
         for (After<BT> func in funcs) await func(r);
         return r;
       }));
+      */
 }
 
 class AsyncStringResponse extends DelegatingFuture<StringResponse>
@@ -160,9 +160,11 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
 
   AsyncStringResponse get toStringResponse => this;
 
+  /*
   AsyncStringResponse onSuccess(After<String> func) => run((r) async {
         if (r.isSuccess) await func(r);
       });
+      */
 
   AsyncStringResponse expect(List<Checker<Response>> conditions) {
     return new AsyncStringResponse(then((r) => r.expect(conditions)));
@@ -187,10 +189,10 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
   }
 
   AsyncTResponse<T> json<T>([T convert(Map d)]) =>
-      new AsyncTResponse<T>(then((StringResponse r) => r.json<T>(convert)));
+      AsyncTResponse<T>(then((StringResponse r) => r.json<T>(convert)));
 
   AsyncTResponse<List<T>> jsonList<T>([T convert(Map d)]) =>
-      new AsyncTResponse<List<T>>(
+      AsyncTResponse<List<T>>(
           then((StringResponse r) => r.jsonList<T>(convert)));
 
   Future<T> decode<T>([T convert(Map d)]) => then((r) => r.decode<T>(convert));
@@ -198,6 +200,14 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
   Future<List<T>> decodeList<T>([T convert(Map d)]) =>
       then((StringResponse r) => r.decodeList<T>(convert));
 
+  AsyncStringResponse after(After func) =>
+      AsyncStringResponse(then((StringResponse r) => r.after(func)));
+
+  /// Runs [funcs] with [Response] object after request completion
+  AsyncStringResponse manyAfter(Iterable<After> funcs) =>
+      AsyncStringResponse(then((StringResponse r) => r.manyAfter(funcs)));
+
+  /*
   /// Runs [func] with [Response] object after request completion
   AsyncStringResponse run(After<String> func) =>
       new AsyncStringResponse(then((r) async {
@@ -211,80 +221,7 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
         for (After<String> func in funcs) await func(r);
         return r;
       }));
-}
-
-class AsyncRawResponse extends DelegatingFuture<RawResponse>
-    implements AsyncResponse<List<int>> {
-  AsyncRawResponse(Future<RawResponse> inner) : super(inner);
-
-  AsyncRawResponse.from(Future<http.Response> inner)
-      : super(inner.then((r) => new RawResponse.from(r)));
-
-  Future<int> get statusCode => then((r) => r.statusCode);
-
-  Future<List<int>> get body => then((r) => r.body);
-
-  Future<List<int>> get bytes => then((r) => r.bytes);
-
-  Future<Map<String, String>> get headers => then((r) => r.headers);
-
-  Future<bool> get isRedirect => then((r) => r.isRedirect);
-
-  Future<bool> get persistentConnection => then((r) => r.persistentConnection);
-
-  Future<String> get reasonPhrase => then((r) => r.reasonPhrase);
-
-  Future<int> get contentLength => then((r) => r.contentLength);
-
-  Future<http.BaseRequest> get request => then((r) => r.request);
-
-  Future<String> get mimeType => then((r) => r.mimeType);
-
-  Future<String> get encoding => then((r) => r.encoding);
-
-  Future<bool> get isSuccess => then((r) => r.isSuccess);
-
-  AsyncStringResponse get toStringResponse => then((r) => r.toStringResponse);
-
-  AsyncRawResponse onSuccess(After<List<int>> func) => run((r) async {
-        if (r.isSuccess) await func(r);
-      });
-
-  AsyncRawResponse expect(List<Checker<Response>> conditions) {
-    return new AsyncRawResponse(then((r) => r.expect(conditions)));
-  }
-
-  AsyncRawResponse exact(
-      {int statusCode,
-      List<int> body,
-      List<int> bytes,
-      String mimeType,
-      String encoding,
-      Map<String, String> headers,
-      int contentLength}) {
-    return new AsyncRawResponse(then((r) => r.exact(
-        statusCode: statusCode,
-        body: body,
-        bytes: bytes,
-        mimeType: mimeType,
-        encoding: encoding,
-        headers: headers,
-        contentLength: contentLength)));
-  }
-
-  /// Runs [func] with [Response] object after request completion
-  AsyncRawResponse run(After<List<int>> func) =>
-      new AsyncRawResponse(then((r) async {
-        await func(r);
-        return r;
-      }));
-
-  /// Runs [funcs] with [Response] object after request completion
-  AsyncRawResponse runAll(List<After<List<int>>> funcs) =>
-      new AsyncRawResponse(then((r) async {
-        for (After<List<int>> func in funcs) await func(r);
-        return r;
-      }));
+      */
 }
 
 abstract class Response<T> implements AsyncResponse<T> {
@@ -324,11 +261,6 @@ abstract class Response<T> implements AsyncResponse<T> {
       int contentLength});
 
   StringResponse get toStringResponse;
-
-  Response<T> run(After<T> func);
-
-  /// Runs [funcs] with [Response] object after request completion
-  Response<T> runAll(List<After<T>> funcs);
 
   static const String defaultContentType =
       'application/octet-stream;charset=utf-8';
@@ -385,9 +317,11 @@ class TResponse<T> implements Response<T> {
 
   bool get isSuccess => statusCode >= 200 && statusCode < 300;
 
+  /*
   TResponse<T> onSuccess(After<T> func) => run((r) async {
         if (r.isSuccess) await func(r);
       });
+      */
 
   TResponse<T> expect(List<Checker<Response>> conditions) {
     final mismatches = conditions
@@ -419,6 +353,7 @@ class TResponse<T> implements Response<T> {
     return expect(conditions);
   }
 
+  /*
   TResponse<T> run(After<T> func) {
     func(this);
     return this;
@@ -429,6 +364,7 @@ class TResponse<T> implements Response<T> {
     for (After<T> func in funcs) func(this);
     return this;
   }
+  */
 }
 
 class StringResponse implements Response<String> {
@@ -488,9 +424,11 @@ class StringResponse implements Response<String> {
 
   bool get isSuccess => statusCode >= 200 && statusCode < 300;
 
+  /*
   StringResponse onSuccess(After<String> func) => run((r) async {
         if (r.isSuccess) await func(r);
       });
+      */
 
   TResponse<T> json<T>([T convert(Map d)]) {
     final d = codec.json.decode(body);
@@ -578,126 +516,17 @@ class StringResponse implements Response<String> {
     return expect(conditions);
   }
 
-  StringResponse run(After<String> func) {
-    func(this);
+  Future<StringResponse> after(After func) async {
+    var res = await func(this);
+    if (res is Response) return res;
     return this;
   }
 
   /// Runs [funcs] with [Response] object after request completion
-  StringResponse runAll(List<After<String>> funcs) {
-    for (After<String> func in funcs) func(this);
-    return this;
-  }
-}
-
-class RawResponse implements Response<List<int>> {
-  final int statusCode;
-
-  List<int> get body => bytes;
-
-  final List<int> bytes;
-
-  final Map<String, String> headers;
-
-  final bool isRedirect;
-
-  final bool persistentConnection;
-
-  final String reasonPhrase;
-
-  final int contentLength;
-
-  final http.BaseRequest request;
-
-  final String mimeType;
-
-  final String encoding;
-
-  RawResponse(
-      {this.statusCode,
-      this.bytes,
-      this.headers,
-      this.isRedirect,
-      this.persistentConnection,
-      this.reasonPhrase,
-      this.contentLength,
-      this.request,
-      this.mimeType,
-      this.encoding});
-
-  factory RawResponse.from(http.Response resp) {
-    final mediaType = MediaType.parse(
-        resp.headers['content-type'] ?? Response.defaultContentType);
-    return RawResponse(
-        statusCode: resp.statusCode,
-        bytes: resp.bodyBytes,
-        headers: resp.headers,
-        isRedirect: resp.isRedirect,
-        persistentConnection: resp.persistentConnection,
-        reasonPhrase: resp.reasonPhrase,
-        contentLength: resp.contentLength,
-        request: resp.request,
-        mimeType: mediaType.mimeType,
-        encoding: mediaType.parameters['charset'] ?? Response.defaultCharset);
-  }
-
-  StringResponse get toStringResponse => StringResponse(
-      statusCode: statusCode,
-      mimeType: mimeType,
-      headers: headers,
-      bytes: bytes,
-      contentLength: contentLength,
-      encoding: encoding,
-      isRedirect: isRedirect,
-      persistentConnection: persistentConnection,
-      reasonPhrase: reasonPhrase,
-      request: request);
-
-  bool get isSuccess => statusCode >= 200 && statusCode < 300;
-
-  RawResponse onSuccess(After<List<int>> func) => run((r) async {
-        if (r.isSuccess) await func(r);
-      });
-
-  RawResponse expect(List<Checker<Response>> conditions) {
-    final mismatches = conditions
-        .map((c) => c(this))
-        .reduce((List<Mismatch> v, List<Mismatch> e) => v..addAll(e))
-        .toList();
-    if (mismatches.length != 0) throw mismatches;
-    return this;
-  }
-
-  RawResponse exact(
-      {int statusCode,
-      List<int> body,
-      List<int> bytes,
-      String mimeType,
-      String encoding,
-      Map<String, String> headers,
-      int contentLength}) {
-    final conditions = <Checker<Response>>[];
-    if (statusCode != null) conditions.add(statusCodeIs(statusCode));
-    if (body != null) conditions.add(bodyIs(body));
-    if (bytes != null) conditions.add(bodyBytesIs(bytes));
-    if (mimeType != null) conditions.add(mimeTypeIs(mimeType));
-    if (encoding != null) conditions.add(encodingIs(encoding));
-    if (headers != null) {
-      headers.forEach(
-          (String key, String value) => conditions.add(headersHas(key, value)));
-    }
-    return expect(conditions);
-  }
-
-  RawResponse run(After<List<int>> func) {
-    func(this);
-    return this;
-  }
-
-  /// Runs [funcs] with [Response] object after request completion
-  RawResponse runAll(List<After<List<int>>> funcs) {
-    for (After<List<int>> func in funcs) func(this);
-    return this;
+  Future<StringResponse> manyAfter(Iterable<After> funcs) async {
+    StringResponse ret = this;
+    for (After f in funcs) ret = await after(f);
+    return ret;
   }
 }
 

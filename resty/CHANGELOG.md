@@ -1,6 +1,10 @@
 # Changelog
 
-## 2.8.1-dev-1
+## 2.8.1-dev.2
+
++ Powerful `After` interceptor
+
+## 2.8.1-dev.1
 
 + Class based `Interceptor`
 
