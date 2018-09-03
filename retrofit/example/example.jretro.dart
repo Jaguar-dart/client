@@ -10,7 +10,7 @@ abstract class _$UserApiClient implements ApiClient {
   final String basePath = "/users";
   Future<User> getUserById(String id, String test) async {
     var req = base.get
-        .setMetaData({
+        .metadata({
           "token": "test",
           "bool": true,
           "int": 1,
@@ -25,7 +25,7 @@ abstract class _$UserApiClient implements ApiClient {
 
   Future<User> createUser(User user) async {
     var req = base.post
-        .setMetaData({
+        .metadata({
           "base": "test",
         })
         .path(basePath)
@@ -36,7 +36,7 @@ abstract class _$UserApiClient implements ApiClient {
 
   Future<User> updateUser(String id, User user) async {
     var req = base.put
-        .setMetaData({
+        .metadata({
           "base": "test",
         })
         .path(basePath)
@@ -48,7 +48,7 @@ abstract class _$UserApiClient implements ApiClient {
 
   Future<void> deleteUser(String id) async {
     var req = base.delete
-        .setMetaData({
+        .metadata({
           "base": "test",
         })
         .path(basePath)
@@ -59,7 +59,7 @@ abstract class _$UserApiClient implements ApiClient {
 
   Future<List<User>> all({String name, String email}) async {
     var req = base.get
-        .setMetaData({
+        .metadata({
           "base": "test",
         })
         .path(basePath)
@@ -69,7 +69,7 @@ abstract class _$UserApiClient implements ApiClient {
 
   Future<void> login(Login login) async {
     var req = base.post
-        .setMetaData({
+        .metadata({
           "base": "test",
         })
         .path(basePath)
@@ -80,7 +80,7 @@ abstract class _$UserApiClient implements ApiClient {
 
   Future<void> loginMultipart(Login login) async {
     var req = base.post
-        .setMetaData({
+        .metadata({
           "base": "test",
         })
         .path(basePath)
