@@ -18,7 +18,7 @@ class BearerToken {
   String token;
 
   void intercept(RouteBase r) {
-    if (token != null) r.setAuthToken(token);
+    if (token != null) r.authToken(token);
     r.interceptAfter(after);
   }
 
