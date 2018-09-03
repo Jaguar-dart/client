@@ -75,12 +75,12 @@ void server() async {
 
 void client() async {
   globalClient = IOClient();
-  var api = UserApi(base: route("http://localhost:10000")..interceptBefore((route) {
-    if(route.metaData != null) {
-      print("Meta data");
-      print(route.metaData);
-    }
-  }), serializers: repo);
+  var api = UserApi(
+      base: route("http://localhost:10000")
+        ..interceptBefore((route) {
+          print("Metadata: ${route.metadataMap}");
+        }),
+      serializers: repo);
 
   try {
     await api.login(Login(username: 'teja', password: 'pass'));

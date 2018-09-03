@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.8.1-dev-1
+
++ Class based `Interceptor`
+
+## 2.8.1-dev.0
+
++ Fixed query bug when data is not string
++ Standardised setters in request creators
+
 ## 2.6.2
 
 + Dart 2 stable

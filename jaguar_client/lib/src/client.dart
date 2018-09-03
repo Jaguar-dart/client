@@ -254,7 +254,7 @@ class JsonClient {
     before.forEach(item.interceptBefore);
     after.forEach(item.interceptAfter);
 
-    item.setBasicAuth(payload.username, payload.password);
+    item.basicAuth(payload.username, payload.password);
 
     if (captureAuthToken) item.interceptAfter(_captureBearerHeader);
 
@@ -287,7 +287,7 @@ class JsonClient {
 
     if (manageCookie) route.interceptBefore(jar.intercept);
 
-    if (bearerAuthHeader is String) route.setAuthToken(bearerAuthHeader);
+    if (bearerAuthHeader is String) route.authToken(bearerAuthHeader);
   }
 
   /* TODO

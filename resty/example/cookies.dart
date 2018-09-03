@@ -4,11 +4,11 @@ import 'package:http/http.dart' as ht;
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar/jaguar.dart';
 
-final server = new Jaguar(port: 8000)
+final server = Jaguar(port: 8000)
   ..get(
       '/key',
       (Context ctx) => Response.json({'Msg': 'Success!'})
-        ..cookies.add(new Cookie('Key', 'Pass')))
+        ..cookies.add(Cookie('Key', 'Pass')))
   ..getJson('/data', (Context ctx) async {
     if (!ctx.cookies.containsKey('Key')) return {'Msg': 'Invalid!'};
     if (ctx.cookies['Key'].value != 'Pass') return {'Msg': 'Invalid!'};
@@ -16,28 +16,28 @@ final server = new Jaguar(port: 8000)
   })
   ..log.onRecord.listen(print);
 
-final jar = new resty.CookieJar();
+final jar = resty.CookieJar();
 
 Future client() async {
   print(await resty
       .get('http://localhost:8000/data')
-      .interceptBefore(jar.intercept)
+      .interceptBefore(jar)
       .go()
       .body);
   print(await resty
       .get('http://localhost:8000/key')
-      .interceptBefore(jar.intercept)
+      .interceptBefore(jar)
       .go()
       .body);
   print(await resty
       .get('http://localhost:8000/data')
-      .interceptBefore(jar.intercept)
+      .interceptBefore(jar)
       .go()
       .body);
 }
 
 main() async {
-  resty.globalClient = new ht.IOClient();
+  resty.globalClient = ht.IOClient();
 
   await server.serve(logRequests: true);
 
