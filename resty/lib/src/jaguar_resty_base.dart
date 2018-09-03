@@ -24,13 +24,7 @@ OptionsMethod options(String url) => OptionsMethod(url);
 ht.BaseClient globalClient;
 
 class RouteBase {
-  Map<String, dynamic> metaData;
-
-  RouteBase([String url, Map<String, dynamic> metaData]) {
-    if (url != null) setUrl(url);
-  }
-
-  // String _path = '';
+  final metadataMap = <String, dynamic>{};
 
   final _paths = <String>[];
 
@@ -38,17 +32,22 @@ class RouteBase {
 
   String _origin;
 
-  Map<String, dynamic /* String | Iterable<String> */ > queryMap = {};
+  final queryMap = <String,
+      dynamic /* String | Iterable<String | dynamic | Iterable<dynamic> */ >{};
 
-  Map<String, String> headersMap = {};
+  final headersMap = <String, String>{};
 
-  Map<String, String> authHeaders = {};
+  final authHeaders = <String, String>{};
 
-  final List<ClientCookie> _cookies = List<ClientCookie>();
+  final _cookies = <ClientCookie>[];
 
-  final List<Before> before = List<Before>();
-  final List<After<String>> after = <After<String>>[];
-  final List<After<String>> successHooks = <After<String>>[];
+  final before = List<Before>();
+  final after = <After<String>>[];
+  final successHooks = <After<String>>[];
+
+  RouteBase([String url]) {
+    if (url != null) this.url(url);
+  }
 
   ht.BaseClient _client;
 
@@ -92,13 +91,19 @@ class RouteBase {
 
   /// Add query parameters
   RouteBase query(String key, value) {
-    queryMap[key] = value.toString();
+    if (value is String || value is Iterable<String>) {
+      queryMap[key] = value;
+    } else if (value is Iterable) {
+      queryMap[key] = value.map((v) => v?.toString() ?? '');
+    } else {
+      queryMap[key] = value?.toString() ?? '';
+    }
     return this;
   }
 
   /// Add query parameters
   RouteBase queries(Map<String, dynamic> value) {
-    queryMap.addAll(value);
+    value.forEach(query);
     return this;
   }
 
@@ -114,17 +119,17 @@ class RouteBase {
     return this;
   }
 
-  RouteBase setAuthHeader(String scheme, String credentials) {
+  RouteBase authHeader(String scheme, String credentials) {
     authHeaders[scheme] = credentials;
     return this;
   }
 
-  RouteBase setAuthToken(String credentials) {
+  RouteBase authToken(String credentials) {
     authHeaders['Bearer'] = credentials;
     return this;
   }
 
-  RouteBase setBasicAuth(String username, String password) {
+  RouteBase basicAuth(String username, String password) {
     authHeaders['Basic'] = const codec.Base64Codec.urlSafe()
         .encode('${username}:${password}'.codeUnits);
     return this;
@@ -155,13 +160,13 @@ class RouteBase {
     return this;
   }
 
-  RouteBase setMetaData(Map<String, dynamic> metaData) {
-    this.metaData = metaData;
+  RouteBase metadata(Map<String, dynamic> value) {
+    metadataMap.addAll(value);
     return this;
   }
 
-  RouteBase setUrl(String url) {
-    final purl = Uri.parse(url);
+  RouteBase url(String value) {
+    final purl = Uri.parse(value);
     if (purl.hasAuthority) origin(purl.origin);
     path(purl.pathSegments.join('/'));
     queries(purl.queryParametersAll);
@@ -169,7 +174,7 @@ class RouteBase {
   }
 
   /// URL
-  String get url {
+  String get getUrl {
     String path = _paths
         .map((ps) => ps.startsWith(':') ? _pathParams[ps.substring(1)] : ps)
         .join('/');
@@ -263,9 +268,10 @@ class Get extends RouteBase {
     _origin = route._origin;
     _paths.addAll(route._paths);
     _pathParams.addAll(route._pathParams);
-    queryMap = Map<String, dynamic>.from(route.queryMap);
-    headersMap = Map<String, String>.from(route.headersMap);
-    authHeaders = Map<String, String>.from(route.authHeaders);
+    queryMap.addAll(route.queryMap);
+    headersMap.addAll(route.headersMap);
+    authHeaders.addAll(route.authHeaders);
+    metadataMap.addAll(route.metadataMap);
     _client = route._client;
     before.addAll(route.before);
     after.addAll(route.after.toList());
@@ -285,7 +291,7 @@ class Get extends RouteBase {
 
   Get query(String key, value) => super.query(key, value);
 
-  Get setMetaData(Map<String, dynamic> metaData) => super.setMetaData(metaData);
+  Get metadata(Map<String, dynamic> metaData) => super.metadata(metaData);
 
   Get queries(Map<String, dynamic> value) => super.queries(value);
 
@@ -293,13 +299,13 @@ class Get extends RouteBase {
 
   Get headers(Map<String, String> values) => super.headers(values);
 
-  Get setAuthHeader(String scheme, String credentials) =>
-      super.setAuthHeader(scheme, credentials);
+  Get authHeader(String scheme, String credentials) =>
+      super.authHeader(scheme, credentials);
 
-  Get setAuthToken(String credentials) => super.setAuthToken(credentials);
+  Get authToken(String credentials) => super.authToken(credentials);
 
-  Get setBasicAuth(String username, String password) =>
-      super.setBasicAuth(username, password);
+  Get basicAuth(String username, String password) =>
+      super.basicAuth(username, password);
 
   Get cookie(ClientCookie cookie) => super.cookie(cookie);
 
@@ -312,7 +318,7 @@ class Get extends RouteBase {
 
   Get onSuccess(After<String> callback) => super.onSuccess(callback);
 
-  Get setUrl(String url) => super.setUrl(url);
+  Get url(String url) => super.url(url);
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     final _Requester htResp = () async {
@@ -328,7 +334,7 @@ class Get extends RouteBase {
         headersMap['authorization'] = auth.toString();
       }
 
-      return (_client ?? globalClient).get(url, headers: headersMap);
+      return (_client ?? globalClient).get(getUrl, headers: headersMap);
     };
 
     var resp = AsyncStringResponse.from(htResp());
@@ -402,9 +408,10 @@ class Post extends RouteBase {
     _origin = route._origin;
     _paths.addAll(route._paths);
     _pathParams.addAll(route._pathParams);
-    queryMap = Map<String, dynamic>.from(route.queryMap);
-    headersMap = Map<String, String>.from(route.headersMap);
-    authHeaders = Map<String, String>.from(route.authHeaders);
+    queryMap.addAll(route.queryMap);
+    headersMap.addAll(route.headersMap);
+    authHeaders.addAll(route.authHeaders);
+    metadataMap.addAll(route.metadataMap);
     _client = route._client;
     before.addAll(route.before);
     after.addAll(route.after.toList());
@@ -424,7 +431,7 @@ class Post extends RouteBase {
 
   Post query(String key, value) => super.query(key, value);
 
-  Post setMetaData(Map<String, dynamic> metaData) => super.setMetaData(metaData);
+  Post metadata(Map<String, dynamic> metaData) => super.metadata(metaData);
 
   Post queries(Map<String, dynamic> value) => super.queries(value);
 
@@ -432,13 +439,13 @@ class Post extends RouteBase {
 
   Post headers(Map<String, String> values) => super.headers(values);
 
-  Post setAuthHeader(String scheme, String credentials) =>
-      super.setAuthHeader(scheme, credentials);
+  Post authHeader(String scheme, String credentials) =>
+      super.authHeader(scheme, credentials);
 
-  Post setAuthToken(String credentials) => super.setAuthToken(credentials);
+  Post authToken(String credentials) => super.authToken(credentials);
 
-  Post setBasicAuth(String username, String password) =>
-      super.setBasicAuth(username, password);
+  Post basicAuth(String username, String password) =>
+      super.basicAuth(username, password);
 
   Post cookie(ClientCookie cookie) => super.cookie(cookie);
 
@@ -516,7 +523,7 @@ class Post extends RouteBase {
 
   Post onSuccess(After<String> callback) => super.onSuccess(callback);
 
-  Post setUrl(String url) => super.setUrl(url);
+  Post url(String value) => super.url(value);
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     final _Requester htResp = () async {
@@ -534,10 +541,10 @@ class Post extends RouteBase {
 
       if (_body is String || _body is Map<String, String> || _body == null) {
         return (_client ?? globalClient)
-            .post(url, headers: headersMap, body: _body);
+            .post(getUrl, headers: headersMap, body: _body);
       } else if (_body is Map<String, Multipart>) {
         final body = _body as Map<String, Multipart>;
-        final r = ht.MultipartRequest('POST', Uri.parse(url));
+        final r = ht.MultipartRequest('POST', Uri.parse(getUrl));
         for (final String field in body.keys) {
           final Multipart value = body[field];
           if (value is MultipartString) {
@@ -628,9 +635,10 @@ class Put extends RouteBase {
     _origin = route._origin;
     _paths.addAll(route._paths);
     _pathParams.addAll(route._pathParams);
-    queryMap = Map<String, dynamic>.from(route.queryMap);
-    headersMap = Map<String, String>.from(route.headersMap);
-    authHeaders = Map<String, String>.from(route.authHeaders);
+    queryMap.addAll(route.queryMap);
+    headersMap.addAll(route.headersMap);
+    authHeaders.addAll(route.authHeaders);
+    metadataMap.addAll(route.metadataMap);
     _client = route._client;
     before.addAll(route.before);
     after.addAll(route.after.toList());
@@ -650,7 +658,7 @@ class Put extends RouteBase {
 
   Put query(String key, value) => super.query(key, value);
 
-  Put setMetaData(Map<String, dynamic> metaData) => super.setMetaData(metaData);
+  Put metadata(Map<String, dynamic> metaData) => super.metadata(metaData);
 
   Put queries(Map<String, dynamic> value) => super.queries(value);
 
@@ -658,13 +666,13 @@ class Put extends RouteBase {
 
   Put headers(Map<String, String> values) => super.headers(values);
 
-  Put setAuthHeader(String scheme, String credentials) =>
-      super.setAuthHeader(scheme, credentials);
+  Put authHeader(String scheme, String credentials) =>
+      super.authHeader(scheme, credentials);
 
-  Put setAuthToken(String credentials) => super.setAuthToken(credentials);
+  Put authToken(String credentials) => super.authToken(credentials);
 
-  Put setBasicAuth(String username, String password) =>
-      super.setBasicAuth(username, password);
+  Put basicAuth(String username, String password) =>
+      super.basicAuth(username, password);
 
   Put cookie(ClientCookie cookie) => super.cookie(cookie);
 
@@ -741,7 +749,7 @@ class Put extends RouteBase {
 
   Put onSuccess(After<String> callback) => super.onSuccess(callback);
 
-  Put setUrl(String url) => super.setUrl(url);
+  Put url(String value) => super.url(value);
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     final _Requester htResp = () async {
@@ -759,10 +767,10 @@ class Put extends RouteBase {
 
       if (_body is String || _body is Map<String, String> || _body == null) {
         return (_client ?? globalClient)
-            .put(url, headers: headersMap, body: _body);
+            .put(getUrl, headers: headersMap, body: _body);
       } else if (_body is Map<String, Multipart>) {
         final body = _body as Map<String, Multipart>;
-        final r = ht.MultipartRequest('PUT', Uri.parse(url));
+        final r = ht.MultipartRequest('PUT', Uri.parse(getUrl));
         for (final String field in body.keys) {
           final Multipart value = body[field];
           if (value is MultipartString) {
@@ -852,9 +860,10 @@ class Delete extends RouteBase {
     _origin = route._origin;
     _paths.addAll(route._paths);
     _pathParams.addAll(route._pathParams);
-    queryMap = Map<String, dynamic>.from(route.queryMap);
-    headersMap = Map<String, String>.from(route.headersMap);
-    authHeaders = Map<String, String>.from(route.authHeaders);
+    queryMap.addAll(route.queryMap);
+    headersMap.addAll(route.headersMap);
+    authHeaders.addAll(route.authHeaders);
+    metadataMap.addAll(route.metadataMap);
     _client = route._client;
     before.addAll(route.before);
     after.addAll(route.after.toList());
@@ -875,7 +884,7 @@ class Delete extends RouteBase {
 
   Delete query(String key, value) => super.query(key, value);
 
-  Delete setMetaData(Map<String, dynamic> metaData) => super.setMetaData(metaData);
+  Delete metadata(Map<String, dynamic> metaData) => super.metadata(metaData);
 
   Delete queries(Map<String, dynamic> value) => super.queries(value);
 
@@ -883,13 +892,13 @@ class Delete extends RouteBase {
 
   Delete headers(Map<String, String> values) => super.headers(values);
 
-  Delete setAuthHeader(String scheme, String credentials) =>
-      super.setAuthHeader(scheme, credentials);
+  Delete authHeader(String scheme, String credentials) =>
+      super.authHeader(scheme, credentials);
 
-  Delete setAuthToken(String credentials) => super.setAuthToken(credentials);
+  Delete authToken(String credentials) => super.authToken(credentials);
 
-  Delete setBasicAuth(String username, String password) =>
-      super.setBasicAuth(username, password);
+  Delete basicAuth(String username, String password) =>
+      super.basicAuth(username, password);
 
   Delete cookie(ClientCookie cookie) => super.cookie(cookie);
 
@@ -903,7 +912,7 @@ class Delete extends RouteBase {
 
   Delete onSuccess(After<String> callback) => super.onSuccess(callback);
 
-  Delete setUrl(String url) => super.setUrl(url);
+  Delete url(String value) => super.url(value);
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     final _Requester htResp = () async {
@@ -918,7 +927,7 @@ class Delete extends RouteBase {
         }
         headersMap['authorization'] = auth.toString();
       }
-      return (_client ?? globalClient).delete(url, headers: headersMap);
+      return (_client ?? globalClient).delete(getUrl, headers: headersMap);
     };
 
     var resp = AsyncStringResponse.from(htResp());
@@ -990,9 +999,10 @@ class OptionsMethod extends RouteBase {
     _origin = route._origin;
     _paths.addAll(route._paths);
     _pathParams.addAll(route._pathParams);
-    queryMap = Map<String, dynamic>.from(route.queryMap);
-    headersMap = Map<String, String>.from(route.headersMap);
-    authHeaders = Map<String, String>.from(route.authHeaders);
+    queryMap.addAll(route.queryMap);
+    headersMap.addAll(route.headersMap);
+    authHeaders.addAll(route.authHeaders);
+    metadataMap.addAll(route.metadataMap);
     _client = route._client;
     before.addAll(route.before);
     after.addAll(route.after.toList());
@@ -1015,7 +1025,8 @@ class OptionsMethod extends RouteBase {
 
   OptionsMethod query(String key, value) => super.query(key, value);
 
-  OptionsMethod setMetaData(Map<String, dynamic> metaData) => super.setMetaData(metaData);
+  OptionsMethod metadata(Map<String, dynamic> metaData) =>
+      super.metadata(metaData);
 
   OptionsMethod queries(Map<String, dynamic> value) => super.queries(value);
 
@@ -1023,14 +1034,13 @@ class OptionsMethod extends RouteBase {
 
   OptionsMethod headers(Map<String, String> values) => super.headers(values);
 
-  OptionsMethod setAuthHeader(String scheme, String credentials) =>
-      super.setAuthHeader(scheme, credentials);
+  OptionsMethod authHeader(String scheme, String credentials) =>
+      super.authHeader(scheme, credentials);
 
-  OptionsMethod setAuthToken(String credentials) =>
-      super.setAuthToken(credentials);
+  OptionsMethod authToken(String credentials) => super.authToken(credentials);
 
-  OptionsMethod setBasicAuth(String username, String password) =>
-      super.setBasicAuth(username, password);
+  OptionsMethod basicAuth(String username, String password) =>
+      super.basicAuth(username, password);
 
   OptionsMethod cookie(ClientCookie cookie) => super.cookie(cookie);
 
@@ -1044,7 +1054,7 @@ class OptionsMethod extends RouteBase {
 
   OptionsMethod onSuccess(After<String> callback) => super.onSuccess(callback);
 
-  OptionsMethod setUrl(String url) => super.setUrl(url);
+  OptionsMethod url(String value) => super.url(value);
 
   AsyncStringResponse go([dynamic then(Response<String> resp)]) {
     final _Requester htResp = () async {
@@ -1060,7 +1070,7 @@ class OptionsMethod extends RouteBase {
         headersMap['authorization'] = auth.toString();
       }
 
-      final req = ht.Request('OPTIONS', Uri.parse(url));
+      final req = ht.Request('OPTIONS', Uri.parse(getUrl));
       req.headers.addAll(headersMap);
 
       return (_client ?? globalClient)
