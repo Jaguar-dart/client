@@ -144,12 +144,12 @@ class RouteBase {
     return this;
   }
 
-  RouteBase interceptBefore(Before interceptor) {
+  RouteBase before(Before interceptor) {
     getBefore.add(interceptor);
     return this;
   }
 
-  RouteBase interceptAfter(After interceptor) {
+  RouteBase after(After interceptor) {
     getAfter.add(interceptor);
     return this;
   }
@@ -330,9 +330,9 @@ class Get extends RouteBase {
 
   Get cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Get interceptBefore(Before interceptor) => super.interceptBefore(interceptor);
+  Get before(Before interceptor) => super.before(interceptor);
 
-  Get interceptAfter(After interceptor) => super.interceptAfter(interceptor);
+  Get after(After interceptor) => super.after(interceptor);
 
   Get url(String url) => super.url(url);
 
@@ -538,10 +538,10 @@ class Post extends RouteBase {
     return this;
   }
 
-  Post interceptBefore(Before interceptor) =>
-      super.interceptBefore(interceptor);
+  Post before(Before interceptor) =>
+      super.before(interceptor);
 
-  Post interceptAfter(After interceptor) => super.interceptAfter(interceptor);
+  Post after(After interceptor) => super.after(interceptor);
 
   Post url(String value) => super.url(value);
 
@@ -771,9 +771,9 @@ class Put extends RouteBase {
     return this;
   }
 
-  Put interceptBefore(Before interceptor) => super.interceptBefore(interceptor);
+  Put before(Before interceptor) => super.before(interceptor);
 
-  Put interceptAfter(After interceptor) => super.interceptAfter(interceptor);
+  Put after(After interceptor) => super.after(interceptor);
 
   Put url(String value) => super.url(value);
 
@@ -936,10 +936,10 @@ class Delete extends RouteBase {
 
   Delete cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Delete interceptBefore(Before interceptor) =>
-      super.interceptBefore(interceptor);
+  Delete before(Before interceptor) =>
+      super.before(interceptor);
 
-  Delete interceptAfter(After interceptor) => super.interceptAfter(interceptor);
+  Delete after(After interceptor) => super.after(interceptor);
 
   Delete url(String value) => super.url(value);
 
@@ -1080,11 +1080,11 @@ class OptionsMethod extends RouteBase {
 
   OptionsMethod cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  OptionsMethod interceptBefore(Before interceptor) =>
-      super.interceptBefore(interceptor);
+  OptionsMethod before(Before interceptor) =>
+      super.before(interceptor);
 
-  OptionsMethod interceptAfter(After interceptor) =>
-      super.interceptAfter(interceptor);
+  OptionsMethod after(After interceptor) =>
+      super.after(interceptor);
 
   OptionsMethod url(String value) => super.url(value);
 
