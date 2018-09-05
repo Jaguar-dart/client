@@ -9,7 +9,7 @@ abstract class Interceptor {
   FutureOr<void> call(RouteBase route) => before(route);
 
   FutureOr<void> before(RouteBase route) {
-    route.interceptAfter(after);
+    route.after(after);
     return null;
   }
 
@@ -21,7 +21,7 @@ class CookieJar extends Interceptor {
 
   void before(RouteBase r) {
     r.cookies(store.cookies);
-    r.interceptAfter(after);
+    r.after(after);
   }
 
   StringResponse after(StringResponse resp) {
@@ -35,7 +35,7 @@ class BearerToken extends Interceptor {
 
   void before(RouteBase r) {
     if (token != null) r.authToken(token);
-    r.interceptAfter(after);
+    r.after(after);
   }
 
   StringResponse after(StringResponse resp) {

@@ -81,7 +81,7 @@ void client() async {
   globalClient = IOClient();
   var api = UserApi(
       base: route("http://localhost:10000")
-        ..interceptBefore((route) {
+        ..before((route) {
           print("Metadata: ${route.metadataMap}");
         }),
       serializers: repo);

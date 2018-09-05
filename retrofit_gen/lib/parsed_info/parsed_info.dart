@@ -89,7 +89,7 @@ class Req {
 
   final String path;
 
-  final Map<DartObject, DartObject> metaData;
+  final Map<String, String> metadata;
 
   final Set<String> pathParams;
 
@@ -109,7 +109,7 @@ class Req {
 
   Req(this.method, this.me,
       {this.path,
-      this.metaData,
+      this.metadata,
       this.query,
       this.headers,
       this.body,
@@ -123,10 +123,10 @@ class WriteInfo {
   final String name;
   final String basePath;
   final Set<String> basePathParams;
-  final Map<DartObject, DartObject> baseMetaData;
+  final Map<String, String> baseMetadata;
 
   final List<Req> requests;
 
-  WriteInfo(this.name, this.basePath, this.basePathParams, this.baseMetaData,
+  WriteInfo(this.name, this.basePath, this.basePathParams, this.baseMetadata,
       this.requests);
 }

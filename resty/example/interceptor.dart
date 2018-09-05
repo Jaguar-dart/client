@@ -20,8 +20,8 @@ Future client() async {
   await resty
       .get('/math/addition')
       .http('localhost:8000')
-      .interceptBefore(setQuery(5, 20))
-      .interceptAfter(printResult)
+      .before(setQuery(5, 20))
+      .after(printResult)
       .go();
 }
 

@@ -21,17 +21,17 @@ final jar = resty.CookieJar();
 Future client() async {
   print(await resty
       .get('http://localhost:8000/data')
-      .interceptBefore(jar)
+      .before(jar)
       .go()
       .body);
   print(await resty
       .get('http://localhost:8000/key')
-      .interceptBefore(jar)
+      .before(jar)
       .go()
       .body);
   print(await resty
       .get('http://localhost:8000/data')
-      .interceptBefore(jar)
+      .before(jar)
       .go()
       .body);
 }

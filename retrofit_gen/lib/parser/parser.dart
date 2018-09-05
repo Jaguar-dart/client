@@ -7,9 +7,8 @@ import '../parsed_info/parsed_info.dart';
 Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   final reader = ConstantReader(annot);
   String path = reader.read('path').stringValue;
-  final metaDataContent = reader.read('metaData');
-  Map<DartObject, DartObject> metaData =
-      metaDataContent.isNull ? null : metaDataContent.mapValue;
+  Map<String, String> metadata = reader.read('metadata').mapValue.map(
+      (k, v) => MapEntry<String, String>(k.toStringValue(), toStringValue(v)));
   var varPathSegs = <String>[];
   if (path != null)
     varPathSegs = path
@@ -94,7 +93,7 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   return Req(httpMethod, method,
       path: path,
       query: query,
-      metaData: metaData,
+      metadata: metadata,
       headers: headers,
       body: body,
       pathParams: pathParams,
@@ -105,7 +104,8 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
 WriteInfo parse(ClassElement element, ConstantReader annotation) {
   final an = isGenApiClient.firstAnnotationOfExact(element);
   final basePath = an.getField("path").toStringValue();
-  final baseMetaData = an.getField("metaData").toMapValue();
+  final baseMetadata = an.getField("metadata").toMapValue().map(
+      (k, v) => MapEntry<String, String>(k.toStringValue(), toStringValue(v)));
   final basePathParams = basePath
       .split('/')
       .where((p) => p.startsWith(':'))
@@ -133,5 +133,33 @@ WriteInfo parse(ClassElement element, ConstantReader annotation) {
   }
 
   return WriteInfo(
-      element.displayName, basePath, basePathParams, baseMetaData, reqs);
+      element.displayName, basePath, basePathParams, baseMetadata, reqs);
+}
+
+String toStringValue(DartObject value) {
+  if (value.isNull) {
+    return 'null';
+  } else if (value.toStringValue() != null) {
+    return '"${value.toStringValue()}"';
+  } else if (value.toBoolValue() != null) {
+    return '${value.toBoolValue()}';
+  } else if (value.toIntValue() != null) {
+    return '${value.toIntValue()}';
+  } else if (value.toDoubleValue() != null) {
+    return '${value.toDoubleValue()}';
+  } else if (value is Iterable) {
+    return '[' + value.toListValue().map(toStringValue).join(',') + ']';
+  } else if (value is Map) {
+    var sb = StringBuffer('{');
+    value.toMapValue().map((k, v) {
+      if (k.toStringValue() == null) {
+        throw UnsupportedError("Key can only be String");
+      }
+      sb.write('"${k.toStringValue()}": ${toStringValue(v)},');
+    });
+    sb.write('}');
+    return sb.toString();
+  } else {
+    throw UnsupportedError("Does not support ${value.type.displayName}");
+  }
 }

@@ -15,27 +15,9 @@ class Writer {
     sb.writeln('}');
   }
 
-  void _writeMetaData(Map<dynamic, dynamic> metaData) {
-    sb.write('.setMetaData({');
-    metaData.forEach((key, value) {
-      sb.write('"${key.toStringValue()}":');
-
-      if (value.toStringValue() != null) {
-        sb.write('"${value.toStringValue()}",');
-      } else if (value.toBoolValue() != null) {
-        sb.write('${value.toBoolValue()},');
-      } else if (value.toIntValue() != null) {
-        sb.write('${value.toIntValue()},');
-      } else if (value.toDoubleValue() != null) {
-        sb.write('${value.toDoubleValue()},');
-      } else if (value is List) {
-        throw UnsupportedError("$key: List is not supported as meta data");
-      } else if (value is Map) {
-        throw UnsupportedError("$key: Map is not supported as meta data");
-      } else {
-        throw UnsupportedError("$key: Type is not supported as meta data");
-      }
-    });
+  void _writeMetadata(Map<String, String> metadata) {
+    sb.write('.metadata({');
+    metadata.forEach((key, value) => sb.write('"$key": $value,'));
     sb.write('})');
   }
 
@@ -46,10 +28,11 @@ class Writer {
 
     sb.write('var req = base.${r.method}');
 
-    if (r.metaData != null) {
-      _writeMetaData(r.metaData);
-    } else if (i.baseMetaData != null) {
-      _writeMetaData(i.baseMetaData);
+    if (i.baseMetadata.isNotEmpty) {
+      _writeMetadata(i.baseMetadata);
+    }
+    if (r.metadata.isNotEmpty) {
+      _writeMetadata(r.metadata);
     }
 
     if (i.basePath != null) sb.write('.path(basePath)');

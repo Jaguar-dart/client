@@ -11,6 +11,9 @@ abstract class _$UserApiClient implements ApiClient {
   Future<User> getUserById(String test, String id, String param) async {
     var req = base.get
         .metadata({
+          "base": "test",
+        })
+        .metadata({
           "token": "test",
           "bool": true,
           "int": 1,
