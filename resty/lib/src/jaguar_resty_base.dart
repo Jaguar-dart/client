@@ -13,6 +13,8 @@ Route route(String url) => Route(url);
 
 Get get(String url) => Get(url);
 
+Patch patch(String url) => Patch(url);
+
 Post post(String url) => Post(url);
 
 Put put(String url) => Put(url);
@@ -242,6 +244,9 @@ class Route extends RouteBase {
 
   /// Converts to [Put] requester
   Put get put => Put.copy(this);
+
+  /// Converts to [Patch] requester
+  Patch get patch => Patch.copy(this);
 
   /// Converts to [Delete] requester
   Delete get delete => Delete.copy(this);
@@ -625,6 +630,239 @@ class Post extends RouteBase {
           String encoding,
           Map<String, String> headers,
           int contentLength}) =>
+      go().exact(
+          statusCode: statusCode,
+          body: body,
+          bytes: bytes,
+          mimeType: mimeType,
+          encoding: encoding,
+          headers: headers,
+          contentLength: contentLength);
+}
+
+/// Build fluent REST PATCH APIs
+///
+/// Example:
+///     patch('/book/${id}')
+///       .json(book.toMap)
+///       .fetch((m) => Book.fromMap(m));
+class Patch extends RouteBase {
+  dynamic _body;
+
+  Patch(String url) : super(url);
+
+  Patch.copy(Route route) {
+    _origin = route._origin;
+    _paths.addAll(route._paths);
+    _pathParams.addAll(route._pathParams);
+    getQuery.addAll(route.getQuery);
+    getHeaders.addAll(route.getHeaders);
+    getAuthHeaders.addAll(route.getAuthHeaders);
+    metadataMap.addAll(route.metadataMap);
+    getClient = route.getClient;
+    getBefore.addAll(route.getBefore);
+    getAfter.addAll(route.getAfter);
+  }
+
+  Patch.clone(Patch route) {
+    _body = route._body; // TODO deep copy
+    _origin = route._origin;
+    _paths.addAll(route._paths);
+    _pathParams.addAll(route._pathParams);
+    getQuery.addAll(route.getQuery);
+    getHeaders.addAll(route.getHeaders);
+    getAuthHeaders.addAll(route.getAuthHeaders);
+    metadataMap.addAll(route.metadataMap);
+    getClient = route.getClient;
+    getBefore.addAll(route.getBefore);
+    getAfter.addAll(route.getAfter);
+  }
+
+  Patch withClient(ht.BaseClient client) => super.withClient(client);
+
+  Patch http(String origin, [String path]) => super.http(origin, path);
+
+  Patch https(String origin, [String path]) => super.https(origin, path);
+
+  Patch origin(String origin, [String path]) => super.origin(origin, path);
+
+  Patch path(String path) => super.path(path);
+
+  Patch pathParams(String name, dynamic value) => super.pathParams(name, value);
+
+  Patch query(String key, value) => super.query(key, value);
+
+  Patch metadata(Map<String, dynamic> metaData) => super.metadata(metaData);
+
+  Patch queries(Map<String, dynamic> value) => super.queries(value);
+
+  Patch header(String key, String value) => super.header(key, value);
+
+  Patch headers(Map<String, String> values) => super.headers(values);
+
+  Patch authHeader(String scheme, String credentials) =>
+      super.authHeader(scheme, credentials);
+
+  Patch authToken(String credentials) => super.authToken(credentials);
+
+  Patch basicAuth(String username, String password) =>
+      super.basicAuth(username, password);
+
+  Patch cookie(ClientCookie cookie) => super.cookie(cookie);
+
+  Patch cookies(List<ClientCookie> cookies) => super.cookies(cookies);
+
+  Patch body(String body) {
+    _body = body;
+    return this;
+  }
+
+  Patch json(body, {bool setHeaders: true}) {
+    _body = codec.json.encode(body);
+    if (setHeaders) {
+      header('content-type', 'application/json');
+      header('Accept', 'application/json');
+    }
+    return this;
+  }
+
+  Patch multipart(Map<String, dynamic> values) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    for (String field in values.keys) {
+      dynamic value = values[field];
+      if (value is List<int>)
+        multipartFile(field, value);
+      else if (value is Multipart)
+        _body[field] = value;
+      else
+        multipartField(field, value?.toString() ?? '');
+    }
+    return this;
+  }
+
+  Patch multipartField(String field, value) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    _body[field] = MultipartString(value?.toString() ?? '');
+    return this;
+  }
+
+  Patch multipartFile(String field, List<int> value,
+      {String filename, MediaType contentType}) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    _body[field] =
+        MultipartFile(value, filename: filename, contentType: contentType);
+    return this;
+  }
+
+  Patch multipartStringFile(String field, String value,
+      {String filename, MediaType contentType}) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    _body[field] = MultipartStringFile(value,
+        filename: filename, contentType: contentType);
+    return this;
+  }
+
+  Patch urlEncodedForm(Map<String, dynamic> values) {
+    if (_body is! Map<String, String>) _body = <String, String>{};
+    for (String field in values.keys) {
+      _body[field] = values[field]?.toString() ?? '';
+    }
+    return this;
+  }
+
+  Patch urlEncodedFormField(String name, value) {
+    if (_body is! Map<String, String>) _body = <String, String>{};
+    _body[name] = value?.toString() ?? '';
+    return this;
+  }
+
+  Patch before(Before interceptor) =>
+      super.before(interceptor);
+
+  Patch after(After interceptor) => super.after(interceptor);
+
+  Patch url(String value) => super.url(value);
+
+  Future<ht.Response> _send() async {
+    for (Before mod in getBefore) await mod(this);
+
+    _prepare(this);
+
+    if (_body is String || _body is Map<String, String> || _body == null) {
+      return (getClient ?? globalClient)
+          .patch(getUrl, headers: getHeaders, body: _body);
+    } else if (_body is Map<String, Multipart>) {
+      final body = _body as Map<String, Multipart>;
+      final r = ht.MultipartRequest('PATCH', Uri.parse(getUrl));
+      for (final String field in body.keys) {
+        final Multipart value = body[field];
+        if (value is MultipartString) {
+          r.fields[field] = value.value;
+        } else if (value is MultipartStringFile) {
+          r.files.add(ht.MultipartFile.fromString(field, value.value,
+              filename: value.filename, contentType: value.contentType));
+        } else if (value is MultipartFile) {
+          r.files.add(ht.MultipartFile.fromBytes(field, value.value,
+              filename: value.filename, contentType: value.contentType));
+        }
+      }
+      r.headers.addAll(getHeaders);
+      return r.send().then((r) => ht.Response.fromStream(r));
+    } else {
+      throw Exception('Invalid body!');
+    }
+  }
+
+  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
+    Patch cloned = Patch.clone(this);
+    AsyncStringResponse resp = AsyncStringResponse(
+        AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
+            .then((StringResponse r) async {
+          StringResponse ret = r;
+          for (After func in cloned.getAfter) {
+            var res = await func(r);
+            if (res != null) ret = res;
+          }
+          return ret;
+        }));
+    return resp;
+  }
+
+  Future<T> one<T>(
+      {T convert(Map d),
+        FutureOr<dynamic> onError(StringResponse resp)}) async {
+    StringResponse resp = await go();
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decode<T>(convert);
+    if (onError == null) throw ErrorResponse(resp);
+    var err = await onError(resp);
+    if (err != null) throw err;
+    return null;
+  }
+
+  Future<List<T>> list<T>(
+      {T convert(Map d),
+        FutureOr<dynamic> onError(StringResponse resp)}) async {
+    StringResponse resp = await go();
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decodeList<T>(convert);
+    if (onError == null) throw ErrorResponse(resp);
+    var err = await onError(resp);
+    if (err != null) throw err;
+    return null;
+  }
+
+  AsyncStringResponse expect(List<Checker<Response>> conditions) =>
+      go().expect(conditions);
+
+  AsyncStringResponse exact(
+      {int statusCode,
+        String body,
+        List<int> bytes,
+        String mimeType,
+        String encoding,
+        Map<String, String> headers,
+        int contentLength}) =>
       go().exact(
           statusCode: statusCode,
           body: body,
