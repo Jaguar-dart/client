@@ -5,9 +5,9 @@ class OpenApi {
 
   final Info info;
 
-  // TODO servers
+  final List<Server> servers;
 
-  final List<PathItem> paths;
+  final Map<String, PathItem> paths;
 
   // TODO components
 
@@ -17,7 +17,8 @@ class OpenApi {
 
   // TODO externalDocs
 
-  const OpenApi({this.openapi, this.info, this.tags, this.paths});
+  const OpenApi(
+      {this.openapi: "3.0.1", this.info, this.servers, this.paths, this.tags});
 
   Map<String, dynamic> toJson() => openApiSerializer.toMap(this);
 }
@@ -72,6 +73,16 @@ class License {
   const License({this.name, this.url});
 }
 
+class Server {
+  final String url;
+
+  final String description;
+
+  // TODO variables
+
+  const Server({this.url, this.description});
+}
+
 class PathItem {
   // TODO ref
 
@@ -97,7 +108,7 @@ class PathItem {
 
   // TODO servers
 
-  // TODO parameters
+  final List<Parameter> parameters;
 
   const PathItem(
       {this.summary,
@@ -109,7 +120,8 @@ class PathItem {
       this.options,
       this.head,
       this.patch,
-      this.trace});
+      this.trace,
+      this.parameters});
 }
 
 class Operation {
@@ -123,9 +135,9 @@ class Operation {
 
   final String operationId;
 
-  // TODO parameters
+  final List<Parameter> parameters;
 
-  final Request request;
+  final Request requestBody;
 
   final Map<String, Response> response;
 
@@ -142,13 +154,107 @@ class Operation {
       this.summary,
       this.description,
       this.operationId,
-      this.request,
+      this.parameters,
+      this.requestBody,
       this.response,
       this.deprecated});
 }
 
 class Schema {
-  // TODO
+  final String title;
+
+  final String type;
+
+  // TODO allOf
+
+  // TODO oneOf
+
+  // TODO anyOf
+
+  // TODO not
+
+  final Schema items;
+
+  final Map<String, Schema> properties;
+
+  final bool additionalProperties;
+
+  final String description;
+
+  // TODO format
+
+  // TODO default
+
+  final bool nullable;
+
+  // TODO discriminator
+
+  final bool readOnly;
+
+  final bool writeOnly;
+
+  // TODO xml
+
+  // TODO externalDocs
+
+  final dynamic example;
+
+  final bool deprecated;
+
+  const Schema(
+      {this.title,
+      this.type,
+      this.items,
+      this.properties,
+      this.additionalProperties,
+      this.description,
+      this.nullable,
+      this.readOnly,
+      this.writeOnly,
+      this.example,
+      this.deprecated});
+}
+
+class Parameter {
+  final String name;
+
+  final String in_;
+
+  final String description;
+
+  final bool required;
+
+  final bool deprecated;
+
+  final bool allowEmptyValue;
+
+  final String style;
+
+  final bool explode;
+
+  final bool allowReserved;
+
+  final Schema schema;
+
+  final dynamic example;
+
+  final Map<String, dynamic> examples;
+
+  // TODO content
+
+  const Parameter(
+      {this.name,
+      this.in_,
+      this.description,
+      this.required,
+      this.deprecated,
+      this.allowEmptyValue,
+      this.style,
+      this.explode,
+      this.allowReserved,
+      this.schema,
+      this.example,
+      this.examples});
 }
 
 class Header {
@@ -171,6 +277,8 @@ class Header {
   final dynamic example;
 
   final Map<String, dynamic> examples;
+
+  // TODO content
 
   const Header(
       {this.description,
@@ -216,5 +324,5 @@ class Request {
 
   final bool required;
 
-  Request({this.description, this.content, this.required});
+  const Request({this.description, this.content, this.required});
 }

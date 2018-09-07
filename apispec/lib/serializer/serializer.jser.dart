@@ -10,6 +10,9 @@ abstract class _$OpenApiSerializer implements Serializer<OpenApi> {
   Serializer<Info> __infoSerializer;
   Serializer<Info> get _infoSerializer =>
       __infoSerializer ??= new InfoSerializer();
+  Serializer<Server> __serverSerializer;
+  Serializer<Server> get _serverSerializer =>
+      __serverSerializer ??= new ServerSerializer();
   Serializer<PathItem> __pathItemSerializer;
   Serializer<PathItem> get _pathItemSerializer =>
       __pathItemSerializer ??= new PathItemSerializer();
@@ -19,15 +22,25 @@ abstract class _$OpenApiSerializer implements Serializer<OpenApi> {
   Map<String, dynamic> toMap(OpenApi model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'openapi', model.openapi);
-    setMapValue(ret, 'info', _infoSerializer.toMap(model.info));
-    setMapValue(
+    setMapValueIfNotNull(ret, 'openapi', model.openapi);
+    setMapValueIfNotNull(ret, 'info', _infoSerializer.toMap(model.info));
+    setMapValueIfNotNull(
+        ret,
+        'servers',
+        codeNonNullIterable(model.servers,
+            (val) => _serverSerializer.toMap(val as Server), []));
+    setMapValueIfNotNull(
         ret,
         'paths',
-        codeIterable(
-            model.paths, (val) => _pathItemSerializer.toMap(val as PathItem)));
-    setMapValue(ret, 'tags',
-        codeIterable(model.tags, (val) => _tagSerializer.toMap(val as Tag)));
+        codeNonNullMap(
+            model.paths,
+            (val) => _pathItemSerializer.toMap(val as PathItem),
+            <String, dynamic>{}));
+    setMapValueIfNotNull(
+        ret,
+        'tags',
+        codeNonNullIterable(
+            model.tags, (val) => _tagSerializer.toMap(val as Tag), []));
     return ret;
   }
 
@@ -38,12 +51,17 @@ abstract class _$OpenApiSerializer implements Serializer<OpenApi> {
         openapi: map['openapi'] as String ?? getJserDefault('openapi'),
         info: _infoSerializer.fromMap(map['info'] as Map) ??
             getJserDefault('info'),
-        tags: codeIterable<Tag>(map['tags'] as Iterable,
-                (val) => _tagSerializer.fromMap(val as Map)) ??
-            getJserDefault('tags'),
-        paths: codeIterable<PathItem>(map['paths'] as Iterable,
-                (val) => _pathItemSerializer.fromMap(val as Map)) ??
-            getJserDefault('paths'));
+        servers: codeNonNullIterable<Server>(map['servers'] as Iterable,
+                (val) => _serverSerializer.fromMap(val as Map), <Server>[]) ??
+            getJserDefault('servers'),
+        paths: codeNonNullMap<PathItem>(
+                map['paths'] as Map,
+                (val) => _pathItemSerializer.fromMap(val as Map),
+                <String, PathItem>{}) ??
+            getJserDefault('paths'),
+        tags: codeNonNullIterable<Tag>(map['tags'] as Iterable,
+                (val) => _tagSerializer.fromMap(val as Map), <Tag>[]) ??
+            getJserDefault('tags'));
     return obj;
   }
 }
@@ -59,12 +77,14 @@ abstract class _$InfoSerializer implements Serializer<Info> {
   Map<String, dynamic> toMap(Info model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'title', model.title);
-    setMapValue(ret, 'description', model.description);
-    setMapValue(ret, 'termsOfService', model.termsOfService);
-    setMapValue(ret, 'contact', _contactSerializer.toMap(model.contact));
-    setMapValue(ret, 'license', _licenseSerializer.toMap(model.license));
-    setMapValue(ret, 'version', model.version);
+    setMapValueIfNotNull(ret, 'title', model.title);
+    setMapValueIfNotNull(ret, 'description', model.description);
+    setMapValueIfNotNull(ret, 'termsOfService', model.termsOfService);
+    setMapValueIfNotNull(
+        ret, 'contact', _contactSerializer.toMap(model.contact));
+    setMapValueIfNotNull(
+        ret, 'license', _licenseSerializer.toMap(model.license));
+    setMapValueIfNotNull(ret, 'version', model.version);
     return ret;
   }
 
@@ -91,9 +111,9 @@ abstract class _$ContactSerializer implements Serializer<Contact> {
   Map<String, dynamic> toMap(Contact model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'name', model.name);
-    setMapValue(ret, 'url', model.url);
-    setMapValue(ret, 'email', model.email);
+    setMapValueIfNotNull(ret, 'name', model.name);
+    setMapValueIfNotNull(ret, 'url', model.url);
+    setMapValueIfNotNull(ret, 'email', model.email);
     return ret;
   }
 
@@ -113,8 +133,8 @@ abstract class _$TagSerializer implements Serializer<Tag> {
   Map<String, dynamic> toMap(Tag model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'name', model.name);
-    setMapValue(ret, 'description', model.description);
+    setMapValueIfNotNull(ret, 'name', model.name);
+    setMapValueIfNotNull(ret, 'description', model.description);
     return ret;
   }
 
@@ -134,8 +154,8 @@ abstract class _$LicenseSerializer implements Serializer<License> {
   Map<String, dynamic> toMap(License model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'name', model.name);
-    setMapValue(ret, 'url', model.url);
+    setMapValueIfNotNull(ret, 'name', model.name);
+    setMapValueIfNotNull(ret, 'url', model.url);
     return ret;
   }
 
@@ -149,24 +169,55 @@ abstract class _$LicenseSerializer implements Serializer<License> {
   }
 }
 
+abstract class _$ServerSerializer implements Serializer<Server> {
+  @override
+  Map<String, dynamic> toMap(Server model) {
+    if (model == null) return null;
+    Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValueIfNotNull(ret, 'url', model.url);
+    setMapValueIfNotNull(ret, 'description', model.description);
+    return ret;
+  }
+
+  @override
+  Server fromMap(Map map) {
+    if (map == null) return null;
+    final obj = new Server(
+        url: map['url'] as String ?? getJserDefault('url'),
+        description:
+            map['description'] as String ?? getJserDefault('description'));
+    return obj;
+  }
+}
+
 abstract class _$PathItemSerializer implements Serializer<PathItem> {
   Serializer<Operation> __operationSerializer;
   Serializer<Operation> get _operationSerializer =>
       __operationSerializer ??= new OperationSerializer();
+  Serializer<Parameter> __parameterSerializer;
+  Serializer<Parameter> get _parameterSerializer =>
+      __parameterSerializer ??= new ParameterSerializer();
   @override
   Map<String, dynamic> toMap(PathItem model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'summary', model.summary);
-    setMapValue(ret, 'description', model.description);
-    setMapValue(ret, 'get', _operationSerializer.toMap(model.get));
-    setMapValue(ret, 'put', _operationSerializer.toMap(model.put));
-    setMapValue(ret, 'post', _operationSerializer.toMap(model.post));
-    setMapValue(ret, 'delete', _operationSerializer.toMap(model.delete));
-    setMapValue(ret, 'options', _operationSerializer.toMap(model.options));
-    setMapValue(ret, 'head', _operationSerializer.toMap(model.head));
-    setMapValue(ret, 'patch', _operationSerializer.toMap(model.patch));
-    setMapValue(ret, 'trace', _operationSerializer.toMap(model.trace));
+    setMapValueIfNotNull(ret, 'summary', model.summary);
+    setMapValueIfNotNull(ret, 'description', model.description);
+    setMapValueIfNotNull(ret, 'get', _operationSerializer.toMap(model.get));
+    setMapValueIfNotNull(ret, 'put', _operationSerializer.toMap(model.put));
+    setMapValueIfNotNull(ret, 'post', _operationSerializer.toMap(model.post));
+    setMapValueIfNotNull(
+        ret, 'delete', _operationSerializer.toMap(model.delete));
+    setMapValueIfNotNull(
+        ret, 'options', _operationSerializer.toMap(model.options));
+    setMapValueIfNotNull(ret, 'head', _operationSerializer.toMap(model.head));
+    setMapValueIfNotNull(ret, 'patch', _operationSerializer.toMap(model.patch));
+    setMapValueIfNotNull(ret, 'trace', _operationSerializer.toMap(model.trace));
+    setMapValueIfNotNull(
+        ret,
+        'parameters',
+        codeNonNullIterable(model.parameters,
+            (val) => _parameterSerializer.toMap(val as Parameter), []));
     return ret;
   }
 
@@ -192,12 +243,20 @@ abstract class _$PathItemSerializer implements Serializer<PathItem> {
         patch: _operationSerializer.fromMap(map['patch'] as Map) ??
             getJserDefault('patch'),
         trace: _operationSerializer.fromMap(map['trace'] as Map) ??
-            getJserDefault('trace'));
+            getJserDefault('trace'),
+        parameters: codeNonNullIterable<Parameter>(
+                map['parameters'] as Iterable,
+                (val) => _parameterSerializer.fromMap(val as Map),
+                <Parameter>[]) ??
+            getJserDefault('parameters'));
     return obj;
   }
 }
 
 abstract class _$OperationSerializer implements Serializer<Operation> {
+  Serializer<Parameter> __parameterSerializer;
+  Serializer<Parameter> get _parameterSerializer =>
+      __parameterSerializer ??= new ParameterSerializer();
   Serializer<Request> __requestSerializer;
   Serializer<Request> get _requestSerializer =>
       __requestSerializer ??= new RequestSerializer();
@@ -208,17 +267,26 @@ abstract class _$OperationSerializer implements Serializer<Operation> {
   Map<String, dynamic> toMap(Operation model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'tags', codeIterable(model.tags, (val) => val as String));
-    setMapValue(ret, 'summary', model.summary);
-    setMapValue(ret, 'description', model.description);
-    setMapValue(ret, 'operationId', model.operationId);
-    setMapValue(ret, 'request', _requestSerializer.toMap(model.request));
-    setMapValue(
+    setMapValueIfNotNull(ret, 'tags',
+        codeNonNullIterable(model.tags, (val) => val as String, []));
+    setMapValueIfNotNull(ret, 'summary', model.summary);
+    setMapValueIfNotNull(ret, 'description', model.description);
+    setMapValueIfNotNull(ret, 'operationId', model.operationId);
+    setMapValueIfNotNull(
+        ret,
+        'parameters',
+        codeNonNullIterable(model.parameters,
+            (val) => _parameterSerializer.toMap(val as Parameter), []));
+    setMapValueIfNotNull(
+        ret, 'requestBody', _requestSerializer.toMap(model.requestBody));
+    setMapValueIfNotNull(
         ret,
         'response',
-        codeMap(model.response,
-            (val) => _responseSerializer.toMap(val as Response)));
-    setMapValue(ret, 'deprecated', model.deprecated);
+        codeNonNullMap(
+            model.response,
+            (val) => _responseSerializer.toMap(val as Response),
+            <String, dynamic>{}));
+    setMapValueIfNotNull(ret, 'deprecated', model.deprecated);
     return ret;
   }
 
@@ -226,18 +294,25 @@ abstract class _$OperationSerializer implements Serializer<Operation> {
   Operation fromMap(Map map) {
     if (map == null) return null;
     final obj = new Operation(
-        tags: codeIterable<String>(
-                map['tags'] as Iterable, (val) => val as String) ??
-            getJserDefault('tags'),
+        tags:
+            codeNonNullIterable<String>(map['tags'] as Iterable, (val) => val as String, <String>[]) ??
+                getJserDefault('tags'),
         summary: map['summary'] as String ?? getJserDefault('summary'),
         description:
             map['description'] as String ?? getJserDefault('description'),
         operationId:
             map['operationId'] as String ?? getJserDefault('operationId'),
-        request: _requestSerializer.fromMap(map['request'] as Map) ??
-            getJserDefault('request'),
-        response: codeMap<Response>(map['response'] as Map,
-                (val) => _responseSerializer.fromMap(val as Map)) ??
+        parameters: codeNonNullIterable<Parameter>(
+                map['parameters'] as Iterable,
+                (val) => _parameterSerializer.fromMap(val as Map),
+                <Parameter>[]) ??
+            getJserDefault('parameters'),
+        requestBody: _requestSerializer.fromMap(map['requestBody'] as Map) ??
+            getJserDefault('requestBody'),
+        response: codeNonNullMap<Response>(
+                map['response'] as Map,
+                (val) => _responseSerializer.fromMap(val as Map),
+                <String, Response>{}) ??
             getJserDefault('response'),
         deprecated: map['deprecated'] as bool ?? getJserDefault('deprecated'));
     return obj;
@@ -260,6 +335,61 @@ abstract class _$SchemaSerializer implements Serializer<Schema> {
   }
 }
 
+abstract class _$ParameterSerializer implements Serializer<Parameter> {
+  Serializer<Schema> __schemaSerializer;
+  Serializer<Schema> get _schemaSerializer =>
+      __schemaSerializer ??= new SchemaSerializer();
+  @override
+  Map<String, dynamic> toMap(Parameter model) {
+    if (model == null) return null;
+    Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValueIfNotNull(ret, 'name', model.name);
+    setMapValueIfNotNull(ret, 'in_', model.in_);
+    setMapValueIfNotNull(ret, 'description', model.description);
+    setMapValueIfNotNull(ret, 'required', model.required);
+    setMapValueIfNotNull(ret, 'deprecated', model.deprecated);
+    setMapValueIfNotNull(ret, 'allowEmptyValue', model.allowEmptyValue);
+    setMapValueIfNotNull(ret, 'style', model.style);
+    setMapValueIfNotNull(ret, 'explode', model.explode);
+    setMapValueIfNotNull(ret, 'allowReserved', model.allowReserved);
+    setMapValueIfNotNull(ret, 'schema', _schemaSerializer.toMap(model.schema));
+    setMapValueIfNotNull(
+        ret, 'example', passProcessor.serialize(model.example));
+    setMapValueIfNotNull(
+        ret,
+        'examples',
+        codeNonNullMap(model.examples, (val) => passProcessor.serialize(val),
+            <String, dynamic>{}));
+    return ret;
+  }
+
+  @override
+  Parameter fromMap(Map map) {
+    if (map == null) return null;
+    final obj = new Parameter(
+        name: map['name'] as String ?? getJserDefault('name'),
+        in_: map['in_'] as String ?? getJserDefault('in_'),
+        description:
+            map['description'] as String ?? getJserDefault('description'),
+        required: map['required'] as bool ?? getJserDefault('required'),
+        deprecated: map['deprecated'] as bool ?? getJserDefault('deprecated'),
+        allowEmptyValue:
+            map['allowEmptyValue'] as bool ?? getJserDefault('allowEmptyValue'),
+        style: map['style'] as String ?? getJserDefault('style'),
+        explode: map['explode'] as bool ?? getJserDefault('explode'),
+        allowReserved:
+            map['allowReserved'] as bool ?? getJserDefault('allowReserved'),
+        schema: _schemaSerializer.fromMap(map['schema'] as Map) ??
+            getJserDefault('schema'),
+        example: passProcessor.deserialize(map['example']) ??
+            getJserDefault('example'),
+        examples: codeNonNullMap<dynamic>(map['examples'] as Map,
+                (val) => passProcessor.deserialize(val), <String, dynamic>{}) ??
+            getJserDefault('examples'));
+    return obj;
+  }
+}
+
 abstract class _$HeaderSerializer implements Serializer<Header> {
   Serializer<Schema> __schemaSerializer;
   Serializer<Schema> get _schemaSerializer =>
@@ -268,17 +398,21 @@ abstract class _$HeaderSerializer implements Serializer<Header> {
   Map<String, dynamic> toMap(Header model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'description', model.description);
-    setMapValue(ret, 'required', model.required);
-    setMapValue(ret, 'deprecated', model.deprecated);
-    setMapValue(ret, 'allowEmptyValue', model.allowEmptyValue);
-    setMapValue(ret, 'style', model.style);
-    setMapValue(ret, 'explode', model.explode);
-    setMapValue(ret, 'allowReserved', model.allowReserved);
-    setMapValue(ret, 'schema', _schemaSerializer.toMap(model.schema));
-    setMapValue(ret, 'example', passProcessor.serialize(model.example));
-    setMapValue(ret, 'examples',
-        codeMap(model.examples, (val) => passProcessor.serialize(val)));
+    setMapValueIfNotNull(ret, 'description', model.description);
+    setMapValueIfNotNull(ret, 'required', model.required);
+    setMapValueIfNotNull(ret, 'deprecated', model.deprecated);
+    setMapValueIfNotNull(ret, 'allowEmptyValue', model.allowEmptyValue);
+    setMapValueIfNotNull(ret, 'style', model.style);
+    setMapValueIfNotNull(ret, 'explode', model.explode);
+    setMapValueIfNotNull(ret, 'allowReserved', model.allowReserved);
+    setMapValueIfNotNull(ret, 'schema', _schemaSerializer.toMap(model.schema));
+    setMapValueIfNotNull(
+        ret, 'example', passProcessor.serialize(model.example));
+    setMapValueIfNotNull(
+        ret,
+        'examples',
+        codeNonNullMap(model.examples, (val) => passProcessor.serialize(val),
+            <String, dynamic>{}));
     return ret;
   }
 
@@ -300,8 +434,8 @@ abstract class _$HeaderSerializer implements Serializer<Header> {
             getJserDefault('schema'),
         example: passProcessor.deserialize(map['example']) ??
             getJserDefault('example'),
-        examples: codeMap<dynamic>(map['examples'] as Map,
-                (val) => passProcessor.deserialize(val)) ??
+        examples: codeNonNullMap<dynamic>(map['examples'] as Map,
+                (val) => passProcessor.deserialize(val), <String, dynamic>{}) ??
             getJserDefault('examples'));
     return obj;
   }
@@ -315,10 +449,14 @@ abstract class _$MediaTypeSerializer implements Serializer<MediaType> {
   Map<String, dynamic> toMap(MediaType model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'schema', _schemaSerializer.toMap(model.schema));
-    setMapValue(ret, 'example', passProcessor.serialize(model.example));
-    setMapValue(ret, 'examples',
-        codeMap(model.examples, (val) => passProcessor.serialize(val)));
+    setMapValueIfNotNull(ret, 'schema', _schemaSerializer.toMap(model.schema));
+    setMapValueIfNotNull(
+        ret, 'example', passProcessor.serialize(model.example));
+    setMapValueIfNotNull(
+        ret,
+        'examples',
+        codeNonNullMap(model.examples, (val) => passProcessor.serialize(val),
+            <String, dynamic>{}));
     return ret;
   }
 
@@ -330,8 +468,8 @@ abstract class _$MediaTypeSerializer implements Serializer<MediaType> {
             getJserDefault('schema'),
         example: passProcessor.deserialize(map['example']) ??
             getJserDefault('example'),
-        examples: codeMap<dynamic>(map['examples'] as Map,
-                (val) => passProcessor.deserialize(val)) ??
+        examples: codeNonNullMap<dynamic>(map['examples'] as Map,
+                (val) => passProcessor.deserialize(val), <String, dynamic>{}) ??
             getJserDefault('examples'));
     return obj;
   }
@@ -348,17 +486,21 @@ abstract class _$ResponseSerializer implements Serializer<Response> {
   Map<String, dynamic> toMap(Response model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'description', model.description);
-    setMapValue(
+    setMapValueIfNotNull(ret, 'description', model.description);
+    setMapValueIfNotNull(
         ret,
         'headers',
-        codeMap(
-            model.headers, (val) => _headerSerializer.toMap(val as Header)));
-    setMapValue(
+        codeNonNullMap(
+            model.headers,
+            (val) => _headerSerializer.toMap(val as Header),
+            <String, dynamic>{}));
+    setMapValueIfNotNull(
         ret,
         'mediaType',
-        codeMap(model.mediaType,
-            (val) => _mediaTypeSerializer.toMap(val as MediaType)));
+        codeNonNullMap(
+            model.mediaType,
+            (val) => _mediaTypeSerializer.toMap(val as MediaType),
+            <String, dynamic>{}));
     return ret;
   }
 
@@ -368,11 +510,15 @@ abstract class _$ResponseSerializer implements Serializer<Response> {
     final obj = new Response(
         description:
             map['description'] as String ?? getJserDefault('description'),
-        headers: codeMap<Header>(map['headers'] as Map,
-                (val) => _headerSerializer.fromMap(val as Map)) ??
+        headers: codeNonNullMap<Header>(
+                map['headers'] as Map,
+                (val) => _headerSerializer.fromMap(val as Map),
+                <String, Header>{}) ??
             getJserDefault('headers'),
-        mediaType: codeMap<MediaType>(map['mediaType'] as Map,
-                (val) => _mediaTypeSerializer.fromMap(val as Map)) ??
+        mediaType: codeNonNullMap<MediaType>(
+                map['mediaType'] as Map,
+                (val) => _mediaTypeSerializer.fromMap(val as Map),
+                <String, MediaType>{}) ??
             getJserDefault('mediaType'));
     return obj;
   }
@@ -386,13 +532,15 @@ abstract class _$RequestSerializer implements Serializer<Request> {
   Map<String, dynamic> toMap(Request model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
-    setMapValue(ret, 'description', model.description);
-    setMapValue(
+    setMapValueIfNotNull(ret, 'description', model.description);
+    setMapValueIfNotNull(
         ret,
         'content',
-        codeMap(model.content,
-            (val) => _mediaTypeSerializer.toMap(val as MediaType)));
-    setMapValue(ret, 'required', model.required);
+        codeNonNullMap(
+            model.content,
+            (val) => _mediaTypeSerializer.toMap(val as MediaType),
+            <String, dynamic>{}));
+    setMapValueIfNotNull(ret, 'required', model.required);
     return ret;
   }
 
@@ -402,8 +550,10 @@ abstract class _$RequestSerializer implements Serializer<Request> {
     final obj = new Request(
         description:
             map['description'] as String ?? getJserDefault('description'),
-        content: codeMap<MediaType>(map['content'] as Map,
-                (val) => _mediaTypeSerializer.fromMap(val as Map)) ??
+        content: codeNonNullMap<MediaType>(
+                map['content'] as Map,
+                (val) => _mediaTypeSerializer.fromMap(val as Map),
+                <String, MediaType>{}) ??
             getJserDefault('content'),
         required: map['required'] as bool ?? getJserDefault('required'));
     return obj;
