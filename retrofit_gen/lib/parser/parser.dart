@@ -103,7 +103,7 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
 
 WriteInfo parse(ClassElement element, ConstantReader annotation) {
   final an = isGenApiClient.firstAnnotationOfExact(element);
-  final basePath = an.getField("path").toStringValue();
+  final basePath = an.getField("path").toStringValue() ?? '';
   final baseMetadata = an.getField("metadata").toMapValue().map(
       (k, v) => MapEntry<String, String>(k.toStringValue(), toStringValue(v)));
   final basePathParams = basePath
