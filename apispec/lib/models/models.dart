@@ -163,13 +163,15 @@ class Operation {
 class Schema {
   final String title;
 
+  // TODO multipleOf
+
   final String type;
 
-  // TODO allOf
+  final List<Schema> allOf;
 
-  // TODO oneOf
+  final List<Schema> oneOf;
 
-  // TODO anyOf
+  final List<Schema> anyOf;
 
   // TODO not
 
@@ -177,11 +179,11 @@ class Schema {
 
   final Map<String, Schema> properties;
 
-  final bool additionalProperties;
+  // TODO final bool additionalProperties;
 
   final String description;
 
-  // TODO format
+  final String format;
 
   // TODO default
 
@@ -206,8 +208,9 @@ class Schema {
       this.type,
       this.items,
       this.properties,
-      this.additionalProperties,
+      // TODO this.additionalProperties,
       this.description,
+      this.format,
       this.nullable,
       this.readOnly,
       this.writeOnly,
