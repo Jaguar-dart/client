@@ -77,7 +77,7 @@ class Writer {
       }
 
       if (body is MultipartFormField) {
-        sb.write('.multipartField(${body.key}, ${body.name})');
+        sb.write('.multipart({"${body.key}": ${body.name}})');
       }
     }
 
@@ -88,6 +88,8 @@ class Writer {
     } else if (r.result.model != null) {
       if (r.result.isResultList) {
         sb.writeln('return req.list(convert: serializers.oneFrom);');
+      } else if (r.result.isStringResponse) {
+        sb.writeln('return req.go();');
       } else {
         sb.writeln('return req.one(convert: serializers.oneFrom);');
       }

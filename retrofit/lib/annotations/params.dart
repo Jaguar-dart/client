@@ -37,10 +37,3 @@ class AsMultipartField {
   final String alias;
   const AsMultipartField([this.alias]);
 }
-
-/* TODO
-class AsMultipartFile {
-  final String alias;
-  const AsMultipartFile([this.alias]);
-}
-*/

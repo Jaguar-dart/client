@@ -43,7 +43,7 @@ class Result {
 
   DartType model;
 
-  // TODO result could be response
+  bool get isStringResponse => isResponse.isAssignableFromType(model);
 
   Result(this.me) {
     DartType rt = me.returnType;
