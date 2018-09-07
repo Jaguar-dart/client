@@ -163,7 +163,35 @@ class Operation {
 class Schema {
   final String title;
 
-  // TODO multipleOf
+  final num multipleOf;
+
+  final num maximum;
+
+  final bool exclusiveMaximum;
+
+  final num minimum;
+
+  final bool exclusiveMinimum;
+
+  final int maxLength;
+
+  final int minLength;
+
+  final String pattern;
+
+  final int maxItems;
+
+  final int minItems;
+
+  final bool uniqueItems;
+
+  final int maxProperties;
+
+  final int minProperties;
+
+  final bool required;
+
+  final List<dynamic> enumerated;
 
   final String type;
 
@@ -173,7 +201,7 @@ class Schema {
 
   final List<Schema> anyOf;
 
-  // TODO not
+  final Schema not;
 
   final Schema items;
 
@@ -205,7 +233,26 @@ class Schema {
 
   const Schema(
       {this.title,
+      this.multipleOf,
+      this.maximum,
+      this.exclusiveMaximum,
+      this.minimum,
+      this.exclusiveMinimum,
+      this.maxLength,
+      this.minLength,
+      this.pattern,
+      this.maxItems,
+      this.minItems,
+      this.uniqueItems,
+      this.maxProperties,
+      this.minProperties,
+      this.required,
+      this.enumerated,
       this.type,
+      this.allOf,
+      this.anyOf,
+      this.oneOf,
+      this.not,
       this.items,
       this.properties,
       // TODO this.additionalProperties,

@@ -320,17 +320,115 @@ abstract class _$OperationSerializer implements Serializer<Operation> {
 }
 
 abstract class _$SchemaSerializer implements Serializer<Schema> {
+  Serializer<Schema> __schemaSerializer;
+  Serializer<Schema> get _schemaSerializer =>
+      __schemaSerializer ??= new SchemaSerializer();
   @override
   Map<String, dynamic> toMap(Schema model) {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
+    setMapValueIfNotNull(ret, 'title', model.title);
+    setMapValueIfNotNull(ret, 'multipleOf', model.multipleOf);
+    setMapValueIfNotNull(ret, 'maximum', model.maximum);
+    setMapValueIfNotNull(ret, 'exclusiveMaximum', model.exclusiveMaximum);
+    setMapValueIfNotNull(ret, 'minimum', model.minimum);
+    setMapValueIfNotNull(ret, 'exclusiveMinimum', model.exclusiveMinimum);
+    setMapValueIfNotNull(ret, 'maxLength', model.maxLength);
+    setMapValueIfNotNull(ret, 'minLength', model.minLength);
+    setMapValueIfNotNull(ret, 'pattern', model.pattern);
+    setMapValueIfNotNull(ret, 'maxItems', model.maxItems);
+    setMapValueIfNotNull(ret, 'minItems', model.minItems);
+    setMapValueIfNotNull(ret, 'uniqueItems', model.uniqueItems);
+    setMapValueIfNotNull(ret, 'maxProperties', model.maxProperties);
+    setMapValueIfNotNull(ret, 'minProperties', model.minProperties);
+    setMapValueIfNotNull(ret, 'required', model.required);
+    setMapValueIfNotNull(
+        ret,
+        'enum',
+        codeNonNullIterable(
+            model.enumerated, (val) => passProcessor.serialize(val), []));
+    setMapValueIfNotNull(ret, 'type', model.type);
+    setMapValueIfNotNull(
+        ret,
+        'allOf',
+        codeNonNullIterable(
+            model.allOf, (val) => _schemaSerializer.toMap(val as Schema), []));
+    setMapValueIfNotNull(
+        ret,
+        'oneOf',
+        codeNonNullIterable(
+            model.oneOf, (val) => _schemaSerializer.toMap(val as Schema), []));
+    setMapValueIfNotNull(
+        ret,
+        'anyOf',
+        codeNonNullIterable(
+            model.anyOf, (val) => _schemaSerializer.toMap(val as Schema), []));
+    setMapValueIfNotNull(ret, 'not', _schemaSerializer.toMap(model.not));
+    setMapValueIfNotNull(ret, 'items', _schemaSerializer.toMap(model.items));
+    setMapValueIfNotNull(
+        ret,
+        'properties',
+        codeNonNullMap(
+            model.properties,
+            (val) => _schemaSerializer.toMap(val as Schema),
+            <String, dynamic>{}));
+    setMapValueIfNotNull(ret, 'description', model.description);
+    setMapValueIfNotNull(ret, 'format', model.format);
+    setMapValueIfNotNull(ret, 'nullable', model.nullable);
+    setMapValueIfNotNull(ret, 'readOnly', model.readOnly);
+    setMapValueIfNotNull(ret, 'writeOnly', model.writeOnly);
+    setMapValueIfNotNull(
+        ret, 'example', passProcessor.serialize(model.example));
+    setMapValueIfNotNull(ret, 'deprecated', model.deprecated);
     return ret;
   }
 
   @override
   Schema fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Schema();
+    final obj = new Schema(
+        title: map['title'] as String ?? getJserDefault('title'),
+        multipleOf: map['multipleOf'] as num ?? getJserDefault('multipleOf'),
+        maximum: map['maximum'] as num ?? getJserDefault('maximum'),
+        exclusiveMaximum: map['exclusiveMaximum'] as bool ??
+            getJserDefault('exclusiveMaximum'),
+        minimum: map['minimum'] as num ?? getJserDefault('minimum'),
+        exclusiveMinimum: map['exclusiveMinimum'] as bool ??
+            getJserDefault('exclusiveMinimum'),
+        maxLength: map['maxLength'] as int ?? getJserDefault('maxLength'),
+        minLength: map['minLength'] as int ?? getJserDefault('minLength'),
+        pattern: map['pattern'] as String ?? getJserDefault('pattern'),
+        maxItems: map['maxItems'] as int ?? getJserDefault('maxItems'),
+        minItems: map['minItems'] as int ?? getJserDefault('minItems'),
+        uniqueItems:
+            map['uniqueItems'] as bool ?? getJserDefault('uniqueItems'),
+        maxProperties:
+            map['maxProperties'] as int ?? getJserDefault('maxProperties'),
+        minProperties:
+            map['minProperties'] as int ?? getJserDefault('minProperties'),
+        required: map['required'] as bool ?? getJserDefault('required'),
+        enumerated:
+            codeNonNullIterable<dynamic>(map['enum'] as Iterable, (val) => passProcessor.deserialize(val), <dynamic>[]) ??
+                getJserDefault('enumerated'),
+        type: map['type'] as String ?? getJserDefault('type'),
+        allOf: codeNonNullIterable<Schema>(map['allOf'] as Iterable, (val) => _schemaSerializer.fromMap(val as Map), <Schema>[]) ??
+            getJserDefault('allOf'),
+        anyOf: codeNonNullIterable<Schema>(map['anyOf'] as Iterable,
+                (val) => _schemaSerializer.fromMap(val as Map), <Schema>[]) ??
+            getJserDefault('anyOf'),
+        oneOf: codeNonNullIterable<Schema>(map['oneOf'] as Iterable,
+                (val) => _schemaSerializer.fromMap(val as Map), <Schema>[]) ??
+            getJserDefault('oneOf'),
+        not: _schemaSerializer.fromMap(map['not'] as Map) ?? getJserDefault('not'),
+        items: _schemaSerializer.fromMap(map['items'] as Map) ?? getJserDefault('items'),
+        properties: codeNonNullMap<Schema>(map['properties'] as Map, (val) => _schemaSerializer.fromMap(val as Map), <String, Schema>{}) ?? getJserDefault('properties'),
+        description: map['description'] as String ?? getJserDefault('description'),
+        format: map['format'] as String ?? getJserDefault('format'),
+        nullable: map['nullable'] as bool ?? getJserDefault('nullable'),
+        readOnly: map['readOnly'] as bool ?? getJserDefault('readOnly'),
+        writeOnly: map['writeOnly'] as bool ?? getJserDefault('writeOnly'),
+        example: passProcessor.deserialize(map['example']) ?? getJserDefault('example'),
+        deprecated: map['deprecated'] as bool ?? getJserDefault('deprecated'));
     return obj;
   }
 }
@@ -344,7 +442,7 @@ abstract class _$ParameterSerializer implements Serializer<Parameter> {
     if (model == null) return null;
     Map<String, dynamic> ret = <String, dynamic>{};
     setMapValueIfNotNull(ret, 'name', model.name);
-    setMapValueIfNotNull(ret, 'in_', model.in_);
+    setMapValueIfNotNull(ret, 'in', model.in_);
     setMapValueIfNotNull(ret, 'description', model.description);
     setMapValueIfNotNull(ret, 'required', model.required);
     setMapValueIfNotNull(ret, 'deprecated', model.deprecated);
@@ -368,7 +466,7 @@ abstract class _$ParameterSerializer implements Serializer<Parameter> {
     if (map == null) return null;
     final obj = new Parameter(
         name: map['name'] as String ?? getJserDefault('name'),
-        in_: map['in_'] as String ?? getJserDefault('in_'),
+        in_: map['in'] as String ?? getJserDefault('in_'),
         description:
             map['description'] as String ?? getJserDefault('description'),
         required: map['required'] as bool ?? getJserDefault('required'),

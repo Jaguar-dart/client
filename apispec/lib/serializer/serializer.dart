@@ -31,10 +31,10 @@ class PathItemSerializer extends Serializer<PathItem>
 class OperationSerializer extends Serializer<Operation>
     with _$OperationSerializer {}
 
-@GenSerializer(nullableFields: false)
+@GenSerializer(nullableFields: false, fields: {"enumerated": Alias("enum")})
 class SchemaSerializer extends Serializer<Schema> with _$SchemaSerializer {}
 
-@GenSerializer(nullableFields: false)
+@GenSerializer(nullableFields: false, fields: {"in_": Alias("in")})
 class ParameterSerializer extends Serializer<Parameter>
     with _$ParameterSerializer {}
 
