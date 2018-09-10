@@ -147,11 +147,11 @@ String toStringValue(DartObject value) {
     return '${value.toIntValue()}';
   } else if (value.toDoubleValue() != null) {
     return '${value.toDoubleValue()}';
-  } else if (value is Iterable) {
+  } else if (value is Iterable || value.toListValue() != null) {
     return '[' + value.toListValue().map(toStringValue).join(',') + ']';
-  } else if (value is Map) {
+  } else if (value is Map || value.toMapValue() != null) {
     var sb = StringBuffer('{');
-    value.toMapValue().map((k, v) {
+    value.toMapValue().forEach((k, v) {
       if (k.toStringValue() == null) {
         throw UnsupportedError("Key can only be String");
       }

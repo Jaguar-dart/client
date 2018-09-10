@@ -18,6 +18,12 @@ abstract class _$UserApiClient implements ApiClient {
           "bool": true,
           "int": 1,
           "double": 2.2,
+          "list": ["test", "ok"],
+          "auth": [
+            {
+              "test": "ok",
+            }
+          ],
         })
         .path(basePath)
         .path("/:id")
