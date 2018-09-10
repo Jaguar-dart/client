@@ -23,7 +23,7 @@ class UserApi extends _$UserApiClient implements ApiClient {
 
   @GetReq(
       path: "/:id",
-      metadata: {"token": "test", "bool": true, "int": 1, "double": 2.2})
+      metadata: {"token": "test", "bool": true, "int": 1, "double": 2.2, "list": ["test", "ok"], "auth": [{"test": "ok"}]})
   Future<User> getUserById(
       String test, String id, @QueryParam("qparam") String param);
 
