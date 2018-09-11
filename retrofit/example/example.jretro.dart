@@ -14,12 +14,12 @@ abstract class _$UserApiClient implements ApiClient {
   }
 
   Future<List<User>> all() async {
-    var req = base.get.path(basePath).path("");
+    var req = base.get.path(basePath);
     return req.list(convert: serializers.oneFrom);
   }
 
   Future<User> createUser(User user) async {
-    var req = base.post.path(basePath).path("").json(serializers.to(user));
+    var req = base.post.path(basePath).json(serializers.to(user));
     return req.one(convert: serializers.oneFrom);
   }
 
