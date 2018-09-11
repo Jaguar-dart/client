@@ -10,7 +10,7 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   Map<String, String> metadata = reader.read('metadata').mapValue.map(
       (k, v) => MapEntry<String, String>(k.toStringValue(), toStringValue(v)));
 
-  final pathParams = Set<String>();
+  final pathParams = <String, String>{};
   final query = <String, String>{};
   final headers = <String, String>{};
   final queryMap = Set<String>();
@@ -21,7 +21,8 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
     {
       DartObject pathParam = isPathParam.firstAnnotationOfExact(pe);
       if (pathParam != null) {
-        pathParams.add(pathParam.getField('alias').toStringValue() ?? pe.displayName);
+        pathParams[pathParam.getField('alias').toStringValue() ?? pe.displayName] =
+            pe.displayName;
       }
     }
 

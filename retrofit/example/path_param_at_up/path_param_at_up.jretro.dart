@@ -14,7 +14,7 @@ abstract class _$SampleApiClient implements ApiClient {
           "base": "test",
         })
         .path(basePath)
-        .path("");
+        .pathParams("test", test);
     return req.one();
   }
 }

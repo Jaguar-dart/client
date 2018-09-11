@@ -21,7 +21,7 @@ class SampleApi extends _$SampleApiClient implements ApiClient {
   SampleApi({this.base, this.serializers});
 
   @GetReq()
-  Future<String> test(String test);
+  Future<String> test(@PathParam("test") String test);
 }
 
 final repo = JsonRepo();

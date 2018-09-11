@@ -108,7 +108,7 @@ class Req {
 
   final Map<String, String> metadata;
 
-  final Set<String> pathParams;
+  final Map<String, String> pathParams;
 
   final Map<String, String> query;
 
