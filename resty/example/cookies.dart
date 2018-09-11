@@ -19,21 +19,9 @@ final server = Jaguar(port: 8000)
 final jar = resty.CookieJar();
 
 Future client() async {
-  print(await resty
-      .get('http://localhost:8000/data')
-      .before(jar)
-      .go()
-      .body);
-  print(await resty
-      .get('http://localhost:8000/key')
-      .before(jar)
-      .go()
-      .body);
-  print(await resty
-      .get('http://localhost:8000/data')
-      .before(jar)
-      .go()
-      .body);
+  print(await resty.get('http://localhost:8000/data').before(jar).go().body);
+  print(await resty.get('http://localhost:8000/key').before(jar).go().body);
+  print(await resty.get('http://localhost:8000/data').before(jar).go().body);
 }
 
 main() async {

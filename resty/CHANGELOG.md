@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.4
+
++ Added `Patch`
+
 ## 2.8.1-dev.2
 
 + Powerful `After` interceptor

@@ -543,8 +543,7 @@ class Post extends RouteBase {
     return this;
   }
 
-  Post before(Before interceptor) =>
-      super.before(interceptor);
+  Post before(Before interceptor) => super.before(interceptor);
 
   Post after(After interceptor) => super.after(interceptor);
 
@@ -776,8 +775,7 @@ class Patch extends RouteBase {
     return this;
   }
 
-  Patch before(Before interceptor) =>
-      super.before(interceptor);
+  Patch before(Before interceptor) => super.before(interceptor);
 
   Patch after(After interceptor) => super.after(interceptor);
 
@@ -818,19 +816,19 @@ class Patch extends RouteBase {
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
             .then((StringResponse r) async {
-          StringResponse ret = r;
-          for (After func in cloned.getAfter) {
-            var res = await func(r);
-            if (res != null) ret = res;
-          }
-          return ret;
-        }));
+      StringResponse ret = r;
+      for (After func in cloned.getAfter) {
+        var res = await func(r);
+        if (res != null) ret = res;
+      }
+      return ret;
+    }));
     return resp;
   }
 
   Future<T> one<T>(
       {T convert(Map d),
-        FutureOr<dynamic> onError(StringResponse resp)}) async {
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decode<T>(convert);
@@ -842,7 +840,7 @@ class Patch extends RouteBase {
 
   Future<List<T>> list<T>(
       {T convert(Map d),
-        FutureOr<dynamic> onError(StringResponse resp)}) async {
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeList<T>(convert);
@@ -856,13 +854,13 @@ class Patch extends RouteBase {
       go().expect(conditions);
 
   AsyncStringResponse exact(
-      {int statusCode,
-        String body,
-        List<int> bytes,
-        String mimeType,
-        String encoding,
-        Map<String, String> headers,
-        int contentLength}) =>
+          {int statusCode,
+          String body,
+          List<int> bytes,
+          String mimeType,
+          String encoding,
+          Map<String, String> headers,
+          int contentLength}) =>
       go().exact(
           statusCode: statusCode,
           body: body,
@@ -1174,8 +1172,7 @@ class Delete extends RouteBase {
 
   Delete cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Delete before(Before interceptor) =>
-      super.before(interceptor);
+  Delete before(Before interceptor) => super.before(interceptor);
 
   Delete after(After interceptor) => super.after(interceptor);
 
@@ -1318,11 +1315,9 @@ class OptionsMethod extends RouteBase {
 
   OptionsMethod cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  OptionsMethod before(Before interceptor) =>
-      super.before(interceptor);
+  OptionsMethod before(Before interceptor) => super.before(interceptor);
 
-  OptionsMethod after(After interceptor) =>
-      super.after(interceptor);
+  OptionsMethod after(After interceptor) => super.after(interceptor);
 
   OptionsMethod url(String value) => super.url(value);
 

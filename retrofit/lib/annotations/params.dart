@@ -1,3 +1,8 @@
+class PathParam {
+  final String alias;
+  const PathParam([this.alias]);
+}
+
 class QueryParam {
   final String alias;
   const QueryParam([this.alias]);

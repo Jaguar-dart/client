@@ -1,6 +1,6 @@
 name: jaguar_resty
 description: Build fluent functional REST clients. Supports interceptors, cookies, multipart forms and authenticators.
-version: 2.8.2
+version: 2.8.4
 homepage: https://github.com/Jaguar-dart/client
 author: Ravi Teja Gudapati <tejainece@gmail.com>
 

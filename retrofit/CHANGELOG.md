@@ -1,11 +1,5 @@
 # Changelog
 
-## 2.2.2
+## 2.5.1
 
-+ Added `AsForm`, `AsFormField`
-
-## 2.2.1
-
-## Breaking changes
-
-+ Change extension to `.jretro.dart`
++ Added `PathParam` annotation

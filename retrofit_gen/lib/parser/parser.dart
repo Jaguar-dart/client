@@ -9,16 +9,8 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   String path = reader.read('path').stringValue;
   Map<String, String> metadata = reader.read('metadata').mapValue.map(
       (k, v) => MapEntry<String, String>(k.toStringValue(), toStringValue(v)));
-  var varPathSegs = <String>[];
-  if (path != null)
-    varPathSegs = path
-        .split('/')
-        .where((p) => p.startsWith(':'))
-        .map((p) => p.substring(1))
-        .toList();
 
   final pathParams = Set<String>();
-
   final query = <String, String>{};
   final headers = <String, String>{};
   final queryMap = Set<String>();
@@ -26,7 +18,12 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   final body = List<Body>();
 
   for (ParameterElement pe in method.parameters) {
-    if (varPathSegs.contains(pe.displayName)) pathParams.add(pe.displayName);
+    {
+      DartObject pathParam = isPathParam.firstAnnotationOfExact(pe);
+      if (pathParam != null) {
+        pathParams.add(pathParam.getField('alias').toStringValue() ?? pe.displayName);
+      }
+    }
 
     {
       DartObject qp = isQueryParam.firstAnnotationOfExact(pe);
@@ -106,11 +103,6 @@ WriteInfo parse(ClassElement element, ConstantReader annotation) {
   final basePath = an.getField("path").toStringValue() ?? '';
   final baseMetadata = an.getField("metadata").toMapValue().map(
       (k, v) => MapEntry<String, String>(k.toStringValue(), toStringValue(v)));
-  final basePathParams = basePath
-      .split('/')
-      .where((p) => p.startsWith(':'))
-      .map((p) => p.substring(1))
-      .toSet();
 
   final reqs = <Req>[];
 
@@ -133,7 +125,7 @@ WriteInfo parse(ClassElement element, ConstantReader annotation) {
   }
 
   return WriteInfo(
-      element.displayName, basePath, basePathParams, baseMetadata, reqs);
+      element.displayName, basePath, baseMetadata, reqs);
 }
 
 String toStringValue(DartObject value) {

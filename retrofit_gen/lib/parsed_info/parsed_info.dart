@@ -1,4 +1,3 @@
-import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart' show MethodElement;
 import 'package:analyzer/dart/element/type.dart';
 import 'package:jaguar_retrofit_gen/utils/utils.dart';
@@ -41,6 +40,10 @@ class Result {
 
   bool isResultList = false;
 
+  bool isResultBuiltin = false;
+
+  String mapValueType;
+
   DartType model;
 
   bool get isStringResponse => isResponse.isAssignableFromType(model);
@@ -63,6 +66,20 @@ class Result {
       return;
     }
 
+    if (isMap.isExactlyType(rt)) {
+      InterfaceType rtIt = rt;
+      DartType key = rtIt.typeArguments.first;
+      DartType value = rtIt.typeArguments[1];
+      if (!isString.isExactlyType(key)) {
+        throw Exception("Maps should have String keys!");
+      }
+      if (isMap.isExactlyType(value) || isList.isExactlyType(value)) {
+        throw Exception("Collections inside Map are not supported!");
+      }
+      mapValueType = value.displayName;
+      return;
+    }
+
     if (isList.isExactlyType(rt)) {
       InterfaceType rtIt = rt;
       DartType mod = rtIt.typeArguments.first;
@@ -74,11 +91,11 @@ class Result {
         model = mod;
         isResultList = true;
       }
-    } else if (isMap.isAssignableFromType(rt)) {
-      returnsDynamic = true;
-    } else {
-      model = rt;
+      return;
     }
+
+    if(isBuiltin(rt)) isResultBuiltin = true;
+    model = rt;
   }
 }
 
@@ -122,11 +139,10 @@ class Req {
 class WriteInfo {
   final String name;
   final String basePath;
-  final Set<String> basePathParams;
   final Map<String, String> baseMetadata;
 
   final List<Req> requests;
 
-  WriteInfo(this.name, this.basePath, this.basePathParams, this.baseMetadata,
+  WriteInfo(this.name, this.basePath, this.baseMetadata,
       this.requests);
 }
