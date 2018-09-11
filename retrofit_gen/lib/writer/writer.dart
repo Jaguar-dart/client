@@ -38,9 +38,17 @@ class Writer {
     if (i.basePath != null) sb.write('.path(basePath)');
     if (r.path != null) sb.write('.path("${r.path}")');
 
-    for (String path in r.pathParams) sb.write('.pathParams("$path", $path)');
-    for (String path in i.basePathParams)
-      sb.write('.pathParams("$path", $path)');
+    r.pathParams.forEach((String key, String valueField) {
+      sb.write('.pathParams("$key", $valueField)');
+    });
+
+    for (String path in i.basePathParams) {
+      r.pathParams.forEach((String key, String valueField) {
+        if(key == path) {
+          sb.write('.pathParams("$key", $valueField)');
+        }
+      });
+    }
 
     r.query.forEach((String key, String valueField) {
       sb.write('.query("$key", $valueField)');
