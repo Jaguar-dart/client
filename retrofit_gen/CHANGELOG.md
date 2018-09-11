@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.2
+
++ `PathParam` alias bug fix
+
 ## 2.2.2
 
 + Added `AsForm`, `AsFormField`
