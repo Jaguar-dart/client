@@ -15,7 +15,8 @@ class AsyncJsonResponse extends resty.AsyncStringResponse
   @override
   Future<S> then<S>(FutureOr<S> onValue(JsonResponse value),
           {Function onError}) =>
-      super.then(onValue, onError: onError);
+      super.then((resty.StringResponse r) => onValue(r as JsonResponse),
+          onError: onError);
 
   @override
   AsyncJsonResponse onFailure(resty.ResponseHook<String> hook) =>
