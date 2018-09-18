@@ -47,8 +47,8 @@ class JsonClient {
     if (headers != null) item.headers(headers);
     _addHeaders(item);
 
-    before.forEach(item.interceptBefore);
-    after.forEach(item.interceptAfter);
+    before.forEach(item.before);
+    after.forEach(item.after);
 
     return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
@@ -71,8 +71,8 @@ class JsonClient {
         item.json(body);
     }
 
-    before.forEach(item.interceptBefore);
-    after.forEach(item.interceptAfter);
+    before.forEach(item.before);
+    after.forEach(item.after);
 
     return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
@@ -96,8 +96,8 @@ class JsonClient {
         item.json(body);
     }
 
-    before.forEach(item.interceptBefore);
-    after.forEach(item.interceptAfter);
+    before.forEach(item.before);
+    after.forEach(item.after);
 
     return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
@@ -113,8 +113,8 @@ class JsonClient {
     if (headers != null) item.headers(headers);
     _addHeaders(item);
 
-    before.forEach(item.interceptBefore);
-    after.forEach(item.interceptAfter);
+    before.forEach(item.before);
+    after.forEach(item.after);
 
     return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
@@ -136,8 +136,8 @@ class JsonClient {
         item.urlEncodedForm(body);
     }
 
-    before.forEach(item.interceptBefore);
-    after.forEach(item.interceptAfter);
+    before.forEach(item.before);
+    after.forEach(item.after);
 
     return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
@@ -166,8 +166,8 @@ class JsonClient {
         item.urlEncodedForm(body);
     }
 
-    before.forEach(item.interceptBefore);
-    after.forEach(item.interceptAfter);
+    before.forEach(item.before);
+    after.forEach(item.after);
 
     return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
@@ -196,10 +196,10 @@ class JsonClient {
 
     item.json(payload.toMap());
 
-    before.forEach(item.interceptBefore);
-    after.forEach(item.interceptAfter);
+    before.forEach(item.before);
+    after.forEach(item.after);
 
-    if (captureAuthToken) item.interceptAfter(_captureBearerHeader);
+    if (captureAuthToken) item.after(_captureBearerHeader);
 
     return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
@@ -224,10 +224,10 @@ class JsonClient {
 
     item.urlEncodedForm(payload.toMap());
 
-    before.forEach(item.interceptBefore);
-    after.forEach(item.interceptAfter);
+    before.forEach(item.before);
+    after.forEach(item.after);
 
-    if (captureAuthToken) item.interceptAfter(_captureBearerHeader);
+    if (captureAuthToken) item.after(_captureBearerHeader);
 
     return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
@@ -251,12 +251,12 @@ class JsonClient {
 
     if (payload.extras != null) item.json(payload.extras);
 
-    before.forEach(item.interceptBefore);
-    after.forEach(item.interceptAfter);
+    before.forEach(item.before);
+    after.forEach(item.after);
 
     item.basicAuth(payload.username, payload.password);
 
-    if (captureAuthToken) item.interceptAfter(_captureBearerHeader);
+    if (captureAuthToken) item.after(_captureBearerHeader);
 
     return new AsyncJsonResponse.fromAsyncStringResponse(repo, item.go());
   }
@@ -285,7 +285,7 @@ class JsonClient {
     route.headers(defaultHeaders);
     route.header('Accept', 'application/json');
 
-    if (manageCookie) route.interceptBefore(jar.intercept);
+    if (manageCookie) route.before(jar.before);
 
     if (bearerAuthHeader is String) route.authToken(bearerAuthHeader);
   }

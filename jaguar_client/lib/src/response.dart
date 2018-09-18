@@ -1,6 +1,6 @@
 part of http.json;
 
-class AsyncJsonResponse extends DelegatingFuture<JsonResponse>
+class AsyncJsonResponse extends resty.AsyncStringResponse
     implements resty.AsyncResponse<String> {
   /// Json serializer repository
   final JsonRepo repo;
@@ -10,40 +10,23 @@ class AsyncJsonResponse extends DelegatingFuture<JsonResponse>
   AsyncJsonResponse.fromAsyncStringResponse(
       this.repo, resty.AsyncStringResponse resp)
       : super(resp.then((resty.StringResponse r) =>
-            new JsonResponse.fromStringResponse(repo, r)));
+            JsonResponse.fromStringResponse(repo, r)));
 
-  Future<int> get statusCode => then((r) => r.statusCode);
+  @override
+  Future<S> then<S>(FutureOr<S> onValue(JsonResponse value),
+          {Function onError}) =>
+      super.then(onValue, onError: onError);
 
-  Future<String> get body => then((r) => r.body);
+  @override
+  AsyncJsonResponse onFailure(resty.ResponseHook<String> hook) =>
+      AsyncJsonResponse.fromAsyncStringResponse(repo, super.onFailure(hook));
 
-  Future<List<int>> get bytes => then((r) => r.bytes);
-
-  Future<Map<String, String>> get headers => then((r) => r.headers);
-
-  Future<bool> get isRedirect => then((r) => r.isRedirect);
-
-  Future<bool> get persistentConnection => then((r) => r.persistentConnection);
-
-  Future<String> get reasonPhrase => then((r) => r.reasonPhrase);
-
-  Future<int> get contentLength => then((r) => r.contentLength);
-
-  Future<http.BaseRequest> get request => then((r) => r.request);
-
-  Future<String> get mimeType => then((r) => r.mimeType);
-
-  Future<String> get encoding => then((r) => r.encoding);
-
-  Future<resty.StringResponse> get toStringResponse => this;
-
-  Future<bool> get isSuccess => then((r) => r.isSuccess);
-
-  AsyncJsonResponse onSuccess(resty.After<String> func) => run((r) async {
-        if (r.isSuccess) await func(r);
-      });
+  @override
+  AsyncJsonResponse onSuccess(resty.ResponseHook<String> hook) =>
+      AsyncJsonResponse.fromAsyncStringResponse(repo, super.onSuccess(hook));
 
   AsyncJsonResponse expect(List<resty.Checker<resty.Response>> conditions) =>
-      new AsyncJsonResponse(repo, then((r) => r.expect(conditions)));
+      AsyncJsonResponse(repo, then((r) => r.expect(conditions)));
 
   AsyncJsonResponse exact(
       {int statusCode,
@@ -53,7 +36,7 @@ class AsyncJsonResponse extends DelegatingFuture<JsonResponse>
       String encoding,
       Map<String, String> headers,
       int contentLength}) {
-    return new AsyncJsonResponse(
+    return AsyncJsonResponse(
         repo,
         then((r) => r.exact(
             statusCode: statusCode,
@@ -66,11 +49,11 @@ class AsyncJsonResponse extends DelegatingFuture<JsonResponse>
   }
 
   resty.AsyncTResponse<T> json<T>([T convert(Map d)]) =>
-      new resty.AsyncTResponse<T>(
+      resty.AsyncTResponse<T>(
           then((resty.StringResponse r) => r.json<T>(convert)));
 
   resty.AsyncTResponse<List<T>> jsonList<T>([T convert(Map d)]) =>
-      new resty.AsyncTResponse<List<T>>(
+      resty.AsyncTResponse<List<T>>(
           then((resty.StringResponse r) => r.jsonList<T>(convert)));
 
   Future<T> decode<T>([T convert(Map d)]) => then((r) => r.decode<T>(convert));
@@ -78,19 +61,9 @@ class AsyncJsonResponse extends DelegatingFuture<JsonResponse>
   Future<List<T>> decodeList<T>([T convert(Map d)]) =>
       then((resty.StringResponse r) => r.decodeList<T>(convert));
 
-  /// Runs [func] with [Response] object after request completion
-  AsyncJsonResponse run(resty.After<String> func) =>
-      new AsyncJsonResponse(repo, then((r) async {
-        await func(r);
-        return r;
-      }));
-
-  /// Runs [funcs] with [Response] object after request completion
-  AsyncJsonResponse runAll(List<resty.After<String>> funcs) =>
-      new AsyncJsonResponse(repo, then((r) async {
-        for (resty.After<String> func in funcs) await func(r);
-        return r;
-      }));
+  @override
+  AsyncJsonResponse run(resty.ResponseHook<String> func) =>
+      AsyncJsonResponse.fromAsyncStringResponse(repo, super.run(func));
 
   Future<T> withSerializer<T>(Serializer<T> serializer) =>
       then((r) => r.withSerializer<T>(serializer));
@@ -119,6 +92,8 @@ class JsonResponse extends resty.StringResponse {
       String reasonPhrase,
       int contentLength,
       http.BaseRequest request,
+      @required resty.RouteBase sender,
+      @required resty.RouteBase sent,
       String mimeType,
       String encoding})
       : super(
@@ -130,6 +105,8 @@ class JsonResponse extends resty.StringResponse {
             reasonPhrase: reasonPhrase,
             contentLength: contentLength,
             request: request,
+            sender: sender,
+            sent: sent,
             mimeType: mimeType,
             encoding: encoding);
 
@@ -143,10 +120,12 @@ class JsonResponse extends resty.StringResponse {
             reasonPhrase: resp.reasonPhrase,
             contentLength: resp.contentLength,
             request: resp.request,
+            sender: resp.sender,
+            sent: resp.sent,
             mimeType: resp.mimeType,
             encoding: resp.encoding);
 
-  JsonResponse onSuccess(resty.After<String> func) => super.onSuccess(func);
+  // JsonResponse onSuccess(resty.After<String> func) => super.onSuccess(func);
 
   resty.StringResponse get toStringResponse => this;
 
@@ -192,8 +171,10 @@ class JsonResponse extends resty.StringResponse {
           headers: headers,
           contentLength: contentLength);
 
+  /*
   JsonResponse run(resty.After<String> func) => super.run(func);
 
   /// Runs [funcs] with [Response] object after request completion
   JsonResponse runAll(List<resty.After<String>> funcs) => super.runAll(funcs);
+  */
 }

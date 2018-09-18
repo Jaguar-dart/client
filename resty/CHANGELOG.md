@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.8.5
+
++ `OnSuccess`, `onFailure`, `run` and `isFailure` for `Response`
++ `onSuccess` and `onFailure` for `go`
+
+### Breaking change
+
++ `then` positional argument is converted to named parameter in `go`
+
 ## 2.8.4
 
 + Added `Patch`

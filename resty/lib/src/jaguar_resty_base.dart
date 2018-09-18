@@ -347,7 +347,10 @@ class Get extends RouteBase {
     return (getClient ?? globalClient).get(getUrl, headers: getHeaders);
   }
 
-  AsyncStringResponse go() {
+  AsyncStringResponse go(
+      {ResponseHook<String> onSuccess,
+      ResponseHook<String> onFailure,
+      ResponseHook<String> then}) {
     Get cloned = Get.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -359,6 +362,9 @@ class Get extends RouteBase {
       }
       return ret;
     }));
+    if (onSuccess != null) resp = resp.onSuccess(onSuccess);
+    if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (then != null) resp = resp.run(then);
     return resp;
   }
 
@@ -579,7 +585,10 @@ class Post extends RouteBase {
     }
   }
 
-  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
+  AsyncStringResponse go(
+      {ResponseHook<String> onSuccess,
+      ResponseHook<String> onFailure,
+      ResponseHook<String> then}) {
     Post cloned = Post.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -591,6 +600,9 @@ class Post extends RouteBase {
       }
       return ret;
     }));
+    if (onSuccess != null) resp = resp.onSuccess(onSuccess);
+    if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (then != null) resp = resp.run(then);
     return resp;
   }
 
@@ -811,7 +823,10 @@ class Patch extends RouteBase {
     }
   }
 
-  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
+  AsyncStringResponse go(
+      {ResponseHook<String> onSuccess,
+      ResponseHook<String> onFailure,
+      ResponseHook<String> then}) {
     Patch cloned = Patch.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -823,6 +838,9 @@ class Patch extends RouteBase {
       }
       return ret;
     }));
+    if (onSuccess != null) resp = resp.onSuccess(onSuccess);
+    if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (then != null) resp = resp.run(then);
     return resp;
   }
 
@@ -1043,7 +1061,10 @@ class Put extends RouteBase {
     }
   }
 
-  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
+  AsyncStringResponse go(
+      {ResponseHook<String> onSuccess,
+      ResponseHook<String> onFailure,
+      ResponseHook<String> then}) {
     Put cloned = Put.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -1055,6 +1076,9 @@ class Put extends RouteBase {
       }
       return ret;
     }));
+    if (onSuccess != null) resp = resp.onSuccess(onSuccess);
+    if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (then != null) resp = resp.run(then);
     return resp;
   }
 
@@ -1184,7 +1208,10 @@ class Delete extends RouteBase {
     return (getClient ?? globalClient).delete(getUrl, headers: getHeaders);
   }
 
-  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
+  AsyncStringResponse go(
+      {ResponseHook<String> onSuccess,
+      ResponseHook<String> onFailure,
+      ResponseHook<String> then}) {
     Delete cloned = Delete.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -1196,6 +1223,9 @@ class Delete extends RouteBase {
       }
       return ret;
     }));
+    if (onSuccess != null) resp = resp.onSuccess(onSuccess);
+    if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (then != null) resp = resp.run(then);
     return resp;
   }
 
@@ -1331,7 +1361,10 @@ class OptionsMethod extends RouteBase {
         .then((r) => ht.Response.fromStream(r));
   }
 
-  AsyncStringResponse go([dynamic then(Response<String> resp)]) {
+  AsyncStringResponse go(
+      {ResponseHook<String> onSuccess,
+      ResponseHook<String> onFailure,
+      ResponseHook<String> then}) {
     OptionsMethod cloned = OptionsMethod.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -1343,6 +1376,9 @@ class OptionsMethod extends RouteBase {
       }
       return ret;
     }));
+    if (onSuccess != null) resp = resp.onSuccess(onSuccess);
+    if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (then != null) resp = resp.run(then);
     return resp;
   }
 

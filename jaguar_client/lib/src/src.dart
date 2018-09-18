@@ -5,6 +5,7 @@ library http.json;
 
 import 'dart:async';
 import 'package:async/async.dart';
+import 'package:meta/meta.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 
 import 'package:http/http.dart' as http;

@@ -9,8 +9,8 @@ import 'package:jaguar_client/jaguar_client.dart';
 import 'package:jaguar_reflect/jaguar_reflect.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 
-@Controller(path: '/api')
-class ExampleApi {
+@GenController(path: '/api')
+class ExampleApi extends Controller {
   @GetJson(path: '/map')
   Map getMap(_) => {'jaguar': 'awesome'};
 
@@ -39,8 +39,8 @@ class ExampleApi {
 }
 
 Future serve() async {
-  Jaguar server = new Jaguar(port: 10123);
-  server.add(reflect(new ExampleApi()));
+  Jaguar server = Jaguar(port: 10123);
+  server.add(reflect(ExampleApi()));
   await server.serve();
 }
 

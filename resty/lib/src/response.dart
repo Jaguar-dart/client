@@ -9,10 +9,14 @@ import 'package:meta/meta.dart';
 
 typedef FutureOr<dynamic> After(StringResponse response);
 
+typedef FutureOr ResponseHook<T>(Response<T> response);
+
 abstract class AsyncResponse<BT> {
   FutureOr<int> get statusCode;
 
   FutureOr<bool> get isSuccess;
+
+  FutureOr<bool> get isFailure;
 
   FutureOr<BT> get body;
 
@@ -40,9 +44,9 @@ abstract class AsyncResponse<BT> {
 
   FutureOr<StringResponse> get toStringResponse;
 
-  /*
-  AsyncResponse<BT> onSuccess(After<BT> func);
-  */
+  Future<Response<BT>> onSuccess(ResponseHook<BT> hook);
+
+  Future<Response<BT>> onFailure(ResponseHook<BT> hook);
 
   AsyncResponse<BT> expect(List<Checker<Response>> conditions);
 
@@ -54,6 +58,8 @@ abstract class AsyncResponse<BT> {
       String encoding,
       Map<String, String> headers,
       int contentLength});
+
+  AsyncResponse<BT> run(ResponseHook<BT> func);
 }
 
 class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
@@ -88,13 +94,15 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
 
   Future<bool> get isSuccess => then((r) => r.isSuccess);
 
+  Future<bool> get isFailure => then((r) => r.isFailure);
+
   AsyncStringResponse get toStringResponse => then((r) => r.toStringResponse);
 
-  /*
-  AsyncTResponse<BT> onSuccess(After<BT> func) => run((r) async {
-        if (r.isSuccess) await func(r);
-      });
-      */
+  AsyncTResponse<BT> onSuccess(ResponseHook<BT> hook) =>
+      run((Response<BT> r) => r.onSuccess(hook));
+
+  AsyncTResponse<BT> onFailure(ResponseHook<BT> hook) =>
+      run((Response<BT> r) => r.onFailure(hook));
 
   AsyncTResponse<BT> expect(List<Checker<Response>> conditions) {
     return new AsyncTResponse<BT>(then((r) => r.expect(conditions)));
@@ -120,14 +128,12 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
     }));
   }
 
-  /*
   /// Runs [func] with [Response] object after request completion
-  AsyncTResponse<BT> run(After<BT> func) =>
-      new AsyncTResponse<BT>(then((r) async {
+  AsyncTResponse<BT> run(ResponseHook<BT> func) =>
+      AsyncTResponse<BT>(then((r) async {
         await func(r);
         return r;
       }));
-      */
 }
 
 class AsyncStringResponse extends DelegatingFuture<StringResponse>
@@ -163,20 +169,22 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
 
   Future<bool> get isSuccess => then((r) => r.isSuccess);
 
+  Future<bool> get isFailure => then((r) => r.isFailure);
+
   Future<RouteBase> get sender => then((r) => r.sender);
 
   Future<RouteBase> get sent => then((r) => r.sent);
 
   AsyncStringResponse get toStringResponse => this;
 
-  /*
-  AsyncStringResponse onSuccess(After<String> func) => run((r) async {
-        if (r.isSuccess) await func(r);
-      });
-      */
+  AsyncStringResponse onSuccess(ResponseHook<String> hook) =>
+      run((Response<String> r) => r.onSuccess(hook));
+
+  AsyncStringResponse onFailure(ResponseHook<String> hook) =>
+      run((Response<String> r) => r.onFailure(hook));
 
   AsyncStringResponse expect(List<Checker<Response>> conditions) {
-    return new AsyncStringResponse(then((r) => r.expect(conditions)));
+    return AsyncStringResponse(then((r) => r.expect(conditions)));
   }
 
   AsyncStringResponse exact(
@@ -209,20 +217,20 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
   Future<List<T>> decodeList<T>([T convert(Map d)]) =>
       then((StringResponse r) => r.decodeList<T>(convert));
 
-  /*
   /// Runs [func] with [Response] object after request completion
-  AsyncStringResponse run(After<String> func) =>
-      new AsyncStringResponse(then((r) async {
+  AsyncStringResponse run(ResponseHook<String> func) =>
+      AsyncStringResponse(then((r) async {
         await func(r);
         return r;
       }));
-      */
 }
 
 abstract class Response<T> implements AsyncResponse<T> {
   int get statusCode;
 
   bool get isSuccess;
+
+  bool get isFailure;
 
   T get body;
 
@@ -247,6 +255,10 @@ abstract class Response<T> implements AsyncResponse<T> {
   String get mimeType;
 
   String get encoding;
+
+  Future<Response<T>> onSuccess(ResponseHook<T> hook);
+
+  Future<Response<T>> onFailure(ResponseHook<T> hook);
 
   Response<T> expect(List<Checker<Response>> conditions);
 
@@ -324,11 +336,17 @@ class TResponse<T> implements Response<T> {
 
   bool get isSuccess => statusCode >= 200 && statusCode < 300;
 
-  /*
-  TResponse<T> onSuccess(After<T> func) => run((r) async {
-        if (r.isSuccess) await func(r);
-      });
-      */
+  bool get isFailure => statusCode >= 400 && statusCode < 600;
+
+  Future<TResponse<T>> onSuccess(ResponseHook<T> func) async {
+    if (isSuccess) await func(this);
+    return this;
+  }
+
+  Future<TResponse<T>> onFailure(ResponseHook<T> func) async {
+    if (isFailure) await func(this);
+    return this;
+  }
 
   TResponse<T> expect(List<Checker<Response>> conditions) {
     final mismatches = conditions
@@ -360,12 +378,10 @@ class TResponse<T> implements Response<T> {
     return expect(conditions);
   }
 
-  /*
-  TResponse<T> run(After<T> func) {
+  TResponse<T> run(ResponseHook<T> func) {
     func(this);
     return this;
   }
-  */
 }
 
 class StringResponse implements Response<String> {
@@ -434,11 +450,17 @@ class StringResponse implements Response<String> {
 
   bool get isSuccess => statusCode >= 200 && statusCode < 300;
 
-  /*
-  StringResponse onSuccess(After<String> func) => run((r) async {
-        if (r.isSuccess) await func(r);
-      });
-      */
+  bool get isFailure => statusCode >= 400 && statusCode < 600;
+
+  Future<StringResponse> onSuccess(ResponseHook<String> func) async {
+    if (isSuccess) await func(this);
+    return this;
+  }
+
+  Future<StringResponse> onFailure(ResponseHook<String> func) async {
+    if (isFailure) await func(this);
+    return this;
+  }
 
   TResponse<T> json<T>([T convert(Map d)]) {
     final d = codec.json.decode(body);
@@ -528,6 +550,11 @@ class StringResponse implements Response<String> {
           (String key, String value) => conditions.add(headersHas(key, value)));
     }
     return expect(conditions);
+  }
+
+  StringResponse run(ResponseHook<String> func) {
+    func(this);
+    return this;
   }
 }
 
