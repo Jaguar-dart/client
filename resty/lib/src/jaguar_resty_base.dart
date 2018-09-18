@@ -282,6 +282,7 @@ class Get extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -295,6 +296,7 @@ class Get extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -431,6 +433,7 @@ class Post extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -445,6 +448,7 @@ class Post extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -669,6 +673,7 @@ class Patch extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -683,6 +688,7 @@ class Patch extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -907,6 +913,7 @@ class Put extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -921,6 +928,7 @@ class Put extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -1142,6 +1150,7 @@ class Delete extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -1155,6 +1164,7 @@ class Delete extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -1288,6 +1298,7 @@ class OptionsMethod extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
@@ -1301,6 +1312,7 @@ class OptionsMethod extends RouteBase {
     getQuery.addAll(route.getQuery);
     getHeaders.addAll(route.getHeaders);
     getAuthHeaders.addAll(route.getAuthHeaders);
+    getCookies.addAll(route.getCookies);
     metadataMap.addAll(route.metadataMap);
     getClient = route.getClient;
     getBefore.addAll(route.getBefore);
