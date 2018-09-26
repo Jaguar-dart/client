@@ -415,13 +415,17 @@ class Get extends RouteBase {
           contentLength: contentLength);
 }
 
+abstract class RouteWithBody {
+  dynamic getBody();
+}
+
 /// Build fluent REST POST APIs
 ///
 /// Example:
 ///     post('/book/${id}')
 ///       .json(book.toMap)
 ///       .fetch((m) => Book.fromMap(m));
-class Post extends RouteBase {
+class Post extends RouteBase implements RouteWithBody {
   dynamic _body;
 
   Post(String url) : super(url);
@@ -454,6 +458,8 @@ class Post extends RouteBase {
     getBefore.addAll(route.getBefore);
     getAfter.addAll(route.getAfter);
   }
+
+  dynamic getBody() => _body;
 
   Post withClient(ht.BaseClient client) => super.withClient(client);
 
@@ -661,7 +667,7 @@ class Post extends RouteBase {
 ///     patch('/book/${id}')
 ///       .json(book.toMap)
 ///       .fetch((m) => Book.fromMap(m));
-class Patch extends RouteBase {
+class Patch extends RouteBase implements RouteWithBody {
   dynamic _body;
 
   Patch(String url) : super(url);
@@ -694,6 +700,8 @@ class Patch extends RouteBase {
     getBefore.addAll(route.getBefore);
     getAfter.addAll(route.getAfter);
   }
+
+  dynamic getBody() => _body;
 
   Patch withClient(ht.BaseClient client) => super.withClient(client);
 
@@ -901,7 +909,7 @@ class Patch extends RouteBase {
 ///     put('/book/${id}')
 ///       .json(book.toMap)
 ///       .fetch((m) => Book.fromMap(m));
-class Put extends RouteBase {
+class Put extends RouteBase implements RouteWithBody {
   dynamic _body;
 
   Put(String url) : super(url);
@@ -934,6 +942,8 @@ class Put extends RouteBase {
     getBefore.addAll(route.getBefore);
     getAfter.addAll(route.getAfter);
   }
+
+  dynamic getBody() => _body;
 
   Put withClient(ht.BaseClient client) => super.withClient(client);
 

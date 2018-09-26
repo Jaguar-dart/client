@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.8
+
++ Added `RouteWithBody` and `getBody`
+
 ## 2.8.5
 
 + `OnSuccess`, `onFailure`, `run` and `isFailure` for `Response`
