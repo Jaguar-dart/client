@@ -5,13 +5,10 @@ import 'package:collection/collection.dart';
 typedef List<Mismatch> Checker<T>(T v);
 
 /// Customizes message of a [Mismatch]
-typedef String CustomMismatchMessage<M extends Mismatch>(M mismatch);
+typedef String CustomMismatchMessage<T>(T mismatch);
 
 /// A mismatch exception
-abstract class Mismatch<M> implements Exception {
-  /// Used to customize the message
-  CustomMismatchMessage<M> customMessage;
-}
+abstract class Mismatch<M> implements Exception {}
 
 class EqualityMismatch<T> implements Exception, Mismatch<EqualityMismatch<T>> {
   /// Expected value
