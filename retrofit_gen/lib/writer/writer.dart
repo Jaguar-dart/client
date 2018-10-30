@@ -59,6 +59,10 @@ class Writer {
     });
 
     for (Body body in r.body) {
+      if (body is RawBody) {
+        sb.write('.body(${body.name})');
+      }
+
       if (body is JsonBody) {
         sb.write('.json(serializers.to(${body.name}))');
       }

@@ -4,6 +4,11 @@ import 'package:jaguar_retrofit_gen/utils/utils.dart';
 
 abstract class Body {}
 
+class RawBody implements Body {
+  final String name;
+  RawBody(this.name);
+}
+
 class JsonBody implements Body {
   final String name;
   JsonBody(this.name);
