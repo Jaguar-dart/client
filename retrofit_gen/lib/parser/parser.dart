@@ -21,8 +21,8 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
     {
       DartObject pathParam = isPathParam.firstAnnotationOfExact(pe);
       if (pathParam != null) {
-        pathParams[pathParam.getField('alias').toStringValue() ?? pe.displayName] =
-            pe.displayName;
+        pathParams[pathParam.getField('alias').toStringValue() ??
+            pe.displayName] = pe.displayName;
       }
     }
 
@@ -125,8 +125,7 @@ WriteInfo parse(ClassElement element, ConstantReader annotation) {
     }
   }
 
-  return WriteInfo(
-      element.displayName, basePath, baseMetadata, reqs);
+  return WriteInfo(element.displayName, basePath, baseMetadata, reqs);
 }
 
 String toStringValue(DartObject value) {

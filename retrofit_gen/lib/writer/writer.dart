@@ -90,7 +90,7 @@ class Writer {
         sb.writeln('return req.list(convert: serializers.oneFrom);');
       } else if (r.result.isStringResponse) {
         sb.writeln('return req.go();');
-      } else if(r.result.isResultBuiltin) {
+      } else if (r.result.isResultBuiltin) {
         sb.writeln('return req.one();');
       } else {
         sb.writeln('return req.one(convert: serializers.oneFrom);');

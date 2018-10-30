@@ -1,3 +1,5 @@
+library retrofit.annotations;
+
 export 'requests.dart';
 export 'params.dart';
 

@@ -94,7 +94,7 @@ class Result {
       return;
     }
 
-    if(isBuiltin(rt)) isResultBuiltin = true;
+    if (isBuiltin(rt)) isResultBuiltin = true;
     model = rt;
   }
 }
@@ -143,6 +143,5 @@ class WriteInfo {
 
   final List<Req> requests;
 
-  WriteInfo(this.name, this.basePath, this.baseMetadata,
-      this.requests);
+  WriteInfo(this.name, this.basePath, this.baseMetadata, this.requests);
 }

@@ -1,7 +1,7 @@
 library upload_files.server;
 
 import 'dart:async';
-import 'package:http/http.dart' as ht;
+import 'package:http/io_client.dart' as ht;
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';

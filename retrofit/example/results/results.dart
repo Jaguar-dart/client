@@ -2,7 +2,7 @@ library jaguar_http.example;
 
 import 'dart:io';
 import 'dart:async';
-import 'package:http/http.dart';
+import 'package:http/io_client.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;

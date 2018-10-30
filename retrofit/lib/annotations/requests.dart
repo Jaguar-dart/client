@@ -1,3 +1,5 @@
+library retrofit.annotations.requests;
+
 abstract class Req {
   String get path;
   Map<String, dynamic> get metadata;

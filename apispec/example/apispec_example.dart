@@ -30,10 +30,9 @@ key `special-key` to test the authorization filters.""",
               description: "Add a new pet to the store",
               operationId: "addPet",
               requestBody: Request(
-                description: "Pet to add to the store",
-                required: true,
-                content: {"application/json": MediaType(schema: null)}
-              ))),
+                  description: "Pet to add to the store",
+                  required: true,
+                  content: {"application/json": MediaType(schema: null)}))),
     });
 
 main() {

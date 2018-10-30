@@ -1,7 +1,7 @@
 import 'package:jaguar/jaguar.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:test/test.dart';
-import 'package:http/http.dart';
+import 'package:http/io_client.dart';
 
 void main() {
   resty.globalClient = IOClient();

@@ -1,3 +1,5 @@
+library retrofit.annotations.params;
+
 class PathParam {
   final String alias;
   const PathParam([this.alias]);
