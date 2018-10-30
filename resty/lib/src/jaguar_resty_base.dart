@@ -495,7 +495,8 @@ class Post extends RouteBase implements RouteWithBody {
 
   Post cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Post body(String body) {
+  Post body(dynamic body) {
+    assert(body is String || body is List<int>);
     _body = body;
     return this;
   }
@@ -570,7 +571,7 @@ class Post extends RouteBase implements RouteWithBody {
 
     _prepare(this);
 
-    if (_body is String || _body is Map<String, String> || _body == null) {
+    if (_body is String || _body is List<int> || _body is Map<String, String> || _body == null) {
       return (getClient ?? globalClient)
           .post(getUrl, headers: getHeaders, body: _body);
     } else if (_body is Map<String, Multipart>) {
@@ -737,7 +738,8 @@ class Patch extends RouteBase implements RouteWithBody {
 
   Patch cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Patch body(String body) {
+  Patch body(dynamic body) {
+    assert(body is String || body is List<int>);
     _body = body;
     return this;
   }
@@ -812,7 +814,7 @@ class Patch extends RouteBase implements RouteWithBody {
 
     _prepare(this);
 
-    if (_body is String || _body is Map<String, String> || _body == null) {
+    if (_body is String || _body is List<int> || _body is Map<String, String> || _body == null) {
       return (getClient ?? globalClient)
           .patch(getUrl, headers: getHeaders, body: _body);
     } else if (_body is Map<String, Multipart>) {
@@ -979,7 +981,8 @@ class Put extends RouteBase implements RouteWithBody {
 
   Put cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Put body(String body) {
+  Put body(dynamic body) {
+    assert(body is String || body is List<int>);
     _body = body;
     return this;
   }
@@ -1054,7 +1057,7 @@ class Put extends RouteBase implements RouteWithBody {
 
     _prepare(this);
 
-    if (_body is String || _body is Map<String, String> || _body == null) {
+    if (_body is String || _body is List<int> || _body is Map<String, String> || _body == null) {
       return (getClient ?? globalClient)
           .put(getUrl, headers: getHeaders, body: _body);
     } else if (_body is Map<String, Multipart>) {
