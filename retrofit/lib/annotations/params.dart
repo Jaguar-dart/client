@@ -27,6 +27,10 @@ class AsJson {
   const AsJson();
 }
 
+class AsBody {
+  const AsBody();
+}
+
 class AsForm {
   const AsForm();
 }

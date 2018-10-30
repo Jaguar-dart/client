@@ -57,6 +57,11 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
     }
 
     {
+      DartObject isBody = isAsBody.firstAnnotationOfExact(pe);
+      if (isBody != null) body.add(RawBody(pe.displayName));
+    }
+
+    {
       DartObject json = isAsJson.firstAnnotationOfExact(pe);
       if (json != null) body.add(JsonBody(pe.displayName));
     }

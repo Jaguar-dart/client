@@ -500,6 +500,11 @@ class Post extends RouteBase implements RouteWithBody {
     return this;
   }
 
+  Post bytes(List<int> body) {
+    _body = body;
+    return this;
+  }
+
   Post json(body, {bool setHeaders: true}) {
     _body = codec.json.encode(body);
     if (setHeaders) {
@@ -570,7 +575,7 @@ class Post extends RouteBase implements RouteWithBody {
 
     _prepare(this);
 
-    if (_body is String || _body is Map<String, String> || _body == null) {
+    if (_body is String || _body is List<int> || _body is Map<String, String> || _body == null) {
       return (getClient ?? globalClient)
           .post(getUrl, headers: getHeaders, body: _body);
     } else if (_body is Map<String, Multipart>) {
@@ -742,6 +747,11 @@ class Patch extends RouteBase implements RouteWithBody {
     return this;
   }
 
+  Patch bytes(List<int> body) {
+    _body = body;
+    return this;
+  }
+
   Patch json(body, {bool setHeaders: true}) {
     _body = codec.json.encode(body);
     if (setHeaders) {
@@ -812,7 +822,7 @@ class Patch extends RouteBase implements RouteWithBody {
 
     _prepare(this);
 
-    if (_body is String || _body is Map<String, String> || _body == null) {
+    if (_body is String || _body is List<int> || _body is Map<String, String> || _body == null) {
       return (getClient ?? globalClient)
           .patch(getUrl, headers: getHeaders, body: _body);
     } else if (_body is Map<String, Multipart>) {
@@ -984,6 +994,11 @@ class Put extends RouteBase implements RouteWithBody {
     return this;
   }
 
+  Put bytes(List<int> body) {
+    _body = body;
+    return this;
+  }
+
   Put json(body, {bool setHeaders: true}) {
     _body = codec.json.encode(body);
     if (setHeaders) {
@@ -1054,7 +1069,7 @@ class Put extends RouteBase implements RouteWithBody {
 
     _prepare(this);
 
-    if (_body is String || _body is Map<String, String> || _body == null) {
+    if (_body is String || _body is List<int> || _body is Map<String, String> || _body == null) {
       return (getClient ?? globalClient)
           .put(getUrl, headers: getHeaders, body: _body);
     } else if (_body is Map<String, Multipart>) {
