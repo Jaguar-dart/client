@@ -42,7 +42,7 @@ abstract class _$UserApiClient implements ApiClient {
   }
 
   Future<void> avatar(List<int> data) async {
-    var req = base.patch.path(basePath).path("/avatar").body(data);
+    var req = base.patch.path(basePath).path("/avatar").bytes(data);
     await req.go();
   }
 }

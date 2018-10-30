@@ -60,7 +60,7 @@ class Writer {
 
     for (Body body in r.body) {
       if (body is RawBody) {
-        sb.write('.body(${body.name})');
+        sb.write('.bytes(${body.name})');
       }
 
       if (body is JsonBody) {

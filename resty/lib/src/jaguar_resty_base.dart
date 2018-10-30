@@ -495,8 +495,12 @@ class Post extends RouteBase implements RouteWithBody {
 
   Post cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Post body(dynamic body) {
-    assert(body is String || body is List<int>);
+  Post body(String body) {
+    _body = body;
+    return this;
+  }
+
+  Post bytes(List<int> body) {
     _body = body;
     return this;
   }
@@ -738,8 +742,12 @@ class Patch extends RouteBase implements RouteWithBody {
 
   Patch cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Patch body(dynamic body) {
-    assert(body is String || body is List<int>);
+  Patch body(String body) {
+    _body = body;
+    return this;
+  }
+
+  Patch bytes(List<int> body) {
     _body = body;
     return this;
   }
@@ -981,8 +989,12 @@ class Put extends RouteBase implements RouteWithBody {
 
   Put cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Put body(dynamic body) {
-    assert(body is String || body is List<int>);
+  Put body(String body) {
+    _body = body;
+    return this;
+  }
+
+  Put bytes(List<int> body) {
     _body = body;
     return this;
   }
