@@ -40,4 +40,9 @@ abstract class _$UserApiClient implements ApiClient {
         .urlEncodedForm(serializers.to(login));
     await req.go();
   }
+
+  Future<void> avatar(List<int> data) async {
+    var req = base.patch.path(basePath).path("/avatar").bytes(data);
+    await req.go();
+  }
 }

@@ -38,6 +38,9 @@ class UserApi extends _$UserApiClient implements ApiClient {
 
   @PostReq(path: "/login")
   Future<void> login(@AsForm() Login login);
+
+  @PatchReq(path: "/avatar")
+  Future<void> avatar(@AsBody() List<int> data);
 }
 
 final repo = JsonRepo()..add(UserSerializer())..add(LoginSerializer());
