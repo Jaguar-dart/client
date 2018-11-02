@@ -81,7 +81,9 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
 
     {
       DartObject data = isAsMultipart.firstAnnotationOfExact(pe);
-      if (data != null) body.add(MultipartForm(pe.displayName));
+      final serialize = data.getField("serialize").toBoolValue();
+      if (data != null)
+        body.add(MultipartForm(pe.displayName, serialize: serialize));
     }
 
     {

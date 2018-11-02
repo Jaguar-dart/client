@@ -15,8 +15,9 @@ class JsonBody implements Body {
 }
 
 class MultipartForm implements Body {
+  final bool serialize;
   final String name;
-  MultipartForm(this.name);
+  MultipartForm(this.name, {this.serialize: true});
 }
 
 class MultipartFormField implements Body {

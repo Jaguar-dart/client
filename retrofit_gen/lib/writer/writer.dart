@@ -76,8 +76,12 @@ class Writer {
       }
 
       if (body is MultipartForm) {
-        sb.write(
-            '.multipart((serializers.to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
+        if (body.serialize) {
+          sb.write(
+              '.multipart((serializers.to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
+        } else {
+          sb.write('.multipart(${body.name})');
+        }
       }
 
       if (body is MultipartFormField) {

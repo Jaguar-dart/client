@@ -48,9 +48,7 @@ class RouteBase {
 
   ht.BaseClient getClient;
 
-  RouteBase([String url]) {
-    if (url != null) this.url(url);
-  }
+  RouteBase();
 
   /// Set the [client] used to make HTTP requests
   RouteBase withClient(ht.BaseClient client) {
@@ -96,8 +94,8 @@ class RouteBase {
       getQuery[key] = value;
     } else if (value is Iterable) {
       getQuery[key] = value.map((v) => v?.toString() ?? '');
-    } else {
-      getQuery[key] = value?.toString() ?? '';
+    } else if (value != null) {
+      getQuery[key] = value?.toString();
     }
     return this;
   }
@@ -234,7 +232,9 @@ class RouteBase {
 ///       .get.fetchList((m) => Book.fromMap(m));
 class Route extends RouteBase {
   /// Construct [Route] object with [path]
-  Route(String url) : super(url);
+  Route(String url) {
+    this.url(url);
+  }
 
   /// Converts to [Get] requester
   Get get get => Get.copy(this);
@@ -273,7 +273,9 @@ void _prepare(RouteBase route) {
 ///       .query('count', '10')
 ///       .fetchList((m) => Book.fromMap(m));
 class Get extends RouteBase {
-  Get(String url) : super(url);
+  Get(String url) {
+    this.url(url);
+  }
 
   Get.copy(Route route) {
     _origin = route._origin;
@@ -415,8 +417,92 @@ class Get extends RouteBase {
           contentLength: contentLength);
 }
 
-abstract class RouteWithBody {
+abstract class RouteWithBody implements RouteBase {
   dynamic getBody();
+}
+
+abstract class _RouteWithBodyMixin implements RouteWithBody {
+  set _body(dynamic value);
+  dynamic get _body;
+
+  RouteWithBody body(String body) {
+    _body = body;
+    return this;
+  }
+
+  RouteWithBody bytes(List<int> body) {
+    _body = body;
+    return this;
+  }
+
+  RouteWithBody json(body, {bool setHeaders: true}) {
+    _body = codec.json.encode(body);
+    if (setHeaders) {
+      header('content-type', 'application/json');
+      header('Accept', 'application/json');
+    }
+    return this;
+  }
+
+  RouteWithBody multipart(Map<String, dynamic> values) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    for (String field in values.keys) {
+      dynamic value = values[field];
+      if (value is List<int>)
+        multipartFile(field, value);
+      else if (value is Multipart)
+        _body[field] = value;
+      else
+        multipartField(field, value);
+    }
+    return this;
+  }
+
+  RouteWithBody multipartField(String field, value) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    if (value != null) {
+      _body[field] = MultipartString(value?.toString());
+    }
+    return this;
+  }
+
+  RouteWithBody multipartFile(String field, List<int> value,
+      {String filename, MediaType contentType}) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    if (value != null) {
+      _body[field] =
+          MultipartFile(value, filename: filename, contentType: contentType);
+    }
+    return this;
+  }
+
+  RouteWithBody multipartStringFile(String field, String value,
+      {String filename, MediaType contentType}) {
+    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
+    if (value != null) {
+      _body[field] = MultipartStringFile(value,
+          filename: filename, contentType: contentType);
+    }
+    return this;
+  }
+
+  RouteWithBody urlEncodedForm(Map<String, dynamic> values) {
+    if (_body is! Map<String, String>) _body = <String, String>{};
+    for (String field in values.keys) {
+      if (values[field] != null) {
+        _body[field] = values[field]?.toString();
+      }
+    }
+    return this;
+  }
+
+  RouteWithBody urlEncodedFormField(String name, value) {
+    if (_body is! Map<String, String>) _body = <String, String>{};
+    if (value != null) {
+      _body[name] = value?.toString();
+    }
+    return this;
+  }
 }
 
 /// Build fluent REST POST APIs
@@ -425,10 +511,12 @@ abstract class RouteWithBody {
 ///     post('/book/${id}')
 ///       .json(book.toMap)
 ///       .fetch((m) => Book.fromMap(m));
-class Post extends RouteBase implements RouteWithBody {
+class Post extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
   dynamic _body;
 
-  Post(String url) : super(url);
+  Post(String url) {
+    this.url(url);
+  }
 
   Post.copy(Route route) {
     _origin = route._origin;
@@ -495,74 +583,33 @@ class Post extends RouteBase implements RouteWithBody {
 
   Post cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Post body(String body) {
-    _body = body;
-    return this;
-  }
+  Post body(String body) => super.body(body);
 
-  Post bytes(List<int> body) {
-    _body = body;
-    return this;
-  }
+  Post bytes(List<int> body) => super.bytes(body);
 
-  Post json(body, {bool setHeaders: true}) {
-    _body = codec.json.encode(body);
-    if (setHeaders) {
-      header('content-type', 'application/json');
-      header('Accept', 'application/json');
-    }
-    return this;
-  }
+  Post json(body, {bool setHeaders: true}) =>
+      super.json(body, setHeaders: setHeaders);
 
-  Post multipart(Map<String, dynamic> values) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    for (String field in values.keys) {
-      dynamic value = values[field];
-      if (value is List<int>)
-        multipartFile(field, value);
-      else if (value is Multipart)
-        _body[field] = value;
-      else
-        multipartField(field, value?.toString() ?? '');
-    }
-    return this;
-  }
+  Post multipart(Map<String, dynamic> values) => super.multipart(values);
 
-  Post multipartField(String field, value) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    _body[field] = MultipartString(value?.toString() ?? '');
-    return this;
-  }
+  Post multipartField(String field, value) =>
+      super.multipartField(field, value);
 
   Post multipartFile(String field, List<int> value,
-      {String filename, MediaType contentType}) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    _body[field] =
-        MultipartFile(value, filename: filename, contentType: contentType);
-    return this;
-  }
+          {String filename, MediaType contentType}) =>
+      super.multipartFile(field, value,
+          filename: filename, contentType: contentType);
 
   Post multipartStringFile(String field, String value,
-      {String filename, MediaType contentType}) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    _body[field] = MultipartStringFile(value,
-        filename: filename, contentType: contentType);
-    return this;
-  }
+          {String filename, MediaType contentType}) =>
+      super.multipartStringFile(field, value,
+          filename: filename, contentType: contentType);
 
-  Post urlEncodedForm(Map<String, dynamic> values) {
-    if (_body is! Map<String, String>) _body = <String, String>{};
-    for (String field in values.keys) {
-      _body[field] = values[field]?.toString() ?? '';
-    }
-    return this;
-  }
+  Post urlEncodedForm(Map<String, dynamic> values) =>
+      super.urlEncodedForm(values);
 
-  Post urlEncodedFormField(String name, value) {
-    if (_body is! Map<String, String>) _body = <String, String>{};
-    _body[name] = value?.toString() ?? '';
-    return this;
-  }
+  Post urlEncodedFormField(String name, value) =>
+      super.urlEncodedFormField(name, value);
 
   Post before(Before interceptor) => super.before(interceptor);
 
@@ -675,10 +722,14 @@ class Post extends RouteBase implements RouteWithBody {
 ///     patch('/book/${id}')
 ///       .json(book.toMap)
 ///       .fetch((m) => Book.fromMap(m));
-class Patch extends RouteBase implements RouteWithBody {
+class Patch extends RouteBase
+    with _RouteWithBodyMixin
+    implements RouteWithBody {
   dynamic _body;
 
-  Patch(String url) : super(url);
+  Patch(String url) {
+    this.url(url);
+  }
 
   Patch.copy(Route route) {
     _origin = route._origin;
@@ -745,74 +796,33 @@ class Patch extends RouteBase implements RouteWithBody {
 
   Patch cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Patch body(String body) {
-    _body = body;
-    return this;
-  }
+  Patch body(String body) => super.body(body);
 
-  Patch bytes(List<int> body) {
-    _body = body;
-    return this;
-  }
+  Patch bytes(List<int> body) => super.bytes(body);
 
-  Patch json(body, {bool setHeaders: true}) {
-    _body = codec.json.encode(body);
-    if (setHeaders) {
-      header('content-type', 'application/json');
-      header('Accept', 'application/json');
-    }
-    return this;
-  }
+  Patch json(body, {bool setHeaders: true}) =>
+      super.json(body, setHeaders: setHeaders);
 
-  Patch multipart(Map<String, dynamic> values) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    for (String field in values.keys) {
-      dynamic value = values[field];
-      if (value is List<int>)
-        multipartFile(field, value);
-      else if (value is Multipart)
-        _body[field] = value;
-      else
-        multipartField(field, value?.toString() ?? '');
-    }
-    return this;
-  }
+  Patch multipart(Map<String, dynamic> values) => super.multipart(values);
 
-  Patch multipartField(String field, value) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    _body[field] = MultipartString(value?.toString() ?? '');
-    return this;
-  }
+  Patch multipartField(String field, value) =>
+      super.multipartField(field, value);
 
   Patch multipartFile(String field, List<int> value,
-      {String filename, MediaType contentType}) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    _body[field] =
-        MultipartFile(value, filename: filename, contentType: contentType);
-    return this;
-  }
+          {String filename, MediaType contentType}) =>
+      super.multipartFile(field, value,
+          filename: filename, contentType: contentType);
 
   Patch multipartStringFile(String field, String value,
-      {String filename, MediaType contentType}) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    _body[field] = MultipartStringFile(value,
-        filename: filename, contentType: contentType);
-    return this;
-  }
+          {String filename, MediaType contentType}) =>
+      super.multipartStringFile(field, value,
+          filename: filename, contentType: contentType);
 
-  Patch urlEncodedForm(Map<String, dynamic> values) {
-    if (_body is! Map<String, String>) _body = <String, String>{};
-    for (String field in values.keys) {
-      _body[field] = values[field]?.toString() ?? '';
-    }
-    return this;
-  }
+  Patch urlEncodedForm(Map<String, dynamic> values) =>
+      super.urlEncodedForm(values);
 
-  Patch urlEncodedFormField(String name, value) {
-    if (_body is! Map<String, String>) _body = <String, String>{};
-    _body[name] = value?.toString() ?? '';
-    return this;
-  }
+  Patch urlEncodedFormField(String name, value) =>
+      super.urlEncodedFormField(name, value);
 
   Patch before(Before interceptor) => super.before(interceptor);
 
@@ -925,10 +935,12 @@ class Patch extends RouteBase implements RouteWithBody {
 ///     put('/book/${id}')
 ///       .json(book.toMap)
 ///       .fetch((m) => Book.fromMap(m));
-class Put extends RouteBase implements RouteWithBody {
+class Put extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
   dynamic _body;
 
-  Put(String url) : super(url);
+  Put(String url) {
+    this.url(url);
+  }
 
   Put.copy(Route route) {
     _origin = route._origin;
@@ -995,74 +1007,32 @@ class Put extends RouteBase implements RouteWithBody {
 
   Put cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Put body(String body) {
-    _body = body;
-    return this;
-  }
+  Put body(String body) => super.body(body);
 
-  Put bytes(List<int> body) {
-    _body = body;
-    return this;
-  }
+  Put bytes(List<int> body) => super.bytes(body);
 
-  Put json(body, {bool setHeaders: true}) {
-    _body = codec.json.encode(body);
-    if (setHeaders) {
-      header('content-type', 'application/json');
-      header('Accept', 'application/json');
-    }
-    return this;
-  }
+  Put json(body, {bool setHeaders: true}) =>
+      super.json(body, setHeaders: setHeaders);
 
-  Put multipart(Map<String, dynamic> values) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    for (String field in values.keys) {
-      dynamic value = values[field];
-      if (value is List<int>)
-        multipartFile(field, value);
-      else if (value is Multipart)
-        _body[field] = value;
-      else
-        multipartField(field, value?.toString() ?? '');
-    }
-    return this;
-  }
+  Put multipart(Map<String, dynamic> values) => super.multipart(values);
 
-  Put multipartField(String field, value) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    _body[field] = MultipartString(value?.toString() ?? '');
-    return this;
-  }
+  Put multipartField(String field, value) => super.multipartField(field, value);
 
   Put multipartFile(String field, List<int> value,
-      {String filename, MediaType contentType}) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    _body[field] =
-        MultipartFile(value, filename: filename, contentType: contentType);
-    return this;
-  }
+          {String filename, MediaType contentType}) =>
+      super.multipartFile(field, value,
+          filename: filename, contentType: contentType);
 
   Put multipartStringFile(String field, String value,
-      {String filename, MediaType contentType}) {
-    if (_body is! Map<String, Multipart>) _body = <String, Multipart>{};
-    _body[field] = MultipartStringFile(value,
-        filename: filename, contentType: contentType);
-    return this;
-  }
+          {String filename, MediaType contentType}) =>
+      super.multipartStringFile(field, value,
+          filename: filename, contentType: contentType);
 
-  Put urlEncodedForm(Map<String, dynamic> values) {
-    if (_body is! Map<String, String>) _body = <String, String>{};
-    for (String field in values.keys) {
-      _body[field] = values[field]?.toString() ?? '';
-    }
-    return this;
-  }
+  Put urlEncodedForm(Map<String, dynamic> values) =>
+      super.urlEncodedForm(values);
 
-  Put urlEncodedFormField(String name, value) {
-    if (_body is! Map<String, String>) _body = <String, String>{};
-    _body[name] = value?.toString() ?? '';
-    return this;
-  }
+  Put urlEncodedFormField(String name, value) =>
+      super.urlEncodedFormField(name, value);
 
   Put before(Before interceptor) => super.before(interceptor);
 
@@ -1175,7 +1145,9 @@ class Put extends RouteBase implements RouteWithBody {
 ///     delete('/book/${id}')
 ///       .fetchList((m) => Book.fromMap(m));
 class Delete extends RouteBase {
-  Delete(String url) : super(url);
+  Delete(String url) {
+    this.url(url);
+  }
 
   Delete.copy(Route route) {
     _origin = route._origin;
@@ -1323,7 +1295,9 @@ class Delete extends RouteBase {
 /// Example:
 ///     options('/book/${id}').go();
 class OptionsMethod extends RouteBase {
-  OptionsMethod(String url) : super(url);
+  OptionsMethod(String url) {
+    this.url(url);
+  }
 
   OptionsMethod.copy(Route route) {
     _origin = route._origin;
