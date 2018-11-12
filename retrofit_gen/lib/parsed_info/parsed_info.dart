@@ -124,6 +124,8 @@ class Req {
 
   final Set<String> headerMap;
 
+  final Map<String, String> headerHooks;
+
   final List<Body> body;
 
   final MethodElement me;
@@ -138,7 +140,8 @@ class Req {
       this.body,
       this.pathParams,
       this.headerMap,
-      this.queryMap})
+      this.queryMap,
+      this.headerHooks})
       : result = Result(me);
 }
 

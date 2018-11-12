@@ -65,7 +65,6 @@ class AsForm {
   const AsForm();
 }
 
-
 /// Sends the argument annotated with [AsFormField] as a field in
 /// url-encoded-form body in the http request.
 ///
@@ -90,7 +89,6 @@ class AsMultipart {
   const AsMultipart({this.serialize: true});
 }
 
-
 /// Sends the argument annotated with [AsMultipartField] as multipart/form-data body
 /// field in the http request.
 ///
@@ -104,7 +102,7 @@ class AsMultipartField {
   const AsMultipartField([this.alias]);
 }
 
-class HeaderHook {
+class HookHeader {
   final String alias;
-  const HeaderHook([this.alias]);
+  const HookHeader([this.alias]);
 }

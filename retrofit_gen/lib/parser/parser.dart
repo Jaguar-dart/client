@@ -16,6 +16,7 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
   final queryMap = Set<String>();
   final headerMap = Set<String>();
   final body = List<Body>();
+  final headerHook = <String, String>{};
 
   for (ParameterElement pe in method.parameters) {
     {
@@ -94,6 +95,14 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
             multipartField.getField('alias').toStringValue() ?? pe.displayName,
             pe.displayName));
     }
+
+    {
+      DartObject hp = isHeaderHook.firstAnnotationOfExact(pe);
+      if (hp != null) {
+        headerHook[hp.getField('alias').toStringValue() ?? pe.displayName] =
+            pe.displayName;
+      }
+    }
   }
 
   return Req(httpMethod, method,
@@ -104,7 +113,8 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
       body: body,
       pathParams: pathParams,
       queryMap: queryMap,
-      headerMap: headerMap);
+      headerMap: headerMap,
+      headerHooks: headerHook);
 }
 
 WriteInfo parse(ClassElement element, ConstantReader annotation) {

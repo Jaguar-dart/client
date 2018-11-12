@@ -58,6 +58,10 @@ class Writer {
       sb.write('.headers($name)');
     });
 
+    r.headerHooks.forEach((String key, String valueField) {
+      sb.write('.hookHeader("$key", $valueField)');
+    });
+
     for (Body body in r.body) {
       if (body is RawBody) {
         sb.write('.bytes(${body.name})');
