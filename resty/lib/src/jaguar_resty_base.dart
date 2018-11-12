@@ -160,7 +160,7 @@ class RouteBase {
   }
 
   RouteBase hookHeader(String key, ValueCallback<String> getter) {
-    getAfter.add((r) => getter(r.headers[key]));
+    if (getter != null) getAfter.add((r) => getter(r.headers[key]));
     return this;
   }
 
@@ -644,11 +644,14 @@ class Post extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
         final Multipart value = body[field];
         if (value is MultipartString) {
           r.fields[field] = value.value;
-        } else if (value is MultipartStringFile) {
-          r.files.add(ht.MultipartFile.fromString(field, value.value,
+        } else if (value is MultipartStreamFile) {
+          r.files.add(ht.MultipartFile(field, value.value, value.length,
               filename: value.filename, contentType: value.contentType));
         } else if (value is MultipartFile) {
           r.files.add(ht.MultipartFile.fromBytes(field, value.value,
+              filename: value.filename, contentType: value.contentType));
+        } else if (value is MultipartStringFile) {
+          r.files.add(ht.MultipartFile.fromString(field, value.value,
               filename: value.filename, contentType: value.contentType));
         }
       }
@@ -858,11 +861,14 @@ class Patch extends RouteBase
         final Multipart value = body[field];
         if (value is MultipartString) {
           r.fields[field] = value.value;
-        } else if (value is MultipartStringFile) {
-          r.files.add(ht.MultipartFile.fromString(field, value.value,
+        } else if (value is MultipartStreamFile) {
+          r.files.add(ht.MultipartFile(field, value.value, value.length,
               filename: value.filename, contentType: value.contentType));
         } else if (value is MultipartFile) {
           r.files.add(ht.MultipartFile.fromBytes(field, value.value,
+              filename: value.filename, contentType: value.contentType));
+        } else if (value is MultipartStringFile) {
+          r.files.add(ht.MultipartFile.fromString(field, value.value,
               filename: value.filename, contentType: value.contentType));
         }
       }
@@ -1069,11 +1075,14 @@ class Put extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
         final Multipart value = body[field];
         if (value is MultipartString) {
           r.fields[field] = value.value;
-        } else if (value is MultipartStringFile) {
-          r.files.add(ht.MultipartFile.fromString(field, value.value,
+        } else if (value is MultipartStreamFile) {
+          r.files.add(ht.MultipartFile(field, value.value, value.length,
               filename: value.filename, contentType: value.contentType));
         } else if (value is MultipartFile) {
           r.files.add(ht.MultipartFile.fromBytes(field, value.value,
+              filename: value.filename, contentType: value.contentType));
+        } else if (value is MultipartStringFile) {
+          r.files.add(ht.MultipartFile.fromString(field, value.value,
               filename: value.filename, contentType: value.contentType));
         }
       }
@@ -1474,6 +1483,19 @@ class MultipartFile implements Multipart {
   final List<int> value;
 
   MultipartFile(this.value, {this.filename, this.contentType});
+}
+
+class MultipartStreamFile implements Multipart {
+  final String filename;
+
+  final MediaType contentType;
+
+  final Stream<List<int>> value;
+
+  final int length;
+
+  MultipartStreamFile(this.value, this.length,
+      {this.filename, this.contentType});
 }
 
 class MultipartStringFile implements Multipart {

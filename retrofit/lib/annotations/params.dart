@@ -103,3 +103,8 @@ class AsMultipartField {
   final String alias;
   const AsMultipartField([this.alias]);
 }
+
+class HeaderHook {
+  final String alias;
+  const HeaderHook([this.alias]);
+}
