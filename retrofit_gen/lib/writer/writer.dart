@@ -1,6 +1,7 @@
 import '../parsed_info/parsed_info.dart';
 import 'package:analyzer/dart/element/element.dart'
     show MethodElement, ParameterElement;
+import 'package:analyzer/dart/element/type.dart';
 
 class Writer {
   final WriteInfo i;
@@ -164,7 +165,11 @@ String _writeFunctionSignature(MethodElement me) {
 String _writeParameter(ParameterElement parameter) {
   var sb = StringBuffer();
 
-  sb.write(parameter.type.toString());
+  if (parameter.type is! FunctionType) {
+    sb.write(parameter.type.toString());
+  } else {
+    sb.write("Function");
+  }
   sb.write(' ');
   sb.write(parameter.displayName);
 
