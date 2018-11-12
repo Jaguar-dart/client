@@ -159,6 +159,11 @@ class RouteBase {
     return this;
   }
 
+  RouteBase hookHeader(String key, ValueCallback<String> getter) {
+    getAfter.add((r) => getter(r.headers[key]));
+    return this;
+  }
+
   RouteBase url(String value) {
     final purl = Uri.parse(value);
     if (purl.hasAuthority) origin(purl.origin);
@@ -321,6 +326,9 @@ class Get extends RouteBase {
 
   Get metadata(Map<String, dynamic> metaData) => super.metadata(metaData);
 
+  Get hookHeader(String key, ValueCallback<String> getter) =>
+      super.hookHeader(key, getter);
+
   Get queries(Map<String, dynamic> value) => super.queries(value);
 
   Get header(String key, String value) => super.header(key, value);
@@ -376,8 +384,7 @@ class Get extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decode<T>(convert);
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -388,8 +395,7 @@ class Get extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decodeList<T>(convert);
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -565,6 +571,9 @@ class Post extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
 
   Post metadata(Map<String, dynamic> metaData) => super.metadata(metaData);
 
+  Post hookHeader(String key, ValueCallback<String> getter) =>
+      super.hookHeader(key, getter);
+
   Post queries(Map<String, dynamic> value) => super.queries(value);
 
   Post header(String key, String value) => super.header(key, value);
@@ -675,8 +684,7 @@ class Post extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decode<T>(convert);
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -687,8 +695,7 @@ class Post extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decodeList<T>(convert);
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -777,6 +784,9 @@ class Patch extends RouteBase
   Patch query(String key, value) => super.query(key, value);
 
   Patch metadata(Map<String, dynamic> metaData) => super.metadata(metaData);
+
+  Patch hookHeader(String key, ValueCallback<String> getter) =>
+      super.hookHeader(key, getter);
 
   Patch queries(Map<String, dynamic> value) => super.queries(value);
 
@@ -888,8 +898,7 @@ class Patch extends RouteBase
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decode<T>(convert);
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -900,8 +909,7 @@ class Patch extends RouteBase
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decodeList<T>(convert);
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -988,6 +996,9 @@ class Put extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
   Put query(String key, value) => super.query(key, value);
 
   Put metadata(Map<String, dynamic> metaData) => super.metadata(metaData);
+
+  Put hookHeader(String key, ValueCallback<String> getter) =>
+      super.hookHeader(key, getter);
 
   Put queries(Map<String, dynamic> value) => super.queries(value);
 
@@ -1098,8 +1109,7 @@ class Put extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decode<T>(convert);
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1110,8 +1120,7 @@ class Put extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decodeList<T>(convert);
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1194,6 +1203,9 @@ class Delete extends RouteBase {
 
   Delete metadata(Map<String, dynamic> metaData) => super.metadata(metaData);
 
+  Delete hookHeader(String key, ValueCallback<String> getter) =>
+      super.hookHeader(key, getter);
+
   Delete queries(Map<String, dynamic> value) => super.queries(value);
 
   Delete header(String key, String value) => super.header(key, value);
@@ -1249,8 +1261,7 @@ class Delete extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decode<T>(convert);
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1261,8 +1272,7 @@ class Delete extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decodeList<T>(convert);
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1347,6 +1357,9 @@ class OptionsMethod extends RouteBase {
   OptionsMethod metadata(Map<String, dynamic> metaData) =>
       super.metadata(metaData);
 
+  OptionsMethod hookHeader(String key, ValueCallback<String> getter) =>
+      super.hookHeader(key, getter);
+
   OptionsMethod queries(Map<String, dynamic> value) => super.queries(value);
 
   OptionsMethod header(String key, String value) => super.header(key, value);
@@ -1406,8 +1419,7 @@ class OptionsMethod extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decode<T>(convert);
+    if (resp.statusCode == 200) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1418,8 +1430,7 @@ class OptionsMethod extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200)
-      return resp.decodeList<T>(convert);
+    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1486,3 +1497,5 @@ class ErrorResponse {
 
   String toString() => 'Http error! Status code: $statusCode body: $body';
 }
+
+typedef ValueCallback<T> = void Function(T value);
