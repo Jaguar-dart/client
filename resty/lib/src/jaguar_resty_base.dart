@@ -384,7 +384,7 @@ class Get extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -395,7 +395,7 @@ class Get extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -687,7 +687,7 @@ class Post extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -698,7 +698,7 @@ class Post extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -904,7 +904,7 @@ class Patch extends RouteBase
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -915,7 +915,7 @@ class Patch extends RouteBase
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1118,7 +1118,7 @@ class Put extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1129,7 +1129,7 @@ class Put extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1270,7 +1270,7 @@ class Delete extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1281,7 +1281,7 @@ class Delete extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1428,7 +1428,7 @@ class OptionsMethod extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decode<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -1439,7 +1439,7 @@ class OptionsMethod extends RouteBase {
       {T convert(Map d),
       FutureOr<dynamic> onError(StringResponse resp)}) async {
     StringResponse resp = await go();
-    if (resp.statusCode == 200) return resp.decodeList<T>(convert);
+    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
