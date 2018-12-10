@@ -11,12 +11,12 @@ part 'file_upload.jretro.dart';
 
 /// Example showing how to define an [ApiClient]
 @GenApiClient(path: "api")
-class UserApi extends _$UserApiClient implements ApiClient {
+class UserApi extends ApiClient with _$UserApiClient {
   final Route base;
 
-  final SerializerRepo serializers;
+  final JsonRepo jsonConverter;
 
-  UserApi({this.base, this.serializers});
+  UserApi({this.base, this.jsonConverter});
 
   @PostReq(path: "upload")
   Future<StringResponse> upload(@AsMultipartField() MultipartFile file);

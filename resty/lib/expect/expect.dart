@@ -1,4 +1,4 @@
-import 'response.dart';
+import 'package:jaguar_resty/response/response.dart';
 import 'package:collection/collection.dart';
 
 /// Performs a check/validation on [T]

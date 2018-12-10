@@ -13,12 +13,12 @@ part 'path_param_at_up.jretro.dart';
 
 /// Example showing how to define an [ApiClient]
 @GenApiClient(path: "/api/:test", metadata: {"base": "test"})
-class SampleApi extends _$SampleApiClient implements ApiClient {
+class SampleApi extends ApiClient with _$SampleApiClient {
   final resty.Route base;
 
-  final SerializerRepo serializers;
+  final JsonRepo jsonConverter;
 
-  SampleApi({this.base, this.serializers});
+  SampleApi({this.base, this.jsonConverter});
 
   @GetReq()
   Future<String> test(@PathParam("test") String test);
@@ -35,7 +35,8 @@ void server() async {
 
 void client() async {
   globalClient = IOClient();
-  var api = SampleApi(base: route("http://localhost:10000"), serializers: repo);
+  var api =
+      SampleApi(base: route("http://localhost:10000"), jsonConverter: repo);
 
   print(await api.test("hello"));
 }

@@ -15,6 +15,6 @@ abstract class _$SampleApiClient implements ApiClient {
         })
         .path(basePath)
         .pathParams("test", test);
-    return req.one();
+    return req.go().then(decodeOne);
   }
 }

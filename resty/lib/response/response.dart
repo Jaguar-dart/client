@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'expect.dart';
+import 'package:jaguar_resty/expect/expect.dart';
 import 'package:async/async.dart';
 import 'dart:convert' as codec;
 import 'package:http_parser/http_parser.dart' show MediaType;
-import 'jaguar_resty_base.dart';
+import 'package:jaguar_resty/routes/routes.dart';
 import 'package:meta/meta.dart';
 
 typedef FutureOr<dynamic> After(StringResponse response);
@@ -105,7 +105,7 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
       run((Response<BT> r) => r.onFailure(hook));
 
   AsyncTResponse<BT> expect(List<Checker<Response>> conditions) {
-    return new AsyncTResponse<BT>(then((r) => r.expect(conditions)));
+    return AsyncTResponse<BT>(then((r) => r.expect(conditions)));
   }
 
   AsyncTResponse<BT> exact(
@@ -116,7 +116,7 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
       String encoding,
       Map<String, String> headers,
       int contentLength}) {
-    return new AsyncTResponse<BT>(then((r) {
+    return AsyncTResponse<BT>(then((r) {
       r.exact(
           statusCode: statusCode,
           body: body,
@@ -142,8 +142,8 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
 
   AsyncStringResponse.from(Future<http.Response> inner,
       {@required RouteBase sender, @required RouteBase sent})
-      : super(inner.then(
-            (r) => new StringResponse.from(r, sender: sender, sent: sent)));
+      : super(inner
+            .then((r) => StringResponse.from(r, sender: sender, sent: sent)));
 
   Future<int> get statusCode => then((r) => r.statusCode);
 
@@ -195,7 +195,7 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
       String encoding,
       Map<String, String> headers,
       int contentLength}) {
-    return new AsyncStringResponse(then((r) => r.exact(
+    return AsyncStringResponse(then((r) => r.exact(
         statusCode: statusCode,
         body: body,
         bytes: bytes,
@@ -212,10 +212,11 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
       AsyncTResponse<List<T>>(
           then((StringResponse r) => r.jsonList<T>(convert)));
 
-  Future<T> decode<T>([T convert(Map d)]) => then((r) => r.decode<T>(convert));
+  Future<T> decodeJson<T>([T convert(Map d)]) =>
+      then((r) => r.decodeJson<T>(convert));
 
-  Future<List<T>> decodeList<T>([T convert(Map d)]) =>
-      then((StringResponse r) => r.decodeList<T>(convert));
+  Future<List<T>> decodeJsonList<T>([T convert(Map d)]) =>
+      then((StringResponse r) => r.decodeJsonList<T>(convert));
 
   /// Runs [func] with [Response] object after request completion
   AsyncStringResponse run(ResponseHook<String> func) =>
@@ -444,7 +445,7 @@ class StringResponse implements Response<String> {
         encoding: mediaType.parameters['charset'] ?? Response.defaultCharset);
   }
 
-  String get body => _body ??= getEncoderForCharset(encoding).decode(bytes);
+  String get body => _body ??= _getEncoderForCharset(encoding).decode(bytes);
 
   StringResponse get toStringResponse => this;
 
@@ -469,7 +470,7 @@ class StringResponse implements Response<String> {
       ret = convert(d);
     else
       ret = d;
-    return new TResponse<T>(
+    return TResponse<T>(
       statusCode: statusCode,
       body: ret,
       bytes: bytes,
@@ -493,7 +494,7 @@ class StringResponse implements Response<String> {
       ret = d.cast<Map>().map(convert).cast<T>().toList();
     else
       ret = d.cast<T>();
-    return new TResponse<List<T>>(
+    return TResponse<List<T>>(
       statusCode: statusCode,
       body: ret,
       bytes: bytes,
@@ -510,13 +511,13 @@ class StringResponse implements Response<String> {
     );
   }
 
-  T decode<T>([T convert(Map d)]) {
+  T decodeJson<T>([T convert(Map d)]) {
     final d = codec.json.decode(body);
     if (convert == null) return d;
     return convert(d);
   }
 
-  List<T> decodeList<T>([T convert(Map d)]) {
+  List<T> decodeJsonList<T>([T convert(Map d)]) {
     List d = codec.json.decode(body);
     if (convert != null) return d.cast<Map>().map(convert).cast<T>().toList();
     return d.cast<T>();
@@ -558,7 +559,7 @@ class StringResponse implements Response<String> {
   }
 }
 
-codec.Encoding getEncoderForCharset(String charset,
+codec.Encoding _getEncoderForCharset(String charset,
     [codec.Encoding fallback = codec.latin1]) {
   if (charset == null) return fallback;
   var encoding = codec.Encoding.getByName(charset);

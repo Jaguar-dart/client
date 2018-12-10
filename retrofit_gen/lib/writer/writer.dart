@@ -69,11 +69,11 @@ class Writer {
       }
 
       if (body is JsonBody) {
-        sb.write('.json(serializers.to(${body.name}))');
+        sb.write('.json(jsonConverter.to(${body.name}))');
       }
 
       if (body is FormBody) {
-        sb.write('.urlEncodedForm(serializers.to(${body.name}))');
+        sb.write('.urlEncodedForm(jsonConverter.to(${body.name}))');
       }
 
       if (body is FormFieldBody) {
@@ -83,7 +83,7 @@ class Writer {
       if (body is MultipartForm) {
         if (body.serialize) {
           sb.write(
-              '.multipart((serializers.to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
+              '.multipart((jsonConverter.to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
         } else {
           sb.write('.multipart(${body.name})');
         }
@@ -100,19 +100,19 @@ class Writer {
       sb.writeln('await req.go();');
     } else if (r.result.model != null) {
       if (r.result.isResultList) {
-        sb.writeln('return req.list(convert: serializers.oneFrom);');
+        sb.writeln('return req.go().then(decodeList);');
       } else if (r.result.isStringResponse) {
         sb.writeln('return req.go();');
       } else if (r.result.isResultBuiltin) {
-        sb.writeln('return req.one();');
+        sb.writeln('return req.go().then(decodeOne);');
       } else {
-        sb.writeln('return req.one(convert: serializers.oneFrom);');
+        sb.writeln('return req.go().then(decodeOne);');
       }
     } else if (r.result.mapValueType != null) {
       sb.writeln(
-          'return req.one().then((v) => serializers.mapFrom<${r.result.mapValueType}>(v));');
+          'return req.one().then((v) => jsonConverter.mapFrom<${r.result.mapValueType}>(v));');
     } else {
-      sb.writeln('return serializers.from(await req.go().body);');
+      sb.writeln('return await req.go();');
     }
 
     sb.writeln('}');

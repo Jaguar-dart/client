@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:http/http.dart' as ht;
 import 'dart:convert' as codec;
-import 'expect.dart';
-import 'response.dart';
+import 'package:jaguar_resty/expect/expect.dart';
+import 'package:jaguar_resty/response/response.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:client_cookie/client_cookie.dart';
 import 'package:auth_header/auth_header.dart';
@@ -271,13 +271,47 @@ void _prepare(RouteBase route) {
   }
 }
 
+abstract class RouteFetch {
+  /// Issues the request and returns the response
+  AsyncStringResponse go(
+      {ResponseHook<String> onSuccess,
+      ResponseHook<String> onFailure,
+      ResponseHook<String> then});
+
+  /// Fetches json response and returns the decoded result
+  Future<T> one<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
+    StringResponse resp = await go();
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decodeJson<T>(convert);
+    if (onError == null) throw ErrorResponse(resp);
+    var err = await onError(resp);
+    if (err != null) throw err;
+    return null;
+  }
+
+  /// Fetches json response and returns the decoded result
+  Future<List<T>> list<T>(
+      {T convert(Map d),
+      FutureOr<dynamic> onError(StringResponse resp)}) async {
+    StringResponse resp = await go();
+    if (resp.statusCode >= 200 && resp.statusCode < 300)
+      return resp.decodeJsonList<T>(convert);
+    if (onError == null) throw ErrorResponse(resp);
+    var err = await onError(resp);
+    if (err != null) throw err;
+    return null;
+  }
+}
+
 /// Build fluent REST GET APIs
 ///
 /// Example:
 ///     get('/book')
 ///       .query('count', '10')
 ///       .fetchList((m) => Book.fromMap(m));
-class Get extends RouteBase {
+class Get extends RouteBase with RouteFetch {
   Get(String url) {
     this.url(url);
   }
@@ -378,28 +412,6 @@ class Get extends RouteBase {
     if (onFailure != null) resp = resp.onFailure(onFailure);
     if (then != null) resp = resp.run(then);
     return resp;
-  }
-
-  Future<T> one<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
-  }
-
-  Future<List<T>> list<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
   }
 
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>
@@ -517,7 +529,9 @@ abstract class _RouteWithBodyMixin implements RouteWithBody {
 ///     post('/book/${id}')
 ///       .json(book.toMap)
 ///       .fetch((m) => Book.fromMap(m));
-class Post extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
+class Post extends RouteBase
+    with _RouteWithBodyMixin, RouteFetch
+    implements RouteWithBody {
   dynamic _body;
 
   Post(String url) {
@@ -683,28 +697,6 @@ class Post extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
     return resp;
   }
 
-  Future<T> one<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
-  }
-
-  Future<List<T>> list<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
-  }
-
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>
       go().expect(conditions);
 
@@ -733,7 +725,7 @@ class Post extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
 ///       .json(book.toMap)
 ///       .fetch((m) => Book.fromMap(m));
 class Patch extends RouteBase
-    with _RouteWithBodyMixin
+    with _RouteWithBodyMixin, RouteFetch
     implements RouteWithBody {
   dynamic _body;
 
@@ -900,28 +892,6 @@ class Patch extends RouteBase
     return resp;
   }
 
-  Future<T> one<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
-  }
-
-  Future<List<T>> list<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
-  }
-
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>
       go().expect(conditions);
 
@@ -949,7 +919,9 @@ class Patch extends RouteBase
 ///     put('/book/${id}')
 ///       .json(book.toMap)
 ///       .fetch((m) => Book.fromMap(m));
-class Put extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
+class Put extends RouteBase
+    with _RouteWithBodyMixin, RouteFetch
+    implements RouteWithBody {
   dynamic _body;
 
   Put(String url) {
@@ -1114,28 +1086,6 @@ class Put extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
     return resp;
   }
 
-  Future<T> one<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
-  }
-
-  Future<List<T>> list<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
-  }
-
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>
       go().expect(conditions);
 
@@ -1162,7 +1112,7 @@ class Put extends RouteBase with _RouteWithBodyMixin implements RouteWithBody {
 /// Example:
 ///     delete('/book/${id}')
 ///       .fetchList((m) => Book.fromMap(m));
-class Delete extends RouteBase {
+class Delete extends RouteBase with RouteFetch {
   Delete(String url) {
     this.url(url);
   }
@@ -1266,28 +1216,6 @@ class Delete extends RouteBase {
     return resp;
   }
 
-  Future<T> one<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
-  }
-
-  Future<List<T>> list<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
-  }
-
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>
       go().expect(conditions);
 
@@ -1313,7 +1241,7 @@ class Delete extends RouteBase {
 ///
 /// Example:
 ///     options('/book/${id}').go();
-class OptionsMethod extends RouteBase {
+class OptionsMethod extends RouteBase with RouteFetch {
   OptionsMethod(String url) {
     this.url(url);
   }
@@ -1422,28 +1350,6 @@ class OptionsMethod extends RouteBase {
     if (onFailure != null) resp = resp.onFailure(onFailure);
     if (then != null) resp = resp.run(then);
     return resp;
-  }
-
-  Future<T> one<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decode<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
-  }
-
-  Future<List<T>> list<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
-    StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300) return resp.decodeList<T>(convert);
-    if (onError == null) throw ErrorResponse(resp);
-    var err = await onError(resp);
-    if (err != null) throw err;
-    return null;
   }
 
   AsyncStringResponse expect(List<Checker<Response>> conditions) =>

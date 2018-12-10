@@ -13,12 +13,12 @@ part 'results.jretro.dart';
 
 /// Example showing how to define an [ApiClient]
 @GenApiClient(path: "results")
-class UserApi extends _$UserApiClient implements ApiClient {
+class UserApi extends ApiClient with _$UserApiClient {
   final resty.Route base;
 
-  final SerializerRepo serializers;
+  final JsonRepo jsonConverter;
 
-  UserApi({this.base, this.serializers});
+  UserApi({this.base, this.jsonConverter});
 
   @GetReq(path: "/map")
   Future<Map<String, int>> map(String test);
@@ -40,7 +40,7 @@ void client() async {
         ..before((route) {
           print("Metadata: ${route.metadataMap}");
         }),
-      serializers: repo);
+      jsonConverter: repo);
 
   try {
     print(await api.map("hello"));
