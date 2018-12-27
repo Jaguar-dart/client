@@ -109,6 +109,7 @@ class Writer {
         sb.writeln('return req.go().then(decodeOne);');
       }
     } else if (r.result.mapValueType != null) {
+      // TODO
       sb.writeln(
           'return req.one().then((v) => jsonConverter.mapFrom<${r.result.mapValueType}>(v));');
     } else {

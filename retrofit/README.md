@@ -2,11 +2,6 @@
 
 An HTTP client API generator inspired by Retrofit for Dart.
 
-# TODO
-
-+ UrlEncodedForm
-+ Multipart form
-
 ## Install
 
 ```yaml
