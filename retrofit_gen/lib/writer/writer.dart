@@ -97,23 +97,23 @@ class Writer {
     sb.writeln(';');
 
     if (r.result.returnsVoid) {
-      sb.writeln('await req.go();');
+      sb.writeln('await req.go(throwOnErr: true);');
     } else if (r.result.model != null) {
       if (r.result.isResultList) {
-        sb.writeln('return req.go().then(decodeList);');
+        sb.writeln('return req.go(throwOnErr: true).then(decodeList);');
       } else if (r.result.isStringResponse) {
-        sb.writeln('return req.go();');
+        sb.writeln('return req.go(throwOnErr: true);');
       } else if (r.result.isResultBuiltin) {
-        sb.writeln('return req.go().then(decodeOne);');
+        sb.writeln('return req.go(throwOnErr: true).then(decodeOne);');
       } else {
-        sb.writeln('return req.go().then(decodeOne);');
+        sb.writeln('return req.go(throwOnErr: true).then(decodeOne);');
       }
     } else if (r.result.mapValueType != null) {
       // TODO
       sb.writeln(
           'return req.one().then((v) => jsonConverter.mapFrom<${r.result.mapValueType}>(v));');
     } else {
-      sb.writeln('return await req.go();');
+      sb.writeln('return await req.go(throwOnErr: true);');
     }
 
     sb.writeln('}');

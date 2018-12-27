@@ -276,7 +276,8 @@ abstract class RouteFetch {
   AsyncStringResponse go(
       {ResponseHook<String> onSuccess,
       ResponseHook<String> onFailure,
-      ResponseHook<String> then});
+      ResponseHook<String> then,
+      bool throwOnErr});
 
   /// Fetches json response and returns the decoded result
   Future<T> one<T>(
@@ -285,6 +286,7 @@ abstract class RouteFetch {
     StringResponse resp = await go();
     if (resp.statusCode >= 200 && resp.statusCode < 300)
       return resp.decodeJson<T>(convert);
+
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);
     if (err != null) throw err;
@@ -396,7 +398,8 @@ class Get extends RouteBase with RouteFetch {
   AsyncStringResponse go(
       {ResponseHook<String> onSuccess,
       ResponseHook<String> onFailure,
-      ResponseHook<String> then}) {
+      ResponseHook<String> then,
+      bool throwOnErr}) {
     Get cloned = Get.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -411,6 +414,7 @@ class Get extends RouteBase with RouteFetch {
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
     if (then != null) resp = resp.run(then);
+    if (throwOnErr == true) resp.onFailure((r) => throw r);
     return resp;
   }
 
@@ -679,7 +683,8 @@ class Post extends RouteBase
   AsyncStringResponse go(
       {ResponseHook<String> onSuccess,
       ResponseHook<String> onFailure,
-      ResponseHook<String> then}) {
+      ResponseHook<String> then,
+      bool throwOnErr}) {
     Post cloned = Post.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -693,6 +698,7 @@ class Post extends RouteBase
     }));
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (throwOnErr == true) resp.onFailure((r) => throw r);
     if (then != null) resp = resp.run(then);
     return resp;
   }
@@ -874,7 +880,8 @@ class Patch extends RouteBase
   AsyncStringResponse go(
       {ResponseHook<String> onSuccess,
       ResponseHook<String> onFailure,
-      ResponseHook<String> then}) {
+      ResponseHook<String> then,
+      bool throwOnErr}) {
     Patch cloned = Patch.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -888,6 +895,7 @@ class Patch extends RouteBase
     }));
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (throwOnErr == true) resp.onFailure((r) => throw r);
     if (then != null) resp = resp.run(then);
     return resp;
   }
@@ -1068,7 +1076,8 @@ class Put extends RouteBase
   AsyncStringResponse go(
       {ResponseHook<String> onSuccess,
       ResponseHook<String> onFailure,
-      ResponseHook<String> then}) {
+      ResponseHook<String> then,
+      bool throwOnErr}) {
     Put cloned = Put.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -1082,6 +1091,7 @@ class Put extends RouteBase
     }));
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (throwOnErr == true) resp.onFailure((r) => throw r);
     if (then != null) resp = resp.run(then);
     return resp;
   }
@@ -1198,7 +1208,8 @@ class Delete extends RouteBase with RouteFetch {
   AsyncStringResponse go(
       {ResponseHook<String> onSuccess,
       ResponseHook<String> onFailure,
-      ResponseHook<String> then}) {
+      ResponseHook<String> then,
+      bool throwOnErr}) {
     Delete cloned = Delete.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -1212,6 +1223,7 @@ class Delete extends RouteBase with RouteFetch {
     }));
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (throwOnErr == true) resp.onFailure((r) => throw r);
     if (then != null) resp = resp.run(then);
     return resp;
   }
@@ -1334,7 +1346,8 @@ class OptionsMethod extends RouteBase with RouteFetch {
   AsyncStringResponse go(
       {ResponseHook<String> onSuccess,
       ResponseHook<String> onFailure,
-      ResponseHook<String> then}) {
+      ResponseHook<String> then,
+      bool throwOnErr}) {
     OptionsMethod cloned = OptionsMethod.clone(this);
     AsyncStringResponse resp = AsyncStringResponse(
         AsyncStringResponse.from(cloned._send(), sender: this, sent: cloned)
@@ -1348,6 +1361,7 @@ class OptionsMethod extends RouteBase with RouteFetch {
     }));
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
+    if (throwOnErr == true) resp.onFailure((r) => throw r);
     if (then != null) resp = resp.run(then);
     return resp;
   }

@@ -27,6 +27,6 @@ abstract class _$SampleApiClient implements ApiClient {
         })
         .path(basePath)
         .path("/:id");
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 }

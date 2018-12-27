@@ -10,27 +10,27 @@ abstract class _$UserApiClient implements ApiClient {
   final String basePath = "user";
   Future<User> getUserById(String id) async {
     var req = base.get.path(basePath).path(":id").pathParams("id", id);
-    return req.go().then(decodeOne);
+    return req.go(throwOnErr: true).then(decodeOne);
   }
 
   Future<List<User>> all() async {
     var req = base.get.path(basePath);
-    return req.go().then(decodeList);
+    return req.go(throwOnErr: true).then(decodeList);
   }
 
   Future<User> createUser(User user) async {
     var req = base.post.path(basePath).json(jsonConverter.to(user));
-    return req.go().then(decodeOne);
+    return req.go(throwOnErr: true).then(decodeOne);
   }
 
   Future<User> updateUser(String id, User user) async {
     var req = base.put.path(basePath).path(":id").json(jsonConverter.to(user));
-    return req.go().then(decodeOne);
+    return req.go(throwOnErr: true).then(decodeOne);
   }
 
   Future<void> deleteUser(String id) async {
     var req = base.delete.path(basePath).path(":id");
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 
   Future<void> login(Login login) async {
@@ -38,11 +38,11 @@ abstract class _$UserApiClient implements ApiClient {
         .path(basePath)
         .path("/login")
         .urlEncodedForm(jsonConverter.to(login));
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 
   Future<void> avatar(List<int> data) async {
     var req = base.patch.path(basePath).path("/avatar").bytes(data);
-    await req.go();
+    await req.go(throwOnErr: true);
   }
 }
