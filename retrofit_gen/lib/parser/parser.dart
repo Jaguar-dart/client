@@ -59,7 +59,13 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
 
     {
       DartObject isBody = isAsBody.firstAnnotationOfExact(pe);
-      if (isBody != null) body.add(RawBody(pe.displayName));
+      if (isBody != null) {
+        if (isList.isExactlyType(pe.type)) {
+          body.add(RawBody(pe.displayName));
+        } else {
+          body.add(StringBody(pe.displayName));
+        }
+      }
     }
 
     {

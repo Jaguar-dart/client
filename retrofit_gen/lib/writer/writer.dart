@@ -68,6 +68,10 @@ class Writer {
         sb.write('.bytes(${body.name})');
       }
 
+      if (body is StringBody) {
+        sb.write('.body(${body.name}?.toString())');
+      }
+
       if (body is JsonBody) {
         sb.write('.json(jsonConverter.to(${body.name}))');
       }

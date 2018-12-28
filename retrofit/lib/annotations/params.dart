@@ -38,12 +38,14 @@ class HeaderMap {
   const HeaderMap();
 }
 
+abstract class BodyAnnotation {}
+
 /// Sends the argument annotated with [AsJson] as JSON body in the http request.
 /// Uses [ApiClient.serializers] for serialization.
 ///
 ///     @PostReq(path: "/book")
 ///     Future<List<Book>> create(@AsJson() Book book);
-class AsJson {
+class AsJson implements BodyAnnotation {
   const AsJson();
 }
 
@@ -52,7 +54,7 @@ class AsJson {
 ///
 ///     @PostReq(path: "/image")
 ///     Future<void> upload(@AsBody() List<int> bytes);
-class AsBody {
+class AsBody implements BodyAnnotation {
   const AsBody();
 }
 
@@ -61,7 +63,7 @@ class AsBody {
 ///
 ///     @PostReq(path: "/book")
 ///     Future<void> upload(@AsForm() Book book);
-class AsForm {
+class AsForm implements BodyAnnotation {
   const AsForm();
 }
 
@@ -70,7 +72,7 @@ class AsForm {
 ///
 ///     @PostReq(path: "/book")
 ///     Future<void> upload(@AsForm() Book book, @AsFormField() String id);
-class AsFormField {
+class AsFormField implements BodyAnnotation {
   final String alias;
   const AsFormField([this.alias]);
 }
@@ -84,7 +86,7 @@ class AsFormField {
 ///
 ///     @PostReq(path: "/book")
 ///     Future<void> upload(@AsMultipart(serialize: false) Map<String, dynamic> book);
-class AsMultipart {
+class AsMultipart implements BodyAnnotation {
   final bool serialize;
   const AsMultipart({this.serialize: true});
 }
@@ -97,7 +99,7 @@ class AsMultipart {
 ///
 ///     @PostReq(path: "/image")
 ///     Future<void> upload(@AsMultipartField() MultipartFile image);
-class AsMultipartField {
+class AsMultipartField implements BodyAnnotation {
   final String alias;
   const AsMultipartField([this.alias]);
 }

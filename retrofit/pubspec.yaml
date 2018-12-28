@@ -1,6 +1,6 @@
 name: jaguar_retrofit
 description: Retrofit inspired declarative HTTP client for Dart.
-version: 2.6.2
+version: 2.6.5
 authors:
 - Ravi Teja Gudapati <tejainece@gmail.com>
 - Hadrien Lejard <hadrien.lejard@gmail.com>

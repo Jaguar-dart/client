@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.6.4
+
++ Implemented `AsBodyString` annotation
+
 ## 2.5.2
 
 + `PathParam` alias bug fix
