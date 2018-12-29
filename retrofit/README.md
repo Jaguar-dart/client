@@ -1,4 +1,4 @@
-# jaguar_http
+# jaguar_retrofit
 
 An HTTP client API generator inspired by Retrofit for Dart.
 
