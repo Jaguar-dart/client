@@ -78,11 +78,11 @@ class Writer {
       }
 
       if (body is JsonBody) {
-        sb.write('.json(jsonConverter.to(${body.name}))');
+        sb.write('.json(converters[ApiClient.contentTypeJson].to(${body.name}))');
       }
 
       if (body is FormBody) {
-        sb.write('.urlEncodedForm(jsonConverter.to(${body.name}))');
+        sb.write('.urlEncodedForm(converters[ApiClient.contentTypeJson].to(${body.name}))');
       }
 
       if (body is FormFieldBody) {
@@ -91,7 +91,7 @@ class Writer {
       if (body is MultipartForm) {
         if (body.serialize) {
           sb.write(
-              '.multipart((jsonConverter.to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
+              '.multipart((converters[ApiClient.contentTypeJson].to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
         } else {
           sb.write('.multipart(${body.name})');
         }

@@ -17,11 +17,9 @@ part 'example.jretro.dart';
 class UserApi extends ApiClient with _$UserApiClient {
   final resty.Route base;
 
-  final JsonRepo jsonConverter;
-
   final Map<String, CodecRepo> converters;
 
-  UserApi({this.base, this.jsonConverter, this.converters});
+  UserApi({this.base, this.converters});
 
   @GetReq(path: ":id")
   Future<User> getUserById(@PathParam() String id);
@@ -45,7 +43,7 @@ class UserApi extends ApiClient with _$UserApiClient {
   Future<void> avatar(@AsBody() List<int> data);
 
   @PostReq()
-  Future<User> serialize(@AsBody('application/json') User data);
+  Future<User> serialize(@AsBody(ApiClient.contentTypeJson) User data);
 }
 
 final repo = JsonRepo()..add(UserSerializer())..add(LoginSerializer());
@@ -86,8 +84,8 @@ void client() async {
         ..before((route) {
           print("Metadata: ${route.metadataMap}");
         }),
-      converters: {'application/json': repo},
-      jsonConverter: repo);
+      converters: {ApiClient.contentTypeJson: repo},
+  );
 
   try {
     await api.login(Login(username: 'teja', password: 'pass'));

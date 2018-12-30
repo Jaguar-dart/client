@@ -6,19 +6,13 @@ import 'package:jaguar_resty/jaguar_resty.dart';
 
 abstract class ApiClient {
   Route get base;
-  JsonRepo get jsonConverter;
+  static const contentTypeJson = 'application/json';
+  static const contentTypeStream = 'application/octet-stream';
 
   final converters = <String, CodecRepo>{};
 
   Future<T> decodeOne<T>(StringResponse response) async {
-    String contentType = await response.mimeType;
-    if (jsonConverter != null) {
-      if (contentType == null ||
-          contentType.isEmpty ||
-          contentType == "application/json") {
-        return jsonConverter.decodeOne<T>(response.body);
-      }
-    }
+    String contentType = await response.mimeType ?? contentTypeJson;
 
     CodecRepo converter = converters[contentType];
     if (converter == null)
@@ -26,18 +20,11 @@ abstract class ApiClient {
     if (converter is CodecRepo<List<int>>) {
       return converter.decodeOne<T>(response.bytes);
     }
-    return converter.decodeOne<T>(response.bytes);
+    return converter.decodeOne<T>(response.body);
   }
 
   Future<List<T>> decodeList<T>(StringResponse response) async {
-    String contentType = await response.mimeType;
-    if (jsonConverter != null) {
-      if (contentType == null ||
-          contentType.isEmpty ||
-          contentType == "application/json") {
-        return jsonConverter.decodeList<T>(response.body);
-      }
-    }
+    String contentType = await response.mimeType ?? contentTypeJson;
 
     CodecRepo converter = converters[contentType];
     if (converter == null)
@@ -45,6 +32,6 @@ abstract class ApiClient {
     if (converter is CodecRepo<List<int>>) {
       return converter.decodeList<T>(response.bytes);
     }
-    return converter.decodeList<T>(response.bytes);
+    return converter.decodeList<T>(response.body);
   }
 }
