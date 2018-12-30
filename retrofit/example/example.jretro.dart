@@ -45,4 +45,15 @@ abstract class _$UserApiClient implements ApiClient {
     var req = base.patch.path(basePath).path("/avatar").bytes(data);
     await req.go(throwOnErr: true);
   }
+
+  Future<User> serialize(User data) async {
+    final dataData = converters['application/json'].encode(data);
+    var req = base.post.path(basePath);
+    if (dataData is String) {
+      req = req.header('Content-Type', 'application/json').body(dataData);
+    } else {
+      req = req.header('Content-Type', 'application/json').bytes(dataData);
+    }
+    return req.go(throwOnErr: true).then(decodeOne);
+  }
 }

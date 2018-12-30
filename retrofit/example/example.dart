@@ -19,7 +19,9 @@ class UserApi extends ApiClient with _$UserApiClient {
 
   final JsonRepo jsonConverter;
 
-  UserApi({this.base, this.jsonConverter});
+  final Map<String, CodecRepo> converters;
+
+  UserApi({this.base, this.jsonConverter, this.converters});
 
   @GetReq(path: ":id")
   Future<User> getUserById(@PathParam() String id);
@@ -41,6 +43,9 @@ class UserApi extends ApiClient with _$UserApiClient {
 
   @PatchReq(path: "/avatar")
   Future<void> avatar(@AsBody() List<int> data);
+
+  @PostReq()
+  Future<User> serialize(@AsBody('application/json') User data);
 }
 
 final repo = JsonRepo()..add(UserSerializer())..add(LoginSerializer());
@@ -81,6 +86,7 @@ void client() async {
         ..before((route) {
           print("Metadata: ${route.metadataMap}");
         }),
+      converters: {'application/json': repo},
       jsonConverter: repo);
 
   try {
@@ -104,6 +110,10 @@ void client() async {
     await api.deleteUser('5');
     users = await api.all();
     print('Deleted user $users');
+    User user11 =
+    await api.serialize(User(id: '11', name: 'eleven', email: 'eleven@eleven.com'));
+    print('Created $user11');
+
   } on resty.Response catch (e) {
     print(e.body);
   }

@@ -27,6 +27,11 @@ class Writer {
 
     sb.writeln(' async {');
 
+    for (Body body in r.body) {
+      if (body is SerializedBody) {
+        sb.writeln('final ${body.name}Data = converters[\'${body.contentType}\'].encode(${body.name});');
+      }
+    }
     sb.write('var req = base.${r.method}');
 
     if (i.baseMetadata.isNotEmpty) {
@@ -83,7 +88,6 @@ class Writer {
       if (body is FormFieldBody) {
         sb.write('.urlEncodedFormField(${body.key}, ${body.name})');
       }
-
       if (body is MultipartForm) {
         if (body.serialize) {
           sb.write(
@@ -99,6 +103,21 @@ class Writer {
     }
 
     sb.writeln(';');
+
+    for (Body body in r.body) {
+      if (body is SerializedBody) {
+        sb.writeln('if(${body.name}Data is String) {');
+        sb.write('req = req');
+        sb.write('.header(\'Content-Type\', \'${body.contentType}\')');
+        sb.writeln('.body(${body.name}Data);');
+        sb.writeln('} else {');
+        sb.write('req = req');
+        sb.write('.header(\'Content-Type\', \'${body.contentType}\')');
+        sb.writeln('.bytes(${body.name}Data);');
+        sb.writeln('}');
+      }
+    }
+
 
     if (r.result.returnsVoid) {
       sb.writeln('await req.go(throwOnErr: true);');
