@@ -21,9 +21,9 @@ dev_dependencies:
 class UserApi extends _$UserApiClient implements ApiClient {
   final resty.Route base;
 
-  final SerializerRepo serializers;
+  final Map<String, CodecRepo> converters;
 
-  UserApi({this.base, this.serializers});
+  UserApi({this.base, this.converters});
 
   @GetReq("/users/:id")
   Future<User> getUserById(String id);
@@ -47,7 +47,8 @@ class UserApi extends _$UserApiClient implements ApiClient {
 
 #### Use it
 ```dart
-  var api = UserApi(base: route("http://localhost:10000"), serializers: repo);
+  final repo = JsonRepo()..add(UserSerializer());
+  final api = UserApi(base: route("http://localhost:10000"), converters: {ApiClient.contentTypeJson: repo});
   User user5 = await api
         .createUser(User(id: '5', name: 'five', email: 'five@five.com'));
 ```

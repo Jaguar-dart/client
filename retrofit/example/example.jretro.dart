@@ -19,12 +19,16 @@ abstract class _$UserApiClient implements ApiClient {
   }
 
   Future<User> createUser(User user) async {
-    var req = base.post.path(basePath).json(jsonConverter.to(user));
+    var req =
+        base.post.path(basePath).json(converters[ContentType.json].to(user));
     return req.go(throwOnErr: true).then(decodeOne);
   }
 
   Future<User> updateUser(String id, User user) async {
-    var req = base.put.path(basePath).path(":id").json(jsonConverter.to(user));
+    var req = base.put
+        .path(basePath)
+        .path(":id")
+        .json(converters[ContentType.json].to(user));
     return req.go(throwOnErr: true).then(decodeOne);
   }
 
@@ -37,12 +41,17 @@ abstract class _$UserApiClient implements ApiClient {
     var req = base.post
         .path(basePath)
         .path("/login")
-        .urlEncodedForm(jsonConverter.to(login));
+        .urlEncodedForm(converters[ContentType.json].to(login));
     await req.go(throwOnErr: true);
   }
 
   Future<void> avatar(List<int> data) async {
     var req = base.patch.path(basePath).path("/avatar").bytes(data);
     await req.go(throwOnErr: true);
+  }
+
+  Future<User> serialize(User data) async {
+    var req = base.post.path(basePath).body(data?.toString());
+    return req.go(throwOnErr: true).then(decodeOne);
   }
 }

@@ -1,7 +1,7 @@
 library jaguar_http.example;
 
-import 'dart:io';
 import 'dart:async';
+import 'dart:io' show exit;
 import 'package:http/io_client.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
@@ -17,9 +17,9 @@ part 'example.jretro.dart';
 class UserApi extends ApiClient with _$UserApiClient {
   final resty.Route base;
 
-  final JsonRepo jsonConverter;
+  final Map<ContentType, CodecRepo> converters;
 
-  UserApi({this.base, this.jsonConverter});
+  UserApi({this.base, this.converters});
 
   @GetReq(path: ":id")
   Future<User> getUserById(@PathParam() String id);
@@ -41,6 +41,9 @@ class UserApi extends ApiClient with _$UserApiClient {
 
   @PatchReq(path: "/avatar")
   Future<void> avatar(@AsBody() List<int> data);
+
+  @PostReq()
+  Future<User> serialize(@AsBody(ContentType.json) User data);
 }
 
 final repo = JsonRepo()..add(UserSerializer())..add(LoginSerializer());
@@ -81,7 +84,8 @@ void client() async {
         ..before((route) {
           print("Metadata: ${route.metadataMap}");
         }),
-      jsonConverter: repo);
+      converters: {ContentType.json: repo},
+  );
 
   try {
     await api.login(Login(username: 'teja', password: 'pass'));
@@ -104,6 +108,10 @@ void client() async {
     await api.deleteUser('5');
     users = await api.all();
     print('Deleted user $users');
+    User user11 =
+    await api.serialize(User(id: '11', name: 'eleven', email: 'eleven@eleven.com'));
+    print('Created $user11');
+
   } on resty.Response catch (e) {
     print(e.body);
   }

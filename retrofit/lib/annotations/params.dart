@@ -1,5 +1,8 @@
 library retrofit.annotations.params;
 
+import 'package:jaguar_resty/jaguar_resty.dart';
+
+
 /// Sends the argument annontated with [PathParam] as path parameter in the http
 /// request.
 ///
@@ -55,7 +58,8 @@ class AsJson implements BodyAnnotation {
 ///     @PostReq(path: "/image")
 ///     Future<void> upload(@AsBody() List<int> bytes);
 class AsBody implements BodyAnnotation {
-  const AsBody();
+  final ContentType contentType;
+  const AsBody([this.contentType = null]);
 }
 
 /// Sends the argument annotated with [AsForm] as url-encoded-form body in the

@@ -15,7 +15,7 @@ dependencies:
   logging: ^0.11.0
   source_gen: ^0.9.0
   meta: ^1.1.5
-  jaguar_resty: ^2.9.2
+  #jaguar_resty: ^2.9.2
   jaguar_retrofit: ^2.6.5
 
 dev_dependencies:
@@ -24,6 +24,6 @@ dev_dependencies:
   collection: ^1.14.10
   path: ^1.6.2
 
-#dependency_overrides:
-#  jaguar_resty:
-#    path: ../resty
+dependency_overrides:
+  jaguar_resty:
+    path: ../resty

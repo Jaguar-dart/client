@@ -19,6 +19,12 @@ class JsonBody implements Body {
   JsonBody(this.name);
 }
 
+class SerializedBody implements Body {
+  final String name;
+  final String contentType;
+  SerializedBody(this.name, this.contentType);
+}
+
 class MultipartForm implements Body {
   final bool serialize;
   final String name;
