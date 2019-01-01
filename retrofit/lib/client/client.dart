@@ -6,13 +6,11 @@ import 'package:jaguar_resty/jaguar_resty.dart';
 
 abstract class ApiClient {
   Route get base;
-  static const contentTypeJson = 'application/json';
-  static const contentTypeStream = 'application/octet-stream';
 
-  final converters = <String, CodecRepo>{};
+  final converters = <ContentType, CodecRepo>{};
 
   Future<T> decodeOne<T>(StringResponse response) async {
-    String contentType = await response.mimeType ?? contentTypeJson;
+    String contentType = await response.mimeType ?? ContentType.json;
 
     CodecRepo converter = converters[contentType];
     if (converter == null)
@@ -24,7 +22,7 @@ abstract class ApiClient {
   }
 
   Future<List<T>> decodeList<T>(StringResponse response) async {
-    String contentType = await response.mimeType ?? contentTypeJson;
+    String contentType = await response.mimeType ?? ContentType.json;
 
     CodecRepo converter = converters[contentType];
     if (converter == null)

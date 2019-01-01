@@ -1,7 +1,7 @@
 library jaguar_http.example;
 
-import 'dart:io';
 import 'dart:async';
+import 'dart:io' show exit;
 import 'package:http/io_client.dart';
 import 'package:jaguar_retrofit/jaguar_retrofit.dart';
 import 'package:jaguar_serializer/jaguar_serializer.dart';
@@ -17,7 +17,7 @@ part 'example.jretro.dart';
 class UserApi extends ApiClient with _$UserApiClient {
   final resty.Route base;
 
-  final Map<String, CodecRepo> converters;
+  final Map<ContentType, CodecRepo> converters;
 
   UserApi({this.base, this.converters});
 
@@ -43,7 +43,7 @@ class UserApi extends ApiClient with _$UserApiClient {
   Future<void> avatar(@AsBody() List<int> data);
 
   @PostReq()
-  Future<User> serialize(@AsBody(ApiClient.contentTypeJson) User data);
+  Future<User> serialize(@AsBody(ContentType.json) User data);
 }
 
 final repo = JsonRepo()..add(UserSerializer())..add(LoginSerializer());
@@ -84,7 +84,7 @@ void client() async {
         ..before((route) {
           print("Metadata: ${route.metadataMap}");
         }),
-      converters: {ApiClient.contentTypeJson: repo},
+      converters: {ContentType.json: repo},
   );
 
   try {

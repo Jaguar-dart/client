@@ -25,6 +25,24 @@ OptionsMethod options(String url) => OptionsMethod(url);
 
 ht.BaseClient globalClient;
 
+class ContentType {
+  final String primaryType;
+  final String subType;
+  const ContentType(this.primaryType, this.subType);
+
+  static const json = ContentType('application', 'json');
+  static const binary = ContentType('application', 'octet-stream');
+  static const html = ContentType('text', 'html');
+  static const plain = ContentType('text', 'plain');
+
+  String get mimeType => '$primaryType/$subType';
+
+  @override
+  String toString() {
+    return mimeType;
+  }
+}
+
 class RouteBase {
   final metadataMap = <String, dynamic>{};
 

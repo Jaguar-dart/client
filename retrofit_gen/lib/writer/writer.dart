@@ -78,11 +78,11 @@ class Writer {
       }
 
       if (body is JsonBody) {
-        sb.write('.json(converters[ApiClient.contentTypeJson].to(${body.name}))');
+        sb.write('.json(converters[ContentType.json].to(${body.name}))');
       }
 
       if (body is FormBody) {
-        sb.write('.urlEncodedForm(converters[ApiClient.contentTypeJson].to(${body.name}))');
+        sb.write('.urlEncodedForm(converters[ContentType.json].to(${body.name}))');
       }
 
       if (body is FormFieldBody) {
@@ -91,7 +91,7 @@ class Writer {
       if (body is MultipartForm) {
         if (body.serialize) {
           sb.write(
-              '.multipart((converters[ApiClient.contentTypeJson].to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
+              '.multipart((converters[ContentType.json].to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
         } else {
           sb.write('.multipart(${body.name})');
         }
@@ -134,7 +134,7 @@ class Writer {
     } else if (r.result.mapValueType != null) {
       // TODO
       sb.writeln(
-          'return req.one().then((v) => jsonConverter.mapFrom<${r.result.mapValueType}>(v));');
+          'return req.one().then((v) => converters[ContentType.json].mapFrom<${r.result.mapValueType}>(v));');
     } else {
       sb.writeln('return await req.go(throwOnErr: true);');
     }

@@ -15,10 +15,9 @@ part 'results.jretro.dart';
 @GenApiClient(path: "results")
 class UserApi extends ApiClient with _$UserApiClient {
   final resty.Route base;
+  final Map<resty.ContentType, CodecRepo> converters;
 
-  final JsonRepo jsonConverter;
-
-  UserApi({this.base, this.jsonConverter});
+  UserApi({this.base, this.converters});
 
   @GetReq(path: "/map")
   Future<Map<String, int>> map(String test);
@@ -40,7 +39,7 @@ void client() async {
         ..before((route) {
           print("Metadata: ${route.metadataMap}");
         }),
-      jsonConverter: repo);
+      converters: {ContentType.json: repo});
 
   try {
     print(await api.map("hello"));

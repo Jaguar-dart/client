@@ -19,9 +19,8 @@ abstract class _$UserApiClient implements ApiClient {
   }
 
   Future<User> createUser(User user) async {
-    var req = base.post
-        .path(basePath)
-        .json(converters[ApiClient.contentTypeJson].to(user));
+    var req =
+        base.post.path(basePath).json(converters[ContentType.json].to(user));
     return req.go(throwOnErr: true).then(decodeOne);
   }
 
@@ -29,7 +28,7 @@ abstract class _$UserApiClient implements ApiClient {
     var req = base.put
         .path(basePath)
         .path(":id")
-        .json(converters[ApiClient.contentTypeJson].to(user));
+        .json(converters[ContentType.json].to(user));
     return req.go(throwOnErr: true).then(decodeOne);
   }
 
@@ -42,7 +41,7 @@ abstract class _$UserApiClient implements ApiClient {
     var req = base.post
         .path(basePath)
         .path("/login")
-        .urlEncodedForm(converters[ApiClient.contentTypeJson].to(login));
+        .urlEncodedForm(converters[ContentType.json].to(login));
     await req.go(throwOnErr: true);
   }
 
@@ -52,13 +51,7 @@ abstract class _$UserApiClient implements ApiClient {
   }
 
   Future<User> serialize(User data) async {
-    final dataData = converters['application/json'].encode(data);
-    var req = base.post.path(basePath);
-    if (dataData is String) {
-      req = req.header('Content-Type', 'application/json').body(dataData);
-    } else {
-      req = req.header('Content-Type', 'application/json').bytes(dataData);
-    }
+    var req = base.post.path(basePath).body(data?.toString());
     return req.go(throwOnErr: true).then(decodeOne);
   }
 }
