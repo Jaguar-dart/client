@@ -9,11 +9,6 @@ class RawBody implements Body {
   RawBody(this.name);
 }
 
-class StringBody implements Body {
-  final String name;
-  StringBody(this.name);
-}
-
 class JsonBody implements Body {
   final String name;
   JsonBody(this.name);

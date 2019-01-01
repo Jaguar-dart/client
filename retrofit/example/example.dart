@@ -9,6 +9,7 @@ import 'models/user.dart';
 import 'package:jaguar_resty/jaguar_resty.dart' as resty;
 import 'package:jaguar_resty/jaguar_resty.dart';
 import 'package:jaguar/jaguar.dart' as jaguar;
+import 'package:jaguar_mimetype/jaguar_mimetype.dart';
 
 part 'example.jretro.dart';
 
@@ -17,9 +18,7 @@ part 'example.jretro.dart';
 class UserApi extends ApiClient with _$UserApiClient {
   final resty.Route base;
 
-  final Map<ContentType, CodecRepo> converters;
-
-  UserApi({this.base, this.converters});
+  UserApi(this.base);
 
   @GetReq(path: ":id")
   Future<User> getUserById(@PathParam() String id);
@@ -31,10 +30,10 @@ class UserApi extends ApiClient with _$UserApiClient {
   Future<User> createUser(@AsJson() User user);
 
   @PutReq(path: ":id")
-  Future<User> updateUser(String id, @AsJson() User user);
+  Future<User> updateUser(@PathParam() String id, @AsJson() User user);
 
   @DeleteReq(path: ":id")
-  Future<void> deleteUser(String id);
+  Future<void> deleteUser(@PathParam() String id);
 
   @PostReq(path: "/login")
   Future<void> login(@AsForm() Login login);
@@ -43,7 +42,7 @@ class UserApi extends ApiClient with _$UserApiClient {
   Future<void> avatar(@AsBody() List<int> data);
 
   @PostReq()
-  Future<User> serialize(@AsBody(ContentType.json) User data);
+  Future<User> serialize(@Serialized(MimeTypes.json) User data);
 }
 
 final repo = JsonRepo()..add(UserSerializer())..add(LoginSerializer());
@@ -79,13 +78,7 @@ void server() async {
 
 void client() async {
   globalClient = IOClient();
-  var api = UserApi(
-      base: route("http://localhost:10000")
-        ..before((route) {
-          print("Metadata: ${route.metadataMap}");
-        }),
-      converters: {ContentType.json: repo},
-  );
+  var api = UserApi(route("http://localhost:10000"))..jsonConverter = repo;
 
   try {
     await api.login(Login(username: 'teja', password: 'pass'));
@@ -108,10 +101,9 @@ void client() async {
     await api.deleteUser('5');
     users = await api.all();
     print('Deleted user $users');
-    User user11 =
-    await api.serialize(User(id: '11', name: 'eleven', email: 'eleven@eleven.com'));
+    User user11 = await api
+        .serialize(User(id: '11', name: 'eleven', email: 'eleven@eleven.com'));
     print('Created $user11');
-
   } on resty.Response catch (e) {
     print(e.body);
   }

@@ -25,24 +25,6 @@ OptionsMethod options(String url) => OptionsMethod(url);
 
 ht.BaseClient globalClient;
 
-class ContentType {
-  final String primaryType;
-  final String subType;
-  const ContentType(this.primaryType, this.subType);
-
-  static const json = ContentType('application', 'json');
-  static const binary = ContentType('application', 'octet-stream');
-  static const html = ContentType('text', 'html');
-  static const plain = ContentType('text', 'plain');
-
-  String get mimeType => '$primaryType/$subType';
-
-  @override
-  String toString() {
-    return mimeType;
-  }
-}
-
 class RouteBase {
   final metadataMap = <String, dynamic>{};
 
@@ -465,13 +447,12 @@ abstract class _RouteWithBodyMixin implements RouteWithBody {
   set _body(dynamic value);
   dynamic get _body;
 
-  RouteWithBody body(String body) {
-    _body = body;
-    return this;
-  }
-
-  RouteWithBody bytes(List<int> body) {
-    _body = body;
+  RouteWithBody body(dynamic body) {
+    if (body is List<int>) {
+      _body = body;
+    } else {
+      _body = body?.toString();
+    }
     return this;
   }
 
@@ -628,9 +609,7 @@ class Post extends RouteBase
 
   Post cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Post body(String body) => super.body(body);
-
-  Post bytes(List<int> body) => super.bytes(body);
+  Post body(dynamic body) => super.body(body);
 
   Post json(body, {bool setHeaders: true}) =>
       super.json(body, setHeaders: setHeaders);
@@ -825,9 +804,7 @@ class Patch extends RouteBase
 
   Patch cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Patch body(String body) => super.body(body);
-
-  Patch bytes(List<int> body) => super.bytes(body);
+  Patch body(dynamic body) => super.body(body);
 
   Patch json(body, {bool setHeaders: true}) =>
       super.json(body, setHeaders: setHeaders);
@@ -1022,9 +999,7 @@ class Put extends RouteBase
 
   Put cookies(List<ClientCookie> cookies) => super.cookies(cookies);
 
-  Put body(String body) => super.body(body);
-
-  Put bytes(List<int> body) => super.bytes(body);
+  Put body(dynamic body) => super.body(body);
 
   Put json(body, {bool setHeaders: true}) =>
       super.json(body, setHeaders: setHeaders);

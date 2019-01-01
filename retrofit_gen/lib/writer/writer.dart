@@ -27,11 +27,6 @@ class Writer {
 
     sb.writeln(' async {');
 
-    for (Body body in r.body) {
-      if (body is SerializedBody) {
-        sb.writeln('final ${body.name}Data = converters[\'${body.contentType}\'].encode(${body.name});');
-      }
-    }
     sb.write('var req = base.${r.method}');
 
     if (i.baseMetadata.isNotEmpty) {
@@ -70,19 +65,15 @@ class Writer {
 
     for (Body body in r.body) {
       if (body is RawBody) {
-        sb.write('.bytes(${body.name})');
-      }
-
-      if (body is StringBody) {
-        sb.write('.body(${body.name}?.toString())');
+        sb.write('.body(${body.name})');
       }
 
       if (body is JsonBody) {
-        sb.write('.json(converters[ContentType.json].to(${body.name}))');
+        sb.write('.json(jsonConverter.to(${body.name}))');
       }
 
       if (body is FormBody) {
-        sb.write('.urlEncodedForm(converters[ContentType.json].to(${body.name}))');
+        sb.write('.urlEncodedForm(jsonConverter.to(${body.name}))');
       }
 
       if (body is FormFieldBody) {
@@ -91,33 +82,22 @@ class Writer {
       if (body is MultipartForm) {
         if (body.serialize) {
           sb.write(
-              '.multipart((converters[ContentType.json].to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
+              '.multipart((jsonConverter.to(${body.name}) as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toString())))');
         } else {
           sb.write('.multipart(${body.name})');
         }
       }
-
       if (body is MultipartFormField) {
         sb.write('.multipart({"${body.key}": ${body.name}})');
+      }
+
+      if (body is SerializedBody) {
+        sb.write(
+            '.body(converters["${body.contentType}"].encode(${body.name}))');
       }
     }
 
     sb.writeln(';');
-
-    for (Body body in r.body) {
-      if (body is SerializedBody) {
-        sb.writeln('if(${body.name}Data is String) {');
-        sb.write('req = req');
-        sb.write('.header(\'Content-Type\', \'${body.contentType}\')');
-        sb.writeln('.body(${body.name}Data);');
-        sb.writeln('} else {');
-        sb.write('req = req');
-        sb.write('.header(\'Content-Type\', \'${body.contentType}\')');
-        sb.writeln('.bytes(${body.name}Data);');
-        sb.writeln('}');
-      }
-    }
-
 
     if (r.result.returnsVoid) {
       sb.writeln('await req.go(throwOnErr: true);');
@@ -134,7 +114,7 @@ class Writer {
     } else if (r.result.mapValueType != null) {
       // TODO
       sb.writeln(
-          'return req.one().then((v) => converters[ContentType.json].mapFrom<${r.result.mapValueType}>(v));');
+          'return req.one().then((v) => jsonConverter.mapFrom<${r.result.mapValueType}>(v));');
     } else {
       sb.writeln('return await req.go(throwOnErr: true);');
     }

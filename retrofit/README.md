@@ -17,28 +17,36 @@ dev_dependencies:
 
 ```dart
 /// Example showing how to define an [ApiClient]
-@GenApiClient()
-class UserApi extends _$UserApiClient implements ApiClient {
+/// Example showing how to define an [ApiClient]
+@GenApiClient(path: "user")
+class UserApi extends ApiClient with _$UserApiClient {
   final resty.Route base;
 
-  final Map<String, CodecRepo> converters;
+  UserApi(this.base);
 
-  UserApi({this.base, this.converters});
+  @GetReq(path: ":id")
+  Future<User> getUserById(@PathParam() String id);
 
-  @GetReq("/users/:id")
-  Future<User> getUserById(String id);
+  @GetReq()
+  Future<List<User>> all();
 
-  @PostReq("/users")
+  @PostReq()
   Future<User> createUser(@AsJson() User user);
 
-  @PutReq("/users/:id")
+  @PutReq(path: ":id")
   Future<User> updateUser(String id, @AsJson() User user);
 
-  @DeleteReq("/users/:id")
+  @DeleteReq(path: ":id")
   Future<void> deleteUser(String id);
 
-  @GetReq("/users")
-  Future<List<User>> all({String name, String email});
+  @PostReq(path: "/login")
+  Future<void> login(@AsForm() Login login);
+
+  @PatchReq(path: "/avatar")
+  Future<void> avatar(@AsBody() List<int> data);
+
+  @PostReq()
+  Future<User> serialize(@Serialized(MimeTypes.json) User data);
 }
 ```
 

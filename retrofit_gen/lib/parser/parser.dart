@@ -60,14 +60,15 @@ Req _parseReq(String httpMethod, DartObject annot, MethodElement method) {
     {
       DartObject isBody = isAsBody.firstAnnotationOfExact(pe);
       if (isBody != null) {
-        final contentType = isBody.getField('contentType')?.toStringValue();
-        if (isList.isExactlyType(pe.type)) {
-          body.add(RawBody(pe.displayName));
-        } else if(contentType != null){
-          body.add(SerializedBody(pe.displayName, contentType));
-        } else {
-          body.add(StringBody(pe.displayName));
-        }
+        body.add(RawBody(pe.displayName));
+      }
+    }
+
+    {
+      DartObject isSer = isSerialized.firstAnnotationOfExact(pe);
+      if (isSer != null) {
+        final contentType = isSer.getField('as')?.toStringValue();
+        body.add(SerializedBody(pe.displayName, contentType));
       }
     }
 

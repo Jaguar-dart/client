@@ -10,6 +10,6 @@ abstract class _$UserApiClient implements ApiClient {
   final String basePath = "results";
   Future<Map<String, int>> map(String test) async {
     var req = base.get.path(basePath).path("/map");
-    return req.one().then((v) => converters[ContentType.json].mapFrom<int>(v));
+    return req.one().then((v) => jsonConverter.mapFrom<int>(v));
   }
 }
