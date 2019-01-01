@@ -1,11 +1,11 @@
 name: jaguar_mimetype
 description: Cross-platform mimetype support.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/Jaguar-dart/client
 author: Ravi Teja Gudapati <tejainece@gmail.com>
 
 environment:
-  sdk: '>=2.1.0 <3.0.0'
+  sdk: '>=2.0.0 <3.0.0'
 
 dependencies:
   path: ^1.6.2
