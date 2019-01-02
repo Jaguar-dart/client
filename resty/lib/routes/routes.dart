@@ -108,13 +108,35 @@ class RouteBase {
 
   /// Add headers
   RouteBase header(String key, String value) {
-    getHeaders[key] = value;
+    getHeaders[key.toLowerCase()] = value;
     return this;
   }
 
   /// Add headers
   RouteBase headers(Map<String, String> values) {
-    getHeaders.addAll(values);
+    getHeaders.addAll(values.map((k, v) => MapEntry(k.toLowerCase(), v)));
+    return this;
+  }
+
+  RouteBase mimeType(String mimeType) {
+    final mt = MediaType.parse(getHeaders['content-type'] ?? '');
+    header('content-type', mt.change(mimeType: mimeType).toString());
+    return this;
+  }
+
+  RouteBase charset(String charset) {
+    final mt = MediaType.parse(getHeaders['content-type'] ?? '');
+    header(
+        'content-type', mt.change(parameters: {'charset': charset}).toString());
+    return this;
+  }
+
+  RouteBase contentType(String mimeType, String charset) {
+    final mt = MediaType.parse(getHeaders['content-type'] ?? '');
+    header(
+        'content-type',
+        mt.change(
+            mimeType: mimeType, parameters: {'charset': charset}).toString());
     return this;
   }
 
@@ -371,6 +393,13 @@ class Get extends RouteBase with RouteFetch {
 
   Get headers(Map<String, String> values) => super.headers(values);
 
+  Get mimeType(String mimeType) => super.mimeType(mimeType);
+
+  Get charset(String charset) => super.charset(charset);
+
+  Get contentType(String mimeType, String charset) =>
+      super.contentType(mimeType, charset);
+
   Get authHeader(String scheme, String credentials) =>
       super.authHeader(scheme, credentials);
 
@@ -597,6 +626,13 @@ class Post extends RouteBase
 
   Post headers(Map<String, String> values) => super.headers(values);
 
+  Post mimeType(String mimeType) => super.mimeType(mimeType);
+
+  Post charset(String charset) => super.charset(charset);
+
+  Post contentType(String mimeType, String charset) =>
+      super.contentType(mimeType, charset);
+
   Post authHeader(String scheme, String credentials) =>
       super.authHeader(scheme, credentials);
 
@@ -791,6 +827,13 @@ class Patch extends RouteBase
   Patch header(String key, String value) => super.header(key, value);
 
   Patch headers(Map<String, String> values) => super.headers(values);
+
+  Patch mimeType(String mimeType) => super.mimeType(mimeType);
+
+  Patch charset(String charset) => super.charset(charset);
+
+  Patch contentType(String mimeType, String charset) =>
+      super.contentType(mimeType, charset);
 
   Patch authHeader(String scheme, String credentials) =>
       super.authHeader(scheme, credentials);
@@ -987,6 +1030,13 @@ class Put extends RouteBase
 
   Put headers(Map<String, String> values) => super.headers(values);
 
+  Put mimeType(String mimeType) => super.mimeType(mimeType);
+
+  Put charset(String charset) => super.charset(charset);
+
+  Put contentType(String mimeType, String charset) =>
+      super.contentType(mimeType, charset);
+
   Put authHeader(String scheme, String credentials) =>
       super.authHeader(scheme, credentials);
 
@@ -1174,6 +1224,13 @@ class Delete extends RouteBase with RouteFetch {
 
   Delete headers(Map<String, String> values) => super.headers(values);
 
+  Delete mimeType(String mimeType) => super.mimeType(mimeType);
+
+  Delete charset(String charset) => super.charset(charset);
+
+  Delete contentType(String mimeType, String charset) =>
+      super.contentType(mimeType, charset);
+
   Delete authHeader(String scheme, String credentials) =>
       super.authHeader(scheme, credentials);
 
@@ -1307,6 +1364,13 @@ class OptionsMethod extends RouteBase with RouteFetch {
   OptionsMethod header(String key, String value) => super.header(key, value);
 
   OptionsMethod headers(Map<String, String> values) => super.headers(values);
+
+  OptionsMethod mimeType(String mimeType) => super.mimeType(mimeType);
+
+  OptionsMethod charset(String charset) => super.charset(charset);
+
+  OptionsMethod contentType(String mimeType, String charset) =>
+      super.contentType(mimeType, charset);
 
   OptionsMethod authHeader(String scheme, String credentials) =>
       super.authHeader(scheme, credentials);
