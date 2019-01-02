@@ -53,6 +53,7 @@ abstract class _$UserApiClient implements ApiClient {
   Future<User> serialize(User data) async {
     var req = base.post
         .path(basePath)
+        .header('Content-Type', 'application/json')
         .body(converters["application/json"].encode(data));
     return req.go(throwOnErr: true).then(decodeOne);
   }
