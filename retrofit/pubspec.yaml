@@ -13,7 +13,7 @@ dependencies:
   jaguar_serializer: ^2.2.4
   http: ^0.12.0
   meta: ^1.1.5
-  jaguar_resty: ^2.10.1
+  jaguar_resty: ^2.10.2
   jaguar_mimetype: ^1.0.0
 
 dev_dependencies:
