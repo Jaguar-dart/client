@@ -92,8 +92,7 @@ class Writer {
       }
 
       if (body is SerializedBody) {
-        sb.write(
-            '.mimeType(\'${body.contentType}\')');
+        sb.write('.mimeType(\'${body.contentType}\')');
         sb.write(
             '.body(converters["${body.contentType}"].encode(${body.name}))');
       }
