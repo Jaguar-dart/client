@@ -119,20 +119,20 @@ class RouteBase {
   }
 
   RouteBase mimeType(String mimeType) {
-    final mt = MediaType.parse(getHeaders['content-type'] ?? '');
+    final mt = MediaType.parse(getHeaders['content-type'] ?? 'text/plain');
     header('content-type', mt.change(mimeType: mimeType).toString());
     return this;
   }
 
   RouteBase charset(String charset) {
-    final mt = MediaType.parse(getHeaders['content-type'] ?? '');
+    final mt = MediaType.parse(getHeaders['content-type'] ?? 'text/plain');
     header(
         'content-type', mt.change(parameters: {'charset': charset}).toString());
     return this;
   }
 
   RouteBase contentType(String mimeType, String charset) {
-    final mt = MediaType.parse(getHeaders['content-type'] ?? '');
+    final mt = MediaType.parse(getHeaders['content-type'] ?? 'text/plain');
     header(
         'content-type',
         mt.change(
@@ -443,7 +443,7 @@ class Get extends RouteBase with RouteFetch {
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
     if (then != null) resp = resp.run(then);
-    if (throwOnErr == true) resp.onFailure((r) => throw r);
+    if (throwOnErr == true) resp = resp.onFailure((r) => throw r);
     return resp;
   }
 
@@ -488,7 +488,7 @@ abstract class _RouteWithBodyMixin implements RouteWithBody {
   RouteWithBody json(body, {bool setHeaders: true}) {
     _body = codec.json.encode(body);
     if (setHeaders) {
-      header('content-type', 'application/json');
+      mimeType('application/json');
       header('Accept', 'application/json');
     }
     return this;

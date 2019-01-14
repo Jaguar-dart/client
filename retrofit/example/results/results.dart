@@ -19,14 +19,18 @@ class UserApi extends ApiClient with _$UserApiClient {
   UserApi(this.base);
 
   @GetReq(path: "/map")
-  Future<Map<String, int>> map(String test);
+  Future<Map<String, int>> map();
+
+  @GetReq(path: "/error")
+  Future<String> errorResp();
 }
 
 final repo = JsonRepo();
 
 void server() async {
   final server = jaguar.Jaguar(port: 10000);
-  server.get("/results/map", (_) => {"hello": 5});
+  server.getJson("/results/map", (_) => {"hello": 5});
+  server.get("/results/error", (_) => 'What?', statusCode: 404);
   server.log.onRecord.listen(print);
   await server.serve(logRequests: true);
 }
@@ -36,7 +40,13 @@ void client() async {
   var api = UserApi(route("http://localhost:10000"))..jsonConverter = repo;
 
   try {
-    print(await api.map("hello"));
+    print(await api.map());
+  } on resty.Response catch (e) {
+    print(e.body);
+  }
+
+  try {
+    print(await api.errorResp());
   } on resty.Response catch (e) {
     print(e.body);
   }

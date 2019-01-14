@@ -1,6 +1,6 @@
 name: jaguar_retrofit
 description: Retrofit inspired declarative HTTP client for Dart.
-version: 2.8.2
+version: 2.8.4
 authors:
 - Ravi Teja Gudapati <tejainece@gmail.com>
 - Hadrien Lejard <hadrien.lejard@gmail.com>
@@ -13,7 +13,7 @@ dependencies:
   jaguar_serializer: ^2.2.4
   http: ^0.12.0
   meta: ^1.1.5
-  jaguar_resty: ^2.10.2
+  jaguar_resty: ^2.10.8
   jaguar_mimetype: ^1.0.0
 
 dev_dependencies:
@@ -23,3 +23,7 @@ dev_dependencies:
   jaguar: ^2.4.1
   jaguar_retrofit_gen:
     path: ../retrofit_gen
+
+#dependency_overrides:
+#  jaguar_resty:
+#    path: ../resty

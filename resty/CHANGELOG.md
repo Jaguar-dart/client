@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.10.4
+
++ Added `map` method to `Response`
+
 ## 2.8.8
 
 + Added `RouteWithBody` and `getBody`

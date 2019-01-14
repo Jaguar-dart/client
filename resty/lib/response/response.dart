@@ -60,6 +60,8 @@ abstract class AsyncResponse<BT> {
       int contentLength});
 
   AsyncResponse<BT> run(ResponseHook<BT> func);
+
+  FutureOr<T> map<T>(FutureOr<T> func(Response<BT> resp));
 }
 
 class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
@@ -134,6 +136,11 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
         await func(r);
         return r;
       }));
+
+  Future<T> map<T>(FutureOr<T> func(Response<BT> resp)) async {
+    final resp = await this;
+    return func(resp);
+  }
 }
 
 class AsyncStringResponse extends DelegatingFuture<StringResponse>
@@ -224,6 +231,11 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
         await func(r);
         return r;
       }));
+
+  Future<T> map<T>(FutureOr<T> func(StringResponse resp)) async {
+    final resp = await this;
+    return func(resp);
+  }
 }
 
 abstract class Response<T> implements AsyncResponse<T> {
@@ -279,10 +291,10 @@ abstract class Response<T> implements AsyncResponse<T> {
   static const String defaultCharset = 'utf-8';
 }
 
-class TResponse<T> implements Response<T> {
+class TResponse<BT> implements Response<BT> {
   final int statusCode;
 
-  final T body;
+  final BT body;
 
   final List<int> bytes;
 
@@ -339,17 +351,17 @@ class TResponse<T> implements Response<T> {
 
   bool get isFailure => statusCode >= 400 && statusCode < 600;
 
-  Future<TResponse<T>> onSuccess(ResponseHook<T> func) async {
+  Future<TResponse<BT>> onSuccess(ResponseHook<BT> func) async {
     if (isSuccess) await func(this);
     return this;
   }
 
-  Future<TResponse<T>> onFailure(ResponseHook<T> func) async {
+  Future<TResponse<BT>> onFailure(ResponseHook<BT> func) async {
     if (isFailure) await func(this);
     return this;
   }
 
-  TResponse<T> expect(List<Checker<Response>> conditions) {
+  TResponse<BT> expect(List<Checker<Response>> conditions) {
     final mismatches = conditions
         .map((c) => c(this))
         .reduce((List<Mismatch> v, List<Mismatch> e) => v..addAll(e))
@@ -358,9 +370,9 @@ class TResponse<T> implements Response<T> {
     return this;
   }
 
-  TResponse<T> exact(
+  TResponse<BT> exact(
       {int statusCode,
-      T body,
+      BT body,
       List<int> bytes,
       String mimeType,
       String encoding,
@@ -379,9 +391,13 @@ class TResponse<T> implements Response<T> {
     return expect(conditions);
   }
 
-  TResponse<T> run(ResponseHook<T> func) {
+  TResponse<BT> run(ResponseHook<BT> func) {
     func(this);
     return this;
+  }
+
+  T map<T>(FutureOr<T> func(Response<BT> resp)) {
+    return func(this);
   }
 }
 
@@ -556,6 +572,10 @@ class StringResponse implements Response<String> {
   StringResponse run(ResponseHook<String> func) {
     func(this);
     return this;
+  }
+
+  T map<T>(FutureOr<T> func(StringResponse resp)) {
+    return func(this);
   }
 }
 

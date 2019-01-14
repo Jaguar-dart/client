@@ -1,6 +1,6 @@
 name: jaguar_retrofit_gen
 description: Generator for jaguar_retrofit, a Retrofit inspired declarative HTTP client.
-version: 2.8.5
+version: 2.8.6
 authors:
 - Ravi Teja Gudapati <tejainece@gmail.com>
 - Hadrien Lejard <hadrien.lejard@gmail.com>
@@ -15,7 +15,7 @@ dependencies:
   logging: ^0.11.0
   source_gen: ^0.9.0
   meta: ^1.1.5
-  jaguar_resty: ^2.10.1
+  jaguar_resty: ^2.10.8
   jaguar_retrofit: ^2.8.1
 
 dev_dependencies:
