@@ -56,7 +56,7 @@ class UserApi extends ApiClient with _$UserApiClient {
 #### Use it
 ```dart
   final repo = JsonRepo()..add(UserSerializer());
-  final api = UserApi(base: route("http://localhost:10000"), converters: {ApiClient.contentTypeJson: repo});
-  User user5 = await api
+  final api = UserApi(base: route("http://localhost:10000"))..jsonConverter = repo;;
+  User user = await api
         .createUser(User(id: '5', name: 'five', email: 'five@five.com'));
 ```
