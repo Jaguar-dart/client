@@ -399,6 +399,11 @@ class TResponse<BT> implements Response<BT> {
   T map<T>(FutureOr<T> func(Response<BT> resp)) {
     return func(this);
   }
+
+  @override
+  String toString() {
+    return 'TResponse{statusCode: $statusCode, url: ${request.url}, mimeType: $mimeType, encoding: $encoding, body: $body}';
+  }
 }
 
 class StringResponse implements Response<String> {
@@ -576,6 +581,11 @@ class StringResponse implements Response<String> {
 
   T map<T>(FutureOr<T> func(StringResponse resp)) {
     return func(this);
+  }
+
+  @override
+  String toString() {
+    return 'StringResponse{statusCode: $statusCode, url: ${request.url}, mimeType: $mimeType, encoding: $encoding, body: $_body}';
   }
 }
 
