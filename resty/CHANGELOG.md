@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.10.10
+
++ Fixed throw on failure buf in `go`
+
+## 2.10.9
+
++ `Response`'s `toString` now prints clear debug message
++ Bug fix in `go` method's handling of `after`'s result
+
 ## 2.10.4
 
 + Added `map` method to `Response`

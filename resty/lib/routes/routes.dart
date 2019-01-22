@@ -731,7 +731,7 @@ class Post extends RouteBase
     }));
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
-    if (throwOnErr == true) resp.onFailure((r) => throw r);
+    if (throwOnErr == true) resp = resp.onFailure((r) => throw r);
     if (then != null) resp = resp.run(then);
     return resp;
   }
@@ -933,7 +933,7 @@ class Patch extends RouteBase
     }));
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
-    if (throwOnErr == true) resp.onFailure((r) => throw r);
+    if (throwOnErr == true) resp = resp.onFailure((r) => throw r);
     if (then != null) resp = resp.run(then);
     return resp;
   }
@@ -1134,7 +1134,7 @@ class Put extends RouteBase
     }));
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
-    if (throwOnErr == true) resp.onFailure((r) => throw r);
+    if (throwOnErr == true) resp = resp.onFailure((r) => throw r);
     if (then != null) resp = resp.run(then);
     return resp;
   }
@@ -1273,7 +1273,7 @@ class Delete extends RouteBase with RouteFetch {
     }));
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
-    if (throwOnErr == true) resp.onFailure((r) => throw r);
+    if (throwOnErr == true) resp = resp.onFailure((r) => throw r);
     if (then != null) resp = resp.run(then);
     return resp;
   }
@@ -1418,7 +1418,7 @@ class OptionsMethod extends RouteBase with RouteFetch {
     }));
     if (onSuccess != null) resp = resp.onSuccess(onSuccess);
     if (onFailure != null) resp = resp.onFailure(onFailure);
-    if (throwOnErr == true) resp.onFailure((r) => throw r);
+    if (throwOnErr == true) resp = resp.onFailure((r) => throw r);
     if (then != null) resp = resp.run(then);
     return resp;
   }
