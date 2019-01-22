@@ -436,7 +436,7 @@ class Get extends RouteBase with RouteFetch {
       StringResponse ret = r;
       for (After func in cloned.getAfter) {
         var res = await func(r);
-        if (res != null) ret = res;
+        if (res is StringResponse) ret = res;
       }
       return ret;
     }));
@@ -725,7 +725,7 @@ class Post extends RouteBase
       StringResponse ret = r;
       for (After func in cloned.getAfter) {
         var res = await func(r);
-        if (res != null) ret = res;
+        if (res is StringResponse) ret = res;
       }
       return ret;
     }));
@@ -927,7 +927,7 @@ class Patch extends RouteBase
       StringResponse ret = r;
       for (After func in cloned.getAfter) {
         var res = await func(r);
-        if (res != null) ret = res;
+        if (res is StringResponse) ret = res;
       }
       return ret;
     }));
@@ -1128,7 +1128,7 @@ class Put extends RouteBase
       StringResponse ret = r;
       for (After func in cloned.getAfter) {
         var res = await func(r);
-        if (res != null) ret = res;
+        if (res is StringResponse) ret = res;
       }
       return ret;
     }));
@@ -1267,7 +1267,7 @@ class Delete extends RouteBase with RouteFetch {
       StringResponse ret = r;
       for (After func in cloned.getAfter) {
         var res = await func(r);
-        if (res != null) ret = res;
+        if (res is StringResponse) ret = res;
       }
       return ret;
     }));
@@ -1412,7 +1412,7 @@ class OptionsMethod extends RouteBase with RouteFetch {
       StringResponse ret = r;
       for (After func in cloned.getAfter) {
         var res = await func(r);
-        if (res != null) ret = res;
+        if (res is StringResponse) ret = res;
       }
       return ret;
     }));
