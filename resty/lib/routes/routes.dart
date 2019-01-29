@@ -283,7 +283,7 @@ class Route extends RouteBase {
 
 void _prepare(RouteBase route) {
   if (route.getCookies.length != 0)
-    route.getHeaders['Cookie'] = ClientCookie.toHeader(route.getCookies);
+    route.getHeaders['Cookie'] = ClientCookie.toSetCookie(route.getCookies);
   if (route.getAuthHeaders.isNotEmpty) {
     final auth = AuthHeaders.fromHeaderStr(route.getHeaders['authorization']);
     for (String scheme in route.getAuthHeaders.keys) {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.8
+
++ `parseSetCookie` to parse `set-cookie` header and get a map of set cookies
++ `ClientCookie.fromSetCookie` to parse `ClientCookie` from one set-cookie item
++ Bug fixes
+
 ## 2.1.4
 
 + Dart 2 stable

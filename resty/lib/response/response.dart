@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'package:meta/meta.dart';
+import 'dart:convert' as codec;
+
 import 'package:http/http.dart' as http;
 import 'package:jaguar_resty/expect/expect.dart';
 import 'package:async/async.dart';
-import 'dart:convert' as codec;
 import 'package:http_parser/http_parser.dart' show MediaType;
 import 'package:jaguar_resty/routes/routes.dart';
-import 'package:meta/meta.dart';
+
+import 'package:client_cookie/client_cookie.dart';
 
 typedef FutureOr<dynamic> After(StringResponse response);
 
@@ -582,6 +585,9 @@ class StringResponse implements Response<String> {
   T map<T>(FutureOr<T> func(StringResponse resp)) {
     return func(this);
   }
+
+  Map<String, ClientCookie> get cookies =>
+      parseSetCookie(headers['set-cookie']);
 
   @override
   String toString() {

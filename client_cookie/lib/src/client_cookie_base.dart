@@ -3,6 +3,8 @@
 
 import 'package:http/http.dart' as http;
 
+final _invalidDirective = Exception('Invalid directives found!!');
+
 /// Client cookie
 class ClientCookie {
   /// Cookie domain
@@ -43,7 +45,7 @@ class ClientCookie {
   /// Receives directives as [Map]
   factory ClientCookie.fromMap(
       String name, String value, DateTime createdAt, Map map) {
-    return new ClientCookie(
+    return ClientCookie(
       name,
       value,
       createdAt,
@@ -54,6 +56,40 @@ class ClientCookie {
       secure: map['Secure'] ?? false,
       path: map['Path'],
     );
+  }
+
+  /// Parses one 'set-cookie' item
+  factory ClientCookie.fromSetCookie(String cookieItem) {
+    final List<String> parts =
+        cookieItem.split(';').reversed.map((String str) => str.trim()).toList();
+
+    if (parts.isEmpty) throw Exception('Invalid cookie set!');
+
+    String name;
+    String value;
+    final map = {};
+
+    {
+      final String first = parts.removeLast();
+      final int idx = first.indexOf('=');
+      if (idx == -1) throw Exception('Invalid Name=Value pair!');
+      name = first.substring(0, idx).trim();
+      value = first.substring(idx + 1).trim();
+      if (name.isEmpty) throw Exception('Cookie must have a name!');
+    }
+
+    for (String directive in parts) {
+      final List<String> points =
+          directive.split('=').map((String str) => str.trim()).toList();
+      if (points.length == 0 || points.length > 2)
+        throw Exception('Invalid directive!');
+      final String key = points.first;
+      final String val = points.length == 2 ? points.last : null;
+      if (!_parsers.containsKey(key)) throw _invalidDirective;
+      map[key] = _parsers[key](val);
+    }
+
+    return ClientCookie.fromMap(name, value, DateTime.now(), map);
   }
 
   /// Formats Date
@@ -78,7 +114,7 @@ class ClientCookie {
     var _intToString = (int i, int pad) {
       var str = i.toString();
       var pads = pad - str.length;
-      return (pads > 0) ? '${new List.filled(pads, '0').join('')}$i' : str;
+      return (pads > 0) ? '${List.filled(pads, '0').join('')}$i' : str;
     };
 
     var utc = datetime.toUtc();
@@ -90,12 +126,9 @@ class ClientCookie {
         '${hour}:${minute}:${second} ${utc.timeZoneName}';
   }
 
-  @Deprecated("Use asHeader instead")
-  String get header => asHeader;
-
   /// Returns a [String] representation that can be written directly to
   /// [http.Request] 'cookie' header
-  String get asHeader {
+  String get toReqHeader {
     final sb = StringBuffer();
 
     //TODO encode all
@@ -146,10 +179,41 @@ class ClientCookie {
     return false;
   }
 
-  /// Returns a [String] representation that can be directly written to [http.Request]
-  /// header
-  static String toHeader(Iterable<ClientCookie> cookies) =>
-      cookies.where((c) => !c.hasExpired).join(';');
+  /// Returns a [String] representation that can be directly written to
+  /// 'set-cookie' header
+  static String toSetCookie(Iterable<ClientCookie> cookies) =>
+      cookies.where((c) => !c.hasExpired).join(',');
+
+  /// A map of field to parser function
+  static final Map<String, dynamic> _parsers = <String, dynamic>{
+    'Expires': (String val) {
+      //TODO
+    },
+    'Max-Age': (String val) {
+      if (val is! String) throw Exception('Invalid Max-Age directive!');
+      return int.parse(val);
+    },
+    'Domain': (String val) {
+      if (val is! String) throw Exception('Invalid Domain directive!');
+      return val;
+    },
+    'Path': (String val) {
+      if (val is! String) throw Exception('Invalid Path directive!');
+      return val;
+    },
+    'Secure': (String val) {
+      if (val != null) throw Exception('Invalid Secure directive!');
+      return true;
+    },
+    'HttpOnly': (String val) {
+      if (val != null) throw Exception('Invalid HttpOnly directive!');
+      return true;
+    },
+    'SameSite': (String val) {
+      if (val is! String) throw Exception('Invalid SameSite directive!');
+      return val;
+    },
+  };
 }
 
 /// A store for Cookies
@@ -176,12 +240,9 @@ class CookieStore {
     return ret;
   }
 
-  @Deprecated("Use asHeader instead")
-  String get header => asHeader;
-
-  /// Returns a [String] representation that can be directly written [http.Request]
-  /// header
-  String get asHeader {
+  /// Returns a [String] representation that can be directly written
+  /// [http.Request] header.
+  String get toReqHeader {
     final removes = <String>[];
     final rets = <String>[];
 
@@ -190,12 +251,12 @@ class CookieStore {
         removes.add(cookie.name);
         continue;
       }
-      rets.add(cookie.asHeader);
+      rets.add(cookie.toReqHeader);
     }
 
     for (String rem in removes) cookieMap.remove(rem);
 
-    return rets.join('; ');
+    return rets.join(', ');
   }
 
   /// Parses and adds all 'set-cookies' from [http.Response] to the Cookie store
@@ -207,90 +268,34 @@ class CookieStore {
   void addFromHeader(String setCookieLine) {
     if (setCookieLine is! String || setCookieLine.isEmpty) return;
 
-    final List<String> setCookieItems = setCookieLine.split(',');
-    try {
-      List<ClientCookie> cookies = setCookieItems.map(parseOneCookie).toList();
-      for (ClientCookie cookie in cookies) {
-        if (cookie.value == null || cookie.value.isEmpty) {
-          cookieMap.remove(cookie.name);
-          continue;
-        }
-        cookieMap[cookie.name] = cookie;
+    final map = parseSetCookie(setCookieLine);
+
+    for (String name in map.keys) {
+      final ClientCookie cookie = map[name];
+      if (cookie.value == null || cookie.value.isEmpty) {
+        cookieMap.remove(name);
+        continue;
       }
-    } catch (e) {}
-  }
-
-  /// Parses one 'set-cookie' item
-  ClientCookie parseOneCookie(String cookieItem) {
-    final List<String> parts =
-        cookieItem.split(';').reversed.map((String str) => str.trim()).toList();
-
-    if (parts.length == 0) {
-      throw new Exception('Invalid cookie set!');
+      cookieMap[name] = cookie;
     }
-
-    String name;
-    String value;
-    final map = {};
-
-    {
-      final String first = parts.removeLast();
-      final int idx = first.indexOf('=');
-      if (idx == -1) throw new Exception('Invalid Name=Value pair!');
-      name = first.substring(0, idx).trim();
-      value = first.substring(idx + 1).trim();
-      if (name.isEmpty) throw new Exception('Cookie must have a name!');
-    }
-
-    for (String directive in parts) {
-      final List<String> points =
-          directive.split('=').map((String str) => str.trim()).toList();
-      if (points.length == 0 || points.length > 2)
-        throw new Exception('Invalid directive!');
-      final String key = points.first;
-      final String val = points.length == 2 ? points.last : null;
-      if (!_parsers.containsKey(key)) {
-        throw new Exception('Invalid directives found!!');
-      }
-      map[key] = _parsers[key](val);
-    }
-
-    return new ClientCookie.fromMap(name, value, new DateTime.now(), map);
   }
 
   /// String representation that is useful for debug printing
-  String toString() {
-    return 'CookieStore($cookieMap)';
+  String toString() => 'CookieStore($cookieMap)';
+}
+
+/// Parses and adds all 'set-cookies' from [http.Response] to the Cookie store
+Map<String, ClientCookie> parseSetCookie(String setCookieLine) {
+  final cookieMap = <String, ClientCookie>{};
+
+  if (setCookieLine is! String || setCookieLine.isEmpty) return cookieMap;
+
+  for (String itemStr in setCookieLine.split(',')) {
+    try {
+      final cookie = ClientCookie.fromSetCookie(itemStr);
+      cookieMap[cookie.name] = cookie;
+    } catch (e) {}
   }
 
-  /// A map of field to parser function
-  static final Map<String, dynamic> _parsers = <String, dynamic>{
-    'Expires': (String val) {
-      //TODO
-    },
-    'Max-Age': (String val) {
-      if (val is! String) throw new Exception('Invalid Max-Age directive!');
-      return int.parse(val);
-    },
-    'Domain': (String val) {
-      if (val is! String) throw new Exception('Invalid Domain directive!');
-      return val;
-    },
-    'Path': (String val) {
-      if (val is! String) throw new Exception('Invalid Path directive!');
-      return val;
-    },
-    'Secure': (String val) {
-      if (val != null) throw new Exception('Invalid Secure directive!');
-      return true;
-    },
-    'HttpOnly': (String val) {
-      if (val != null) throw new Exception('Invalid HttpOnly directive!');
-      return true;
-    },
-    'SameSite': (String val) {
-      if (val is! String) throw new Exception('Invalid SameSite directive!');
-      return val;
-    },
-  };
+  return cookieMap;
 }
