@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.10.12
+
++ `StringResponse.cookies`
+
 ## 2.10.10
 
 + Fixed throw on failure buf in `go`

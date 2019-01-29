@@ -591,7 +591,7 @@ class StringResponse implements Response<String> {
 
   @override
   String toString() {
-    return 'StringResponse{statusCode: $statusCode, url: ${request.url}, mimeType: $mimeType, encoding: $encoding, body: $_body}';
+    return 'StringResponse{statusCode: $statusCode, url: ${request.url}, mimeType: $mimeType, encoding: $encoding, body: $body}';
   }
 }
 
