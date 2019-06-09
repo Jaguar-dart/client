@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.8
+
++ Upgraded `analyzer` package
+
 ## 2.6.4
 
 + Implemented `AsBodyString` annotation

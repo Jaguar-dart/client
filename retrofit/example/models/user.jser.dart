@@ -20,7 +20,7 @@ abstract class _$UserSerializer implements Serializer<User> {
   @override
   User fromMap(Map map) {
     if (map == null) return null;
-    final obj = new User();
+    final obj = User();
     obj.id = map['id'] as String;
     obj.name = map['name'] as String;
     obj.email = map['email'] as String;
@@ -41,7 +41,7 @@ abstract class _$LoginSerializer implements Serializer<Login> {
   @override
   Login fromMap(Map map) {
     if (map == null) return null;
-    final obj = new Login();
+    final obj = Login();
     obj.username = map['username'] as String;
     obj.password = map['password'] as String;
     return obj;
