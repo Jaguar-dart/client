@@ -432,7 +432,7 @@ class StringResponse implements Response<String> {
 
   final RouteBase sent;
 
-  final String mimeType;
+  String mimeType;
 
   final String encoding;
 
