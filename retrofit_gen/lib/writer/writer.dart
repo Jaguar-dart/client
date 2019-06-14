@@ -77,7 +77,7 @@ class Writer {
       }
 
       if (body is FormFieldBody) {
-        sb.write('.urlEncodedFormField(${body.key}, ${body.name})');
+        sb.write('.urlEncodedFormField("${body.key}", ${body.name})');
       }
       if (body is MultipartForm) {
         if (body.serialize) {
