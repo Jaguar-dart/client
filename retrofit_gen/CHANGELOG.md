@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.9
+
++ `FormFieldBody` bug fix
+
 ## 2.8.8
 
 + Upgraded `analyzer` package
