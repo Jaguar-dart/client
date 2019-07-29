@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.10.14
+
++ Fixed `auth_header` dependency
+
 ## 2.10.12
 
 + `StringResponse.cookies`

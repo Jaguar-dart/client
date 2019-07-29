@@ -1,7 +1,5 @@
 library retrofit.annotations.params;
 
-import 'package:jaguar_resty/jaguar_resty.dart';
-
 /// Sends the argument annontated with [PathParam] as path parameter in the http
 /// request.
 ///

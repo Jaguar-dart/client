@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.8.10
+
++ Updated `auth_header` dependency
+
 ## 2.8.9
 
 + `FormFieldBody` bug fix
