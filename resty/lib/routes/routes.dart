@@ -707,7 +707,7 @@ class Post extends RouteBase
         }
       }
       r.headers.addAll(getHeaders);
-      return r.send().then((r) => ht.Response.fromStream(r));
+      return (getClient ?? globalClient).send(r).then((r) => ht.Response.fromStream(r));
     } else {
       throw Exception('Invalid body!');
     }
