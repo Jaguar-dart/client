@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.10.15
+
++ Multipart requests now use the globalClient if set
+
 ## 2.10.14
 
 + Fixed `auth_header` dependency
