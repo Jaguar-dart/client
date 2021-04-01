@@ -8,22 +8,22 @@ final _invalidDirective = Exception('Invalid directives found!!');
 /// Client cookie
 class ClientCookie {
   /// Cookie domain
-  final String domain;
+  final String? domain;
 
   /// Cookie expiry date
-  final DateTime expires;
+  final DateTime? expires;
 
   /// Is cookie HTTP only?
   final bool httpOnly;
 
   /// Max age of cookie
-  final int maxAge;
+  final int? maxAge;
 
   /// Cookie name
   final String name;
 
   /// Cookie path
-  final String path;
+  final String? path;
 
   /// Should the cookie be only sent on secure requests?
   final bool secure;
@@ -84,7 +84,7 @@ class ClientCookie {
       if (points.length == 0 || points.length > 2)
         throw Exception('Invalid directive!');
       final String key = points.first;
-      final String val = points.length == 2 ? points.last : null;
+      final String val = points.length == 2 ? points.last : '';
       if (!_parsers.containsKey(key)) throw _invalidDirective;
       map[key] = _parsers[key](val);
     }
@@ -154,12 +154,24 @@ class ClientCookie {
     sb.write('=');
     if (value is String) sb.write(value);
 
-    if (httpOnly) sb.write('; HttpOnly');
-    if (secure) sb.write('; Secure');
-    if (path is String) sb.write('; Path=$path');
-    if (domain is String) sb.write('; Domain=$domain');
-    if (maxAge is int) sb.write('; Max-Age=$maxAge');
-    if (expires is DateTime) sb.write('; Max-Age=${_formatDate(expires)}');
+    if (httpOnly) {
+      sb.write('; HttpOnly');
+    }
+    if (secure) {
+      sb.write('; Secure');
+    }
+    if (path != null) {
+      sb.write('; Path=$path');
+    }
+    if (domain != null) {
+      sb.write('; Domain=$domain');
+    }
+    if (maxAge != null) {
+      sb.write('; Max-Age=$maxAge');
+    }
+    if (expires != null) {
+      sb.write('; Max-Age=${_formatDate(expires!)}');
+    }
 
     return sb.toString();
   }
@@ -226,10 +238,10 @@ class CookieStore {
   /// Returns a cookie by [name]
   ///
   /// Returns [null] if cookie with name is not present
-  ClientCookie get(String name) {
+  ClientCookie? get(String name) {
     if (!cookieMap.containsKey(name)) return null;
 
-    final ret = cookieMap[name];
+    final ret = cookieMap[name]!;
 
     // Remove expired cookie
     if (ret.hasExpired) {
@@ -261,7 +273,9 @@ class CookieStore {
 
   /// Parses and adds all 'set-cookies' from [http.Response] to the Cookie store
   void addFromResponse(http.Response resp) {
-    addFromHeader(resp.headers['set-cookie']);
+    if (resp.headers.containsKey('set-cookie')) {
+      addFromHeader(resp.headers['set-cookie']!);
+    }
   }
 
   /// Parses and adds all 'set-cookies' from [http.Response] to the Cookie store
@@ -271,7 +285,7 @@ class CookieStore {
     final map = parseSetCookie(setCookieLine);
 
     for (String name in map.keys) {
-      final ClientCookie cookie = map[name];
+      final ClientCookie cookie = map[name]!;
       if (cookie.value == null || cookie.value.isEmpty) {
         cookieMap.remove(name);
         continue;

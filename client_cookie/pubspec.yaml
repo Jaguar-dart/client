@@ -1,14 +1,15 @@
 name: client_cookie
 description: Emulates Cookie store for dart:io and Flutter as if its a Browser. Parses cookies from 'set-cookie' response header and also writes cookies to request header.
-version: 2.2.1
+version: 3.0.0
 homepage: https://github.com/Jaguar-dart/client_cookie
-author: Ravi Teja Gudapati <tejainece@gmail.com>
+
+documentation:
 
 environment:
-  sdk: ">=2.0.0-dev.65 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  http: ^0.12.0
+  http: ^0.13.0
 
 dev_dependencies:
-  test: ^1.3.0
+  test: ^1.16.0

@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0
+
++ Null safety
+
 ## 2.1.8
 
 + `parseSetCookie` to parse `set-cookie` header and get a map of set cookies
