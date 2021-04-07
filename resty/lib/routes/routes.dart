@@ -6,6 +6,7 @@ import 'package:jaguar_resty/response/response.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:client_cookie/client_cookie.dart';
 import 'package:auth_header/auth_header.dart';
+import 'package:jaguar_resty/routes/uri_builder.dart';
 
 typedef FutureOr<void> Before(RouteBase route);
 
@@ -23,19 +24,10 @@ Delete delete(String url) => Delete(url);
 
 OptionsMethod options(String url) => OptionsMethod(url);
 
-ht.BaseClient globalClient;
+ht.BaseClient? globalClient;
 
 class RouteBase {
   final metadataMap = <String, dynamic>{};
-
-  final _paths = <String>[];
-
-  final _pathParams = <String, String>{};
-
-  String _origin;
-
-  final getQuery = <String,
-      dynamic /* String | Iterable<String | dynamic | Iterable<dynamic> */ >{};
 
   final getHeaders = <String, String>{};
 
@@ -46,46 +38,37 @@ class RouteBase {
   final getBefore = <Before>[];
   final getAfter = <After>[];
 
-  ht.BaseClient getClient;
+  ht.BaseClient? getClient;
+
+  MutUri uri = MutUri();
 
   RouteBase();
 
   /// Set the [client] used to make HTTP requests
-  RouteBase withClient(ht.BaseClient client) {
+  void withClient(ht.BaseClient client) {
     getClient = client;
-    return this;
   }
 
-  RouteBase http(String origin, [String path]) {
-    _origin = 'http://${origin}';
-    if (path != null) this.path(path);
-    return this;
+  void http(String origin, [String? path]) {
+    uri.http(origin, path);
   }
 
-  RouteBase https(String origin, [String path]) {
-    _origin = 'https://${origin}';
-    if (path != null) this.path(path);
-    return this;
+  void https(String origin, [String? path]) {
+    uri.https(origin, path);
   }
 
   /// Set origin of the URL
-  RouteBase origin(String origin, [String path]) {
-    _origin = origin;
-    if (path != null) this.path(path);
-    return this;
+  void origin(String origin, [String? path]) {
+    uri.origin(origin, path);
   }
 
   /// Append path segments to the URL
-  RouteBase path(String path) {
-    if (path.isEmpty) return this;
-    final parts = path.split('/').where((p) => p.isNotEmpty);
-    _paths.addAll(parts);
-    return this;
+  void path(String path) {
+    uri.path(path);
   }
 
-  RouteBase pathParams(String name, dynamic value) {
-    if (value != null) _pathParams[name] = value?.toString();
-    return this;
+  void pathParams(String name, dynamic value) {
+    uri.pathParams(name, value);
   }
 
   /// Add query parameters
@@ -181,8 +164,8 @@ class RouteBase {
     return this;
   }
 
-  RouteBase hookHeader(String key, ValueCallback<String> getter) {
-    if (getter != null) getAfter.add((r) => getter(r.headers[key]));
+  RouteBase hookHeader(String key, ValueCallback<String?> getter) {
+    getAfter.add((r) => getter(r.headers[key]));
     return this;
   }
 
@@ -192,62 +175,6 @@ class RouteBase {
     path(purl.pathSegments.join('/'));
     queries(purl.queryParametersAll);
     return this;
-  }
-
-  /// URL
-  String get getUrl {
-    String path = _paths
-        .map((ps) => ps.startsWith(':') ? _pathParams[ps.substring(1)] : ps)
-        .join('/');
-
-    path = Uri.encodeFull(path);
-
-    if (_origin == null && getQuery == null) return path;
-
-    final sb = StringBuffer();
-    if (_origin != null) sb.write(_origin);
-    if (_origin == null || !_origin.endsWith('/')) sb.write('/');
-    sb.write(path);
-    if (getQuery == null) return sb.toString();
-    _makeQueryParams(sb, getQuery);
-    return sb.toString();
-  }
-
-  static void _makeQueryParams(StringBuffer sb, Map<String, dynamic> query) {
-    if (query.length == 0) return;
-    sb.write('?');
-
-    void writeQuery(String key, String value, [bool isFirst = false]) {
-      if (!isFirst) sb.write('&');
-      sb.write(Uri.encodeQueryComponent(key));
-      if (value != null && value.isNotEmpty) {
-        sb.write("=");
-        sb.write(Uri.encodeQueryComponent(value));
-      }
-    }
-
-    void writeQueries(String key, value, [bool isFirst = false]) {
-      if (value is Iterable) {
-        for (int i = 0; i < value.length; i++) {
-          if (i == 0) {
-            writeQuery(key, value.elementAt(i)?.toString() ?? '', isFirst);
-          } else {
-            writeQuery(key, value.elementAt(i)?.toString() ?? '', false);
-          }
-        }
-        return;
-      }
-      writeQuery(key, value?.toString() ?? '', isFirst);
-    }
-
-    for (int i = 0; i < query.length; i++) {
-      String key = query.keys.elementAt(i);
-      if (i == 0) {
-        writeQueries(key, query[key], true);
-      } else {
-        writeQueries(key, query[key], false);
-      }
-    }
   }
 }
 
@@ -287,7 +214,7 @@ void _prepare(RouteBase route) {
   if (route.getAuthHeaders.isNotEmpty) {
     final auth = AuthHeaders.fromHeaderStr(route.getHeaders['authorization']);
     for (String scheme in route.getAuthHeaders.keys) {
-      auth.addItem(AuthHeaderItem(scheme, route.getAuthHeaders[scheme]));
+      auth.addItem(AuthHeaderItem(scheme, route.getAuthHeaders[scheme]!));
     }
     route.getHeaders['authorization'] = auth.toString();
   }
@@ -302,12 +229,13 @@ abstract class RouteFetch {
       bool throwOnErr});
 
   /// Fetches json response and returns the decoded result
-  Future<T> one<T>(
-      {T convert(Map d),
-      FutureOr<dynamic> onError(StringResponse resp)}) async {
+  Future<T?> one<T>(
+      {T convert(Map d)?,
+      FutureOr<dynamic> onError(StringResponse resp)?}) async {
     StringResponse resp = await go();
-    if (resp.statusCode >= 200 && resp.statusCode < 300)
+    if (resp.statusCode >= 200 && resp.statusCode < 300) {
       return resp.decodeJson<T>(convert);
+    }
 
     if (onError == null) throw ErrorResponse(resp);
     var err = await onError(resp);

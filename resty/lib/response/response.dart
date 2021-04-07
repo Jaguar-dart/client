@@ -535,15 +535,19 @@ class StringResponse implements Response<String> {
     );
   }
 
-  T decodeJson<T>([T convert(Map d)]) {
+  T decodeJson<T>([T convert(Map d)?]) {
     final d = codec.json.decode(body);
-    if (convert == null) return d;
+    if (convert == null) {
+      return d;
+    }
     return convert(d);
   }
 
-  List<T> decodeJsonList<T>([T convert(Map d)]) {
+  List<T> decodeJsonList<T>([T convert(Map d)?]) {
     List d = codec.json.decode(body);
-    if (convert != null) return d.cast<Map>().map(convert).cast<T>().toList();
+    if (convert != null) {
+      return d.cast<Map>().map(convert).cast<T>().toList();
+    }
     return d.cast<T>();
   }
 
@@ -557,13 +561,13 @@ class StringResponse implements Response<String> {
   }
 
   StringResponse exact(
-      {int statusCode,
-      String body,
-      List<int> bytes,
-      String mimeType,
-      String encoding,
-      Map<String, String> headers,
-      int contentLength}) {
+      {int? statusCode,
+      String? body,
+      List<int>? bytes,
+      String? mimeType,
+      String? encoding,
+      Map<String, String>? headers,
+      int? contentLength}) {
     final conditions = <Checker<Response>>[];
     if (statusCode != null) conditions.add(statusCodeIs(statusCode));
     if (body != null) conditions.add(bodyIs(body));
@@ -582,7 +586,7 @@ class StringResponse implements Response<String> {
     return this;
   }
 
-  T map<T>(FutureOr<T> func(StringResponse resp)) {
+  FutureOr<T> map<T>(FutureOr<T> func(StringResponse resp)) {
     return func(this);
   }
 
