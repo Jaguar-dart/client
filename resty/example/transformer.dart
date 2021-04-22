@@ -7,14 +7,14 @@ import 'package:jaguar/jaguar.dart';
 
 final server = Jaguar(port: 8000)
   ..getJson('/math/addition',
-      (Context ctx) => ctx.query.getInt("a") + ctx.query.getInt("b"));
+      (Context ctx) => ctx.query.getInt("a")! + ctx.query.getInt("b")!);
 
-resty.Before setQuery(int a, int b) => (resty.RouteBase route) {
+resty.Before setQuery(int a, int b) => (resty.Method route) {
       route.query("a", a);
       route.query("b", b);
     };
 
-void printResult(resty.Response<String> resp) {
+void printResult(resty.Response resp) {
   print(resp.body);
 }
 

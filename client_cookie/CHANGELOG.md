@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.2
+
++ Bug fix in parsing cookie parameters
+
+## 3.0.1
+
++ Minor null safety fixes
+
 ## 3.0.0
 
 + Null safety

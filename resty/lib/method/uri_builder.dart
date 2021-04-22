@@ -1,51 +1,100 @@
 /// Mutable Uri
 class MutUri {
-  final _paths = <String>[];
+  final List<String> _paths;
 
-  final _pathParams = <String, String>{};
+  final Map<String, String> _pathParams;
 
   String? _origin;
 
-  final getQuery = <String,
-      dynamic /* String | Iterable<String | dynamic | Iterable<dynamic> */ >{};
+  final Map<String,
+          dynamic /* String | Iterable<String | dynamic | Iterable<dynamic> */ >
+      getQuery;
 
-  void http(String origin, [String? path]) {
+  MutUri(
+      {String? origin,
+      List<String>? paths,
+      Map<String, String>? pathParams,
+      Map<String, dynamic>? query})
+      : _paths = paths?.toList() ?? <String>[],
+        _pathParams =
+            pathParams != null ? Map<String, String>.from(pathParams) : {},
+        _origin = origin,
+        getQuery = query != null ? Map<String, dynamic>.from(query) : {};
+
+  static MutUri from(dynamic from) {
+    if (from == null) {
+      return MutUri();
+    }
+    if (from is String) {
+      from = Uri.parse(from);
+    }
+    if (from is Uri) {
+      if (from.isScheme('http') || from.isScheme('https')) {
+        return MutUri(
+          origin: from.origin,
+          paths: from.pathSegments,
+          query: from.queryParameters,
+        );
+      } else {
+        return MutUri(
+          paths: from.pathSegments,
+          query: from.queryParameters,
+        );
+      }
+    }
+    if (from is MutUri) {
+      return from;
+    }
+    throw Exception('');
+  }
+
+  MutUri http(String origin, [String? path]) {
     _origin = 'http://${origin}';
     if (path != null) {
       this.path(path);
     }
+    return this;
   }
 
-  void https(String origin, [String? path]) {
+  MutUri https(String origin, [String? path]) {
     _origin = 'https://${origin}';
     if (path != null) {
       this.path(path);
     }
+    return this;
   }
 
   /// Set origin of the URL
-  void origin(String origin, [String? path]) {
+  MutUri origin(String origin, [String? path]) {
     _origin = origin;
     if (path != null) {
       this.path(path);
     }
+    return this;
   }
 
   /// Append path segments to the URL
-  void path(String path) {
-    if (path.isEmpty) return;
+  MutUri path(String path) {
+    if (path.isEmpty) return this;
     final parts = path.split('/').where((p) => p.isNotEmpty);
     _paths.addAll(parts);
+    return this;
   }
 
-  void pathParams(String name, dynamic value) {
+  MutUri pathParam(String name, dynamic value) {
     if (value != null) {
       _pathParams[name] = value!.toString();
     }
+    return this;
+  }
+
+  MutUri pathParams(Map<String, dynamic> value) {
+    value.forEach(pathParam);
+    return this;
   }
 
   /// Add query parameters
-  void query(String key, value) {
+  MutUri query(String key, value) {
     if (value is String || value is Iterable<String>) {
       getQuery[key] = value;
     } else if (value is Iterable) {
@@ -53,11 +102,13 @@ class MutUri {
     } else if (value != null) {
       getQuery[key] = value?.toString();
     }
+    return this;
   }
 
   /// Add query parameters
-  void queries(Map<String, dynamic> value) {
+  MutUri queries(Map<String, dynamic> value) {
     value.forEach(query);
+    return this;
   }
 
   Uri get uri {
@@ -126,4 +177,11 @@ class MutUri {
       }
     }
   }
+
+  MutUri clone() => MutUri(
+        origin: _origin,
+        paths: _paths.toList(),
+        pathParams: Map.from(_pathParams),
+        query: Map.from(getQuery),
+      );
 }

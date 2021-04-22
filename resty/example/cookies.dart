@@ -10,18 +10,22 @@ final server = Jaguar(port: 8000)
       (Context ctx) => Response.json({'Msg': 'Success!'})
         ..cookies.add(Cookie('Key', 'Pass')))
   ..getJson('/data', (Context ctx) async {
-    if (!ctx.cookies.containsKey('Key')) return {'Msg': 'Invalid!'};
-    if (ctx.cookies['Key'].value != 'Pass') return {'Msg': 'Invalid!'};
-    return {'Msg': 'Success!'};
+    if (!ctx.cookies.containsKey('Key')) {
+      return {'Msg': 'Invalid!'};
+    }
+    if (ctx.cookies['Key']!.value != 'Pass') {
+      return {'Msg': 'Invalid!'};
+    }
+    return {'Msg': 'Valid!'};
   })
   ..log.onRecord.listen(print);
 
 final jar = resty.CookieJar();
 
 Future client() async {
-  print(await resty.get('http://localhost:8000/data').before(jar).go().body);
-  print(await resty.get('http://localhost:8000/key').before(jar).go().body);
-  print(await resty.get('http://localhost:8000/data').before(jar).go().body);
+  print(await resty.get('http://localhost:8000/data').before(jar).readString());
+  print(await resty.get('http://localhost:8000/key').before(jar).readString());
+  print(await resty.get('http://localhost:8000/data').before(jar).readString());
 }
 
 main() async {

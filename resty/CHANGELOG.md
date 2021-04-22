@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.0
+
++ Null safety
++ Simpler API
+
 ## 2.10.15
 
 + Multipart requests now use the globalClient if set

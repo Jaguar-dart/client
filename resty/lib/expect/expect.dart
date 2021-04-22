@@ -1,3 +1,4 @@
+import 'package:http/http.dart';
 import 'package:jaguar_resty/response/response.dart';
 import 'package:collection/collection.dart';
 
@@ -17,12 +18,12 @@ class EqualityMismatch<T> implements Exception, Mismatch<EqualityMismatch<T>> {
   /// Actual value
   T actual;
 
-  CustomMismatchMessage<EqualityMismatch<T>> customMessage;
+  CustomMismatchMessage<EqualityMismatch<T>>? customMessage;
 
   EqualityMismatch(this.expected, this.actual, {this.customMessage});
 
   String toString() => customMessage != null
-      ? customMessage(this)
+      ? customMessage!(this)
       : "Equality mismatch: Expected: $expected. Found: $actual!";
 }
 
@@ -33,24 +34,24 @@ class RangeMismatch<T> implements Exception, Mismatch<RangeMismatch<T>> {
 
   T actual;
 
-  CustomMismatchMessage<RangeMismatch<T>> customMessage;
+  CustomMismatchMessage<RangeMismatch<T>>? customMessage;
 
   RangeMismatch(this.lower, this.higher, this.actual, {this.customMessage});
 
   String toString() => customMessage != null
-      ? customMessage(this)
+      ? customMessage!(this)
       : "Range mismatch: Expected: [$lower, $higher]. Found: $actual!";
 }
 
 class MapHasMismatch<T> implements Exception, Mismatch<MapHasMismatch<T>> {
   T key;
 
-  CustomMismatchMessage<MapHasMismatch<T>> customMessage;
+  CustomMismatchMessage<MapHasMismatch<T>>? customMessage;
 
   MapHasMismatch(this.key, {this.customMessage});
 
   String toString() => customMessage != null
-      ? customMessage(this)
+      ? customMessage!(this)
       : "Map has mismatch: Key $key not found!";
 }
 
@@ -77,7 +78,8 @@ Checker<Response> statusCodeIsInRange(int lower, int higher) =>
       return <Mismatch>[];
     };
 
-Checker<Response> headersHas(String header, [String value]) => (Response resp) {
+Checker<Response> headersHas(String header, [String? value]) =>
+    (Response resp) {
       if (!resp.headers.containsKey(header))
         return <Mismatch>[
           new MapHasMismatch(header,
@@ -94,24 +96,22 @@ Checker<Response> headersHas(String header, [String value]) => (Response resp) {
       return <Mismatch>[];
     };
 
-Checker<Response<T>> bodyIs<T>(T expected, [bool isEqual(T a, T b)]) =>
-    (Response<T> resp) {
-      bool equal = isEqual != null
-          ? isEqual(expected, resp.body)
-          : expected == resp.body;
-      if (!equal)
+Checker<Response> bodyIs(String expected) => (Response resp) {
+      bool equal = expected == resp.body;
+      if (!equal) {
         return <Mismatch>[
           new EqualityMismatch(expected, resp.body,
               customMessage: (m) =>
                   'Expected body ${m.expected} but found ${m.actual}!')
         ];
+      }
       return <Mismatch>[];
     };
 
 const _bodyBytesEquality = const IterableEquality<int>();
 
 Checker<Response> bodyBytesIs(List<int> expected) => (Response resp) {
-      if (_bodyBytesEquality.equals(expected, resp.bytes))
+      if (_bodyBytesEquality.equals(expected, resp.bodyBytes))
         return <Mismatch>[
           new EqualityMismatch(expected, resp.body,
               customMessage: (m) =>
@@ -121,12 +121,13 @@ Checker<Response> bodyBytesIs(List<int> expected) => (Response resp) {
     };
 
 Checker<Response> mimeTypeIs(String expected) => (Response resp) {
-      if (expected != resp.mimeType)
+      if (expected != resp.mimeType) {
         return <Mismatch>[
           new EqualityMismatch(expected, resp.mimeType,
               customMessage: (m) =>
                   'Expected mimetype ${m.expected} but found ${m.actual}!')
         ];
+      }
       return <Mismatch>[];
     };
 
@@ -135,11 +136,12 @@ final Checker<Response> mimeTypeIsJson = mimeTypeIs('application/json');
 final Checker<Response> mimeTypeIsHtml = mimeTypeIs('text/html');
 
 Checker<Response> encodingIs(String expected) => (Response resp) {
-      if (expected != resp.encoding)
+      if (expected != resp.encoding) {
         return <Mismatch>[
           new EqualityMismatch(expected, resp.encoding,
               customMessage: (m) =>
                   'Expected encoding ${m.expected} but found ${m.actual}!')
         ];
+      }
       return <Mismatch>[];
     };

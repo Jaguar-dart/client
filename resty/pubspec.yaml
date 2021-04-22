@@ -12,7 +12,7 @@ dependencies:
   http: ^0.13.0
   async: ^2.5.0
   http_parser: ^4.0.0
-  client_cookie: ^3.0.0
+  client_cookie: ^3.0.2
   collection: ^1.14.6
   auth_header: ^3.0.0
   path: ^1.8.0
@@ -21,4 +21,4 @@ dependencies:
 dev_dependencies:
   pedantic: ^1.8.0
   test: ^1.16.0
-  # jaguar: ^2.4.1
+  jaguar: 3.0.2-dev

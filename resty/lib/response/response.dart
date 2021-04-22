@@ -1,19 +1,17 @@
 import 'dart:async';
-import 'package:meta/meta.dart';
 import 'dart:convert' as codec;
 
 import 'package:http/http.dart' as http;
 import 'package:jaguar_resty/expect/expect.dart';
-import 'package:async/async.dart';
 import 'package:http_parser/http_parser.dart' show MediaType;
-import 'package:jaguar_resty/routes/routes.dart';
 
 import 'package:client_cookie/client_cookie.dart';
 
-typedef FutureOr<dynamic> After(StringResponse response);
+typedef FutureOr<dynamic> After(http.Response response);
 
-typedef FutureOr ResponseHook<T>(Response<T> response);
+typedef FutureOr ResponseHook(http.Response response);
 
+/*
 abstract class AsyncResponse<BT> {
   FutureOr<int> get statusCode;
 
@@ -31,19 +29,19 @@ abstract class AsyncResponse<BT> {
 
   FutureOr<bool> get persistentConnection;
 
-  FutureOr<String> get reasonPhrase;
+  FutureOr<String?> get reasonPhrase;
 
-  FutureOr<int> get contentLength;
+  FutureOr<int?> get contentLength;
 
-  FutureOr<http.BaseRequest> get request;
+  FutureOr<http.BaseRequest?> get request;
 
-  FutureOr<RouteBase> get sender;
+  FutureOr<Method> get sender;
 
-  FutureOr<RouteBase> get sent;
+  FutureOr<Method> get sent;
 
-  FutureOr<String> get mimeType;
+  FutureOr<String?> get mimeType;
 
-  FutureOr<String> get encoding;
+  FutureOr<String?> get encoding;
 
   FutureOr<StringResponse> get toStringResponse;
 
@@ -83,25 +81,26 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
 
   Future<bool> get persistentConnection => then((r) => r.persistentConnection);
 
-  Future<String> get reasonPhrase => then((r) => r.reasonPhrase);
+  Future<String?> get reasonPhrase => then((r) => r.reasonPhrase);
 
-  Future<int> get contentLength => then((r) => r.contentLength);
+  Future<int?> get contentLength => then((r) => r.contentLength);
 
-  Future<http.BaseRequest> get request => then((r) => r.request);
+  Future<http.BaseRequest?> get request => then((r) => r.request);
 
-  Future<RouteBase> get sender => then((r) => r.sender);
+  Future<Method> get sender => then((r) => r.sender);
 
-  Future<RouteBase> get sent => then((r) => r.sent);
+  Future<Method> get sent => then((r) => r.sent);
 
-  Future<String> get mimeType => then((r) => r.mimeType);
+  Future<String?> get mimeType => then((r) => r.mimeType);
 
-  Future<String> get encoding => then((r) => r.encoding);
+  Future<String?> get encoding => then((r) => r.encoding);
 
   Future<bool> get isSuccess => then((r) => r.isSuccess);
 
   Future<bool> get isFailure => then((r) => r.isFailure);
 
-  AsyncStringResponse get toStringResponse => then((r) => r.toStringResponse);
+  AsyncStringResponse get toStringResponse =>
+      AsyncStringResponse(then((r) => r.toStringResponse));
 
   AsyncTResponse<BT> onSuccess(ResponseHook<BT> hook) =>
       run((Response<BT> r) => r.onSuccess(hook));
@@ -114,15 +113,15 @@ class AsyncTResponse<BT> extends DelegatingFuture<Response<BT>>
   }
 
   AsyncTResponse<BT> exact(
-      {int statusCode,
-      BT body,
-      List<int> bytes,
-      String mimeType,
-      String encoding,
-      Map<String, String> headers,
-      int contentLength}) {
+      {int? statusCode,
+      BT? body,
+      List<int>? bytes,
+      String? mimeType,
+      String? encoding,
+      Map<String, String>? headers,
+      int? contentLength}) {
     return AsyncTResponse<BT>(then((r) {
-      r.exact(
+      return r.exact(
           statusCode: statusCode,
           body: body,
           bytes: bytes,
@@ -151,7 +150,7 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
   AsyncStringResponse(Future<StringResponse> inner) : super(inner);
 
   AsyncStringResponse.from(Future<http.Response> inner,
-      {@required RouteBase sender, @required RouteBase sent})
+      {required Method sender, required Method sent})
       : super(inner
             .then((r) => StringResponse.from(r, sender: sender, sent: sent)));
 
@@ -167,23 +166,23 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
 
   Future<bool> get persistentConnection => then((r) => r.persistentConnection);
 
-  Future<String> get reasonPhrase => then((r) => r.reasonPhrase);
+  Future<String?> get reasonPhrase => then((r) => r.reasonPhrase);
 
-  Future<int> get contentLength => then((r) => r.contentLength);
+  Future<int?> get contentLength => then((r) => r.contentLength);
 
-  Future<http.BaseRequest> get request => then((r) => r.request);
+  Future<http.BaseRequest?> get request => then((r) => r.request);
 
-  Future<String> get mimeType => then((r) => r.mimeType);
+  Future<String?> get mimeType => then((r) => r.mimeType);
 
-  Future<String> get encoding => then((r) => r.encoding);
+  Future<String?> get encoding => then((r) => r.encoding);
 
   Future<bool> get isSuccess => then((r) => r.isSuccess);
 
   Future<bool> get isFailure => then((r) => r.isFailure);
 
-  Future<RouteBase> get sender => then((r) => r.sender);
+  Future<Method> get sender => then((r) => r.sender);
 
-  Future<RouteBase> get sent => then((r) => r.sent);
+  Future<Method> get sent => then((r) => r.sent);
 
   AsyncStringResponse get toStringResponse => this;
 
@@ -198,13 +197,13 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
   }
 
   AsyncStringResponse exact(
-      {int statusCode,
-      String body,
-      List<int> bytes,
-      String mimeType,
-      String encoding,
-      Map<String, String> headers,
-      int contentLength}) {
+      {int? statusCode,
+      String? body,
+      List<int>? bytes,
+      String? mimeType,
+      String? encoding,
+      Map<String, String>? headers,
+      int? contentLength}) {
     return AsyncStringResponse(then((r) => r.exact(
         statusCode: statusCode,
         body: body,
@@ -215,17 +214,17 @@ class AsyncStringResponse extends DelegatingFuture<StringResponse>
         contentLength: contentLength)));
   }
 
-  AsyncTResponse<T> json<T>([T convert(Map d)]) =>
+  AsyncTResponse<T> json<T>([T convert(Map d)?]) =>
       AsyncTResponse<T>(then((StringResponse r) => r.json<T>(convert)));
 
-  AsyncTResponse<List<T>> jsonList<T>([T convert(Map d)]) =>
+  AsyncTResponse<List<T>> jsonList<T>([T convert(Map d)?]) =>
       AsyncTResponse<List<T>>(
           then((StringResponse r) => r.jsonList<T>(convert)));
 
-  Future<T> decodeJson<T>([T convert(Map d)]) =>
+  Future<T> decodeJson<T>([T convert(Map d)?]) =>
       then((r) => r.decodeJson<T>(convert));
 
-  Future<List<T>> decodeJsonList<T>([T convert(Map d)]) =>
+  Future<List<T>> decodeJsonList<T>([T convert(Map d)?]) =>
       then((StringResponse r) => r.decodeJsonList<T>(convert));
 
   /// Runs [func] with [Response] object after request completion
@@ -258,19 +257,19 @@ abstract class Response<T> implements AsyncResponse<T> {
 
   bool get persistentConnection;
 
-  String get reasonPhrase;
+  String? get reasonPhrase;
 
-  int get contentLength;
+  int? get contentLength;
 
-  http.BaseRequest get request;
+  http.BaseRequest? get request;
 
-  RouteBase get sender;
+  Method get sender;
 
-  RouteBase get sent;
+  Method get sent;
 
-  String get mimeType;
+  String? get mimeType;
 
-  String get encoding;
+  String? get encoding;
 
   Future<Response<T>> onSuccess(ResponseHook<T> hook);
 
@@ -279,13 +278,13 @@ abstract class Response<T> implements AsyncResponse<T> {
   Response<T> expect(List<Checker<Response>> conditions);
 
   Response<T> exact(
-      {int statusCode,
-      T body,
-      List<int> bytes,
-      String mimeType,
-      String encoding,
-      Map<String, String> headers,
-      int contentLength});
+      {int? statusCode,
+      T? body,
+      List<int>? bytes,
+      String? mimeType,
+      String? encoding,
+      Map<String, String>? headers,
+      int? contentLength});
 
   StringResponse get toStringResponse;
 
@@ -307,32 +306,32 @@ class TResponse<BT> implements Response<BT> {
 
   final bool persistentConnection;
 
-  final String reasonPhrase;
+  final String? reasonPhrase;
 
-  final int contentLength;
+  final int? contentLength;
 
-  final http.BaseRequest request;
+  final http.BaseRequest? request;
 
-  final RouteBase sender;
+  final Method sender;
 
-  final RouteBase sent;
+  final Method sent;
 
-  final String mimeType;
+  final String? mimeType;
 
-  final String encoding;
+  final String? encoding;
 
   TResponse(
-      {this.statusCode,
-      this.body,
-      this.bytes,
-      this.headers,
-      this.isRedirect,
-      this.persistentConnection,
+      {required this.statusCode,
+      required this.body,
+      required this.bytes,
+      required this.headers,
+      required this.isRedirect,
+      required this.persistentConnection,
       this.reasonPhrase,
       this.contentLength,
       this.request,
-      @required this.sender,
-      @required this.sent,
+      required this.sender,
+      required this.sent,
       this.mimeType,
       this.encoding});
 
@@ -374,13 +373,13 @@ class TResponse<BT> implements Response<BT> {
   }
 
   TResponse<BT> exact(
-      {int statusCode,
-      BT body,
-      List<int> bytes,
-      String mimeType,
-      String encoding,
-      Map<String, String> headers,
-      int contentLength}) {
+      {int? statusCode,
+      BT? body,
+      List<int>? bytes,
+      String? mimeType,
+      String? encoding,
+      Map<String, String>? headers,
+      int? contentLength}) {
     final conditions = <Checker<Response>>[];
     if (statusCode != null) conditions.add(statusCodeIs(statusCode));
     if (body != null) conditions.add(bodyIs(body));
@@ -399,20 +398,20 @@ class TResponse<BT> implements Response<BT> {
     return this;
   }
 
-  T map<T>(FutureOr<T> func(Response<BT> resp)) {
+  FutureOr<T> map<T>(FutureOr<T> func(Response<BT> resp)) {
     return func(this);
   }
 
   @override
   String toString() {
-    return 'TResponse{statusCode: $statusCode, url: ${request.url}, mimeType: $mimeType, encoding: $encoding, body: $body}';
+    return 'TResponse{statusCode: $statusCode, url: ${request?.url}, mimeType: $mimeType, encoding: $encoding, body: $body}';
   }
 }
 
 class StringResponse implements Response<String> {
   final int statusCode;
 
-  String _body;
+  String? _body;
 
   final List<int> bytes;
 
@@ -422,36 +421,36 @@ class StringResponse implements Response<String> {
 
   final bool persistentConnection;
 
-  final String reasonPhrase;
+  final String? reasonPhrase;
 
-  final int contentLength;
+  final int? contentLength;
 
-  final http.BaseRequest request;
+  final http.BaseRequest? request;
 
-  final RouteBase sender;
+  final Method sender;
 
-  final RouteBase sent;
+  final Method sent;
 
-  final String mimeType;
+  final String? mimeType;
 
-  final String encoding;
+  final String? encoding;
 
   StringResponse(
-      {this.statusCode,
-      this.bytes,
-      this.headers,
-      this.isRedirect,
-      this.persistentConnection,
-      this.reasonPhrase,
-      this.contentLength,
-      this.request,
-      @required this.sender,
-      @required this.sent,
+      {required this.statusCode,
+      required this.bytes,
+      required this.headers,
+      required this.isRedirect,
+      required this.persistentConnection,
+      required this.reasonPhrase,
+      required this.contentLength,
+      required this.request,
+      required this.sender,
+      required this.sent,
       this.mimeType,
       this.encoding});
 
   factory StringResponse.from(http.Response resp,
-      {@required RouteBase sender, @required RouteBase sent}) {
+      {required Method sender, required Method sent}) {
     final mediaType = MediaType.parse(
         resp.headers['content-type'] ?? Response.defaultContentType);
     return StringResponse(
@@ -473,10 +472,6 @@ class StringResponse implements Response<String> {
 
   StringResponse get toStringResponse => this;
 
-  bool get isSuccess => statusCode >= 200 && statusCode < 300;
-
-  bool get isFailure => statusCode >= 400 && statusCode < 600;
-
   Future<StringResponse> onSuccess(ResponseHook<String> func) async {
     if (isSuccess) await func(this);
     return this;
@@ -487,7 +482,7 @@ class StringResponse implements Response<String> {
     return this;
   }
 
-  TResponse<T> json<T>([T convert(Map d)]) {
+  TResponse<T> json<T>([T convert(Map d)?]) {
     final d = codec.json.decode(body);
     T ret;
     if (convert != null)
@@ -511,7 +506,7 @@ class StringResponse implements Response<String> {
     );
   }
 
-  TResponse<List<T>> jsonList<T>([T convert(Map d)]) {
+  TResponse<List<T>> jsonList<T>([T convert(Map d)?]) {
     List d = codec.json.decode(body);
     List<T> ret;
     if (convert != null)
@@ -580,28 +575,96 @@ class StringResponse implements Response<String> {
     }
     return expect(conditions);
   }
+}
 
-  StringResponse run(ResponseHook<String> func) {
-    func(this);
-    return this;
+codec.Encoding _getEncoderForCharset(String? charset,
+    [codec.Encoding fallback = codec.latin1]) {
+  if (charset == null) {
+    return fallback;
   }
+  var encoding = codec.Encoding.getByName(charset);
+  return encoding == null ? fallback : encoding;
+}
+*/
 
-  FutureOr<T> map<T>(FutureOr<T> func(StringResponse resp)) {
-    return func(this);
-  }
+extension RespExt on http.Response {
+  bool get isSuccess => statusCode >= 200 && statusCode < 300;
+
+  bool get isFailure => statusCode >= 400 && statusCode < 600;
 
   Map<String, ClientCookie> get cookies =>
       parseSetCookie(headers['set-cookie']);
 
-  @override
-  String toString() {
-    return 'StringResponse{statusCode: $statusCode, url: ${request.url}, mimeType: $mimeType, encoding: $encoding, body: $body}';
+  String get mimeType {
+    final mediaType =
+        MediaType.parse(headers['content-type'] ?? defaultContentType);
+    return mediaType.mimeType;
   }
-}
 
-codec.Encoding _getEncoderForCharset(String charset,
-    [codec.Encoding fallback = codec.latin1]) {
-  if (charset == null) return fallback;
-  var encoding = codec.Encoding.getByName(charset);
-  return encoding == null ? fallback : encoding;
+  String get encoding {
+    final mediaType =
+        MediaType.parse(headers['content-type'] ?? defaultContentType);
+    return mediaType.parameters['charset'] ?? defaultCharset;
+  }
+
+  void expect(List<Checker<http.Response>> conditions) {
+    final mismatches = conditions
+        .map((c) => c(this))
+        .reduce((List<Mismatch> v, List<Mismatch> e) => v..addAll(e))
+        .toList();
+    if (mismatches.length != 0) {
+      throw mismatches;
+    }
+  }
+
+  void exact(
+      {int? statusCode,
+      String? body,
+      List<int>? bytes,
+      String? mimeType,
+      String? encoding,
+      Map<String, String>? headers,
+      int? contentLength}) {
+    final conditions = <Checker<http.Response>>[];
+    if (statusCode != null) {
+      conditions.add(statusCodeIs(statusCode));
+    }
+    if (body != null) {
+      conditions.add(bodyIs(body));
+    }
+    if (bytes != null) {
+      conditions.add(bodyBytesIs(bytes));
+    }
+    if (mimeType != null) {
+      conditions.add(mimeTypeIs(mimeType));
+    }
+    if (encoding != null) {
+      conditions.add(encodingIs(encoding));
+    }
+    if (headers != null) {
+      headers.forEach(
+          (String key, String value) => conditions.add(headersHas(key, value)));
+    }
+    return expect(conditions);
+  }
+
+  T json<T>([T convert(Map d)?]) {
+    final d = codec.json.decode(body);
+    if (convert != null) {
+      return convert(d);
+    }
+    return d;
+  }
+
+  List<T> jsonList<T>([T convert(Map d)?]) {
+    List d = codec.json.decode(body);
+    if (convert != null) {
+      return d.cast<Map>().map(convert).cast<T>().toList();
+    }
+    return d.cast<T>();
+  }
+
+  static const String defaultContentType =
+      'application/octet-stream;charset=utf-8';
+  static const String defaultCharset = 'utf-8';
 }

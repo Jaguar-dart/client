@@ -75,7 +75,9 @@ class ClientCookie {
       if (idx == -1) throw Exception('Invalid Name=Value pair!');
       name = first.substring(0, idx).trim();
       value = first.substring(idx + 1).trim();
-      if (name.isEmpty) throw Exception('Cookie must have a name!');
+      if (name.isEmpty) {
+        throw Exception('Cookie must have a name!');
+      }
     }
 
     for (String directive in parts) {
@@ -85,7 +87,9 @@ class ClientCookie {
         throw Exception('Invalid directive!');
       final String key = points.first;
       final String val = points.length == 2 ? points.last : '';
-      if (!_parsers.containsKey(key)) throw _invalidDirective;
+      if (!_parsers.containsKey(key)) {
+        throw _invalidDirective;
+      }
       map[key] = _parsers[key](val);
     }
 
@@ -201,28 +205,28 @@ class ClientCookie {
     'Expires': (String val) {
       //TODO
     },
-    'Max-Age': (String val) {
-      if (val is! String) throw Exception('Invalid Max-Age directive!');
+    'Max-Age': (String? val) {
+      if (val == null) throw Exception('Invalid Max-Age directive!');
       return int.parse(val);
     },
-    'Domain': (String val) {
-      if (val is! String) throw Exception('Invalid Domain directive!');
+    'Domain': (String? val) {
+      if (val == null) throw Exception('Invalid Domain directive!');
       return val;
     },
-    'Path': (String val) {
-      if (val is! String) throw Exception('Invalid Path directive!');
+    'Path': (String? val) {
+      if (val == null) throw Exception('Invalid Path directive!');
       return val;
     },
-    'Secure': (String val) {
-      if (val != null) throw Exception('Invalid Secure directive!');
+    'Secure': (String? val) {
+      if (val == null) throw Exception('Invalid Secure directive!');
       return true;
     },
-    'HttpOnly': (String val) {
-      if (val != null) throw Exception('Invalid HttpOnly directive!');
+    'HttpOnly': (String? val) {
+      if (val == null) throw Exception('Invalid HttpOnly directive!');
       return true;
     },
-    'SameSite': (String val) {
-      if (val is! String) throw Exception('Invalid SameSite directive!');
+    'SameSite': (String? val) {
+      if (val == null) throw Exception('Invalid SameSite directive!');
       return val;
     },
   };
@@ -279,14 +283,16 @@ class CookieStore {
   }
 
   /// Parses and adds all 'set-cookies' from [http.Response] to the Cookie store
-  void addFromHeader(String setCookieLine) {
-    if (setCookieLine is! String || setCookieLine.isEmpty) return;
+  void addFromHeader(String? setCookieLine) {
+    if (setCookieLine == null || setCookieLine.isEmpty) {
+      return;
+    }
 
     final map = parseSetCookie(setCookieLine);
 
     for (String name in map.keys) {
       final ClientCookie cookie = map[name]!;
-      if (cookie.value == null || cookie.value.isEmpty) {
+      if (cookie.value.isEmpty) {
         cookieMap.remove(name);
         continue;
       }
@@ -298,17 +304,17 @@ class CookieStore {
   String toString() => 'CookieStore($cookieMap)';
 }
 
-/// Parses and adds all 'set-cookies' from [http.Response] to the Cookie store
-Map<String, ClientCookie> parseSetCookie(String setCookieLine) {
+/// Parses and adds all 'set-cookies' from [http.Response] to the Cookiewqa<s§ store
+Map<String, ClientCookie> parseSetCookie(String? setCookieLine) {
   final cookieMap = <String, ClientCookie>{};
 
-  if (setCookieLine is! String || setCookieLine.isEmpty) return cookieMap;
+  if (setCookieLine == null || setCookieLine.isEmpty) {
+    return cookieMap;
+  }
 
   for (String itemStr in setCookieLine.split(',')) {
-    try {
-      final cookie = ClientCookie.fromSetCookie(itemStr);
-      cookieMap[cookie.name] = cookie;
-    } catch (e) {}
+    final cookie = ClientCookie.fromSetCookie(itemStr);
+    cookieMap[cookie.name] = cookie;
   }
 
   return cookieMap;
