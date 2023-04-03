@@ -361,7 +361,8 @@ Map<String, ClientCookie> parseSetCookie(String? setCookieLine,
     return cookieMap;
   }
 
-  for (String itemStr in setCookieLine.split(',')) {
+  final cookieStrings = setCookieLine.split(RegExp(r',(?=[A-Za-z0-9_-]+\s*=)'));
+  for (String itemStr in cookieStrings) {
     final cookie = ClientCookie.fromSetCookie(itemStr,
         enableExtendedDirectiveParsing: enableExtendedDirectiveParsing);
     cookieMap[cookie.name] = cookie;
