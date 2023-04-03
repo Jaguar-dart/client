@@ -59,7 +59,13 @@ class ClientCookie {
   }
 
   /// Parses one 'set-cookie' item
-  factory ClientCookie.fromSetCookie(String cookieItem) {
+  ///
+  /// Parameters:
+  /// - [enableExtendedDirectiveParsing]
+  ///   When enabled and a directive is not recognized, the parser will try extended methods to find the right directive. These methods are:
+  ///   - Comparing Case-insensitive
+  factory ClientCookie.fromSetCookie(String cookieItem,
+      {bool enableExtendedDirectiveParsing = true}) {
     final List<String> parts =
         cookieItem.split(';').reversed.map((String str) => str.trim()).toList();
 
@@ -81,14 +87,25 @@ class ClientCookie {
     }
 
     for (String directive in parts) {
-      final List<String> points =
-          directive.split('=').map((String str) => str.trim()).toList();
-      if (points.length == 0 || points.length > 2)
+      final List<String> points = directive //
+          .split('=')
+          .map((String str) => str.trim())
+          .toList();
+
+      if (points.length == 0 || points.length > 2) {
         throw Exception('Invalid directive!');
-      final String key = points.first;
+      }
+
+      String key = points.first;
       final String val = points.length == 2 ? points.last : '';
       if (!_parsers.containsKey(key)) {
-        throw _invalidDirective;
+        if (!enableExtendedDirectiveParsing) {
+          throw _invalidDirective;
+        }
+        key = _parsers.keys.firstWhere(
+          (e) => e.toLowerCase() == key.toLowerCase(),
+          orElse: () => throw _invalidDirective,
+        );
       }
       map[key] = _parsers[key](val);
     }
@@ -234,10 +251,18 @@ class ClientCookie {
 
 /// A store for Cookies
 class CookieStore {
+  /// Influences the parsing of the 'set-cookie' header.
+  ///
+  /// When enabled and a directive is not recognized, the parser will try extended methods to find the right directive. These methods are:
+  /// - Comparing Case-insensitive
+  bool enableExtendedDirectiveParsing;
+
   /// The actual storeage
   Map<String, ClientCookie> cookieMap = {};
 
   List<ClientCookie> get cookies => cookieMap.values.toList();
+
+  CookieStore({this.enableExtendedDirectiveParsing = true});
 
   /// Returns a cookie by [name]
   ///
@@ -276,19 +301,37 @@ class CookieStore {
   }
 
   /// Parses and adds all 'set-cookies' from [http.Response] to the Cookie store
-  void addFromResponse(http.Response resp) {
+  ///
+  /// Parameters:
+  /// - [enableExtendedDirectiveParsing]
+  ///   When enabled and a directive is not recognized, the parser will try extended methods to find the right directive. These methods are:
+  ///   - Comparing Case-insensitive
+  ///
+  ///   overrides [CookieStore.enableExtendedDirectiveParsing]
+  void addFromResponse(http.Response resp,
+      {bool? enableExtendedDirectiveParsing}) {
     if (resp.headers.containsKey('set-cookie')) {
       addFromHeader(resp.headers['set-cookie']!);
     }
   }
 
   /// Parses and adds all 'set-cookies' from [http.Response] to the Cookie store
-  void addFromHeader(String? setCookieLine) {
+  ///
+  /// Parameters:
+  /// - [enableExtendedDirectiveParsing]
+  ///   When enabled and a directive is not recognized, the parser will try extended methods to find the right directive. These methods are:
+  ///   - Comparing Case-insensitive
+  ///
+  ///   overrides [CookieStore.enableExtendedDirectiveParsing]
+  void addFromHeader(String? setCookieLine,
+      {bool? enableExtendedDirectiveParsing}) {
     if (setCookieLine == null || setCookieLine.isEmpty) {
       return;
     }
 
-    final map = parseSetCookie(setCookieLine);
+    final map = parseSetCookie(setCookieLine,
+        enableExtendedDirectiveParsing: enableExtendedDirectiveParsing ??
+            this.enableExtendedDirectiveParsing);
 
     for (String name in map.keys) {
       final ClientCookie cookie = map[name]!;
@@ -304,8 +347,14 @@ class CookieStore {
   String toString() => 'CookieStore($cookieMap)';
 }
 
-/// Parses and adds all 'set-cookies' from [http.Response] to the Cookiewqa<s§ store
-Map<String, ClientCookie> parseSetCookie(String? setCookieLine) {
+/// Parses and adds all 'set-cookies' from [http.Response] to the Cookie store
+///
+/// Parameters:
+/// - [enableExtendedDirectiveParsing]
+///   When enabled and a directive is not recognized, the parser will try extended methods to find the right directive. These methods are:
+///   - Comparing Case-insensitive
+Map<String, ClientCookie> parseSetCookie(String? setCookieLine,
+    {bool enableExtendedDirectiveParsing = true}) {
   final cookieMap = <String, ClientCookie>{};
 
   if (setCookieLine == null || setCookieLine.isEmpty) {
@@ -313,7 +362,8 @@ Map<String, ClientCookie> parseSetCookie(String? setCookieLine) {
   }
 
   for (String itemStr in setCookieLine.split(',')) {
-    final cookie = ClientCookie.fromSetCookie(itemStr);
+    final cookie = ClientCookie.fromSetCookie(itemStr,
+        enableExtendedDirectiveParsing: enableExtendedDirectiveParsing);
     cookieMap[cookie.name] = cookie;
   }
 
