@@ -297,7 +297,7 @@ class CookieStore {
 
     for (String rem in removes) cookieMap.remove(rem);
 
-    return rets.join(', ');
+    return rets.join('; ');
   }
 
   /// Parses and adds all 'set-cookies' from [http.Response] to the Cookie store
